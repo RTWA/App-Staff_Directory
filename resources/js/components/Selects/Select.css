@@ -1,0 +1,28 @@
+.input-select__control {
+    border: none !important;
+    box-shadow: none !important;
+    background: none !important;
+}
+
+.input-select__input input {
+    --tw-ring-color: none !important;
+}
+
+.dark .input-select__single-value {
+    color: white;
+}
+
+.dark .input-select__menu {
+    background: rgba(75, 85, 99, 1) !important
+}
+
+.input-select__option:hover {
+    background: rgba(199, 210, 254, 1) !important
+}
+.dark .input-select__option:hover {
+    background: rgba(99, 102, 241, 1) !important;
+}
+
+.input-select__option--is-selected {
+    background: rgba(99, 102, 241, 1) !important;
+}

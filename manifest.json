@@ -1,0 +1,86 @@
+{
+    "name": "Staff Directory",
+    "slug": "StaffDirectory",
+    "version": "1.0.0",
+    "description": "Display a grid of Staff Photos, or a table of details. This App can provision Staff from Mircosoft Azure Active Directory.",
+    "icon": "[\"fas\", \"user-friends\"]",
+    "author": "WebApps",
+    "menu": [
+        {
+            "action": "views",
+            "text": "Manage Views",
+            "permission": "app.StaffDirectory.manageViews"
+        },
+        {
+            "action": "staff",
+            "text": "Manage Staff",
+            "permission": "app.StaffDirectory.manageStaff"
+        },
+        {
+            "action": "settings",
+            "text": "App Settings",
+            "permission": "app.StaffDirectory.appSettings"
+        }
+    ],
+    "routes": [
+        {
+            "path": "/views",
+            "name": "Manage Views",
+            "exact": true,
+            "component": "Settings",
+            "permission": "app.StaffDirectory.manageViews"
+        },
+        {
+            "path": "/staff",
+            "name": "Manage Staff",
+            "exact": true,
+            "component": "Settings",
+            "permission": "app.StaffDirectory.manageStaff"
+        },
+        {
+            "path": "/settings",
+            "name": "App Settings",
+            "exact": true,
+            "component": "Manage",
+            "permission": "app.StaffDirectory.appSettings"
+        }
+    ],
+    "permissions": [
+        {
+            "name": "app.StaffDirectory.manageViews",
+            "title": "Manage Views",
+            "guard": "web",
+            "admin": true
+        },
+        {
+            "name": "app.StaffDirectory.manageStaff",
+            "title": "Manage Staff",
+            "guard": "web",
+            "admin": true
+        },
+        {
+            "name": "app.StaffDirectory.appSettings",
+            "title": "Manage App Settings",
+            "guard": "web",
+            "admin": true
+        }
+    ],
+    "settings": [
+        {
+            "key": "app.StaffDirectory.newRecord.sendNotification",
+            "value": "false"
+        },
+        {
+            "key": "app.StaffDirectory.newRecord.notifyTo",
+            "value": ""
+        },
+        {
+            "key": "app.StaffDirectory.deleteRecord.sendNotification",
+            "value": "false"
+        },
+        {
+            "key": "app.StaffDirectory.deleteRecord.notifyTo",
+            "value": ""
+        }
+    ]
+}

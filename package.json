@@ -1,0 +1,41 @@
+{
+  "name": "staffdirectory",
+  "version": "1.0.0",
+  "description": "Staff Directory App for WebApps",
+  "author": "WebApps",
+  "license": "MIT",
+  "scripts": {
+    "dev": "npm run development",
+    "development": "mix",
+    "watch": "mix watch",
+    "watch-poll": "mix watch -- --watch-options-poll=1000",
+    "hot": "mix watch --hot",
+    "prod": "npm run production",
+    "production": "mix --production"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.13",
+    "@babel/plugin-proposal-class-properties": "^7.12.13",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/plugin-transform-arrow-functions": "^7.12.13",
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.12.13",
+    "@babel/preset-react": "^7.12.13",
+    "axios": "^0.21.1",
+    "babel-preset-react": "^6.24.1",
+    "classnames": "^2.2.6",
+    "jquery": "^3.5.1",
+    "laravel-mix": "^6.0.11",
+    "moment": "^2.29.1",
+    "postcss": "^8.1.14",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.1",
+    "react-app-polyfill": "^2.0.0",
+    "react-copy-to-clipboard": "^5.0.3",
+    "react-dom": "^17.0.1",
+    "react-router-dom": "^5.2.0",
+    "react-select": "^4.3.0",
+    "react-toast-notifications": "^2.4.4",
+    "react-user-avatar": "^1.10.0"
+  }
+}

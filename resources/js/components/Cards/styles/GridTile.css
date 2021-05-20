@@ -1,0 +1,180 @@
+/* Staff Directory GridTile Component - MESSY */
+/* TODO: Update branding from LEH colours */
+.pic {
+    height: 180px;
+  }
+  .pic.table {
+    width: 42px;
+    height: 42px;
+    margin: 0;
+  }
+  
+  .pic.leave {
+    opacity: 0.4;
+  }
+  
+  .info {
+    font-family: 'Lato', sans-serif;
+    color: #fff;
+    font-size: 14px;
+    padding: 4px;
+    background-color: #C51534;
+    text-align: right;
+    margin-top: 10px;
+    min-height: 160px;
+  }
+  
+  .info li {
+    line-height: 1.2rem;
+  }
+  
+  .info li a {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #FFF;
+    text-decoration: none;
+  }
+  
+  .info li a:hover {
+    text-decoration: underline;
+  }
+  
+  .email a {
+    font-size: 0.8rem;
+  }
+  
+  .title {
+    font-size: 0.8rem;
+  }
+  
+  .onleave,
+  .iscover,
+  .isenior,
+  .info a {
+    font-size: 0.7rem
+  }
+  
+  /* entire container, keeps perspective */
+  .flip-container {
+    transform-style: preserve-3d;
+    margin: 0 5px 10px 5px;
+  }
+  
+  /*  UPDATED! flip the pane when hovered */
+  .flip-container:hover .back,
+  .flip-container.flipped .back {
+    transform: rotateY(0deg);
+  }
+  
+  .flip-container:hover .front,
+  .flip-container.flipped .front {
+    transform: rotateY(180deg);
+  }
+  
+  .flip-container,
+  .front,
+  .back {
+    width: 180px;
+    height: 180px;
+    display: inline-block;
+    overflow: hidden;
+  }
+  
+  /* flip speed goes here */
+  .flipper {
+    transition: 0.6s;
+    transform-style: preserve-3d;
+    position: relative;
+  }
+  
+  /* hide back of pane during swap */
+  .front, .back {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transition: 0.6s;
+    transform-style: preserve-3d;
+  
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  /*  UPDATED! front pane, placed above back */
+  .front {
+    z-index: 2;
+    transform: rotateY(0deg);
+  }
+  
+  /* back, initially hidden pane */
+  .back {
+    transform: rotateY(-180deg);
+    background-color: #3C3C3C;
+  
+  }
+  
+  /* Faded Name Tag */
+  .front p {
+    position: absolute;
+    background: rgba(197, 21, 52, 0.65);
+    width: 100%;
+    padding: 5px 0;
+    text-align: center;
+    color: #FFF;
+    font-weight: 500;
+    font-size: 80%;
+    bottom: 0;
+  }
+  
+  .front p.not {
+    display: none;
+  }
+  
+  .front p.hod {
+    position: absolute;
+    background: #C51534;
+    width: 100%;
+    padding: 7px 0;
+    text-align: center;
+    color: #FFF;
+    font-weight: bold;
+    font-size: 70%;
+    bottom: -35px;
+    animation: inout 6s infinite;
+  }
+  
+  @-webkit-keyframes inout {
+    40%, 60% {
+      bottom: 0;
+    }
+  }
+  
+  @keyframes inout {
+    40%, 60% {
+      bottom: 0;
+    }
+  }
+  
+  /* Remove list style - a fix for iOS */
+  .back ul {
+    list-style: none;
+  }
+  
+  /*
+   Some vertical flip updates
+  */
+  .vertical.flip-container {
+    position: relative;
+  }
+  
+  .vertical .back {
+    transform: rotateX(180deg);
+  }
+  
+  .vertical.flip-container:hover .back {
+    transform: rotateX(0deg);
+  }
+  
+  .vertical.flip-container:hover .front {
+    transform: rotateX(180deg);
+  }
+  

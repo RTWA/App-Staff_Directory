@@ -1,0 +1,13 @@
+.table.StaffDirectory td.photo {
+    width: 42px;
+    padding: 0;
+    margin: 0;
+}
+
+.table.StaffDirectory td {
+    vertical-align: middle;
+}
+
+.table.StaffDirectory .title {
+    font-size: 1rem;
+}

@@ -1,0 +1,6 @@
+{
+    "name": "ConfirmDeleteButton",
+    "version": "0.0.0",
+    "private": true,
+    "main": "./ConfirmDeleteButton.js"
+  }
