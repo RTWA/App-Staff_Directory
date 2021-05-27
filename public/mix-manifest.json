@@ -1,4 +1,6 @@
 {
-    "/C:/public/js/apps/StaffDirectory.js": "/C:/public/js/apps/StaffDirectory.js",
-    "/C:/public/js/apps/StaffDirectory_view.js": "/C:/public/js/apps/StaffDirectory_view.js"
+    "/StaffDirectory.js": "/StaffDirectory.js",
+    "/StaffDirectory_view.js": "/StaffDirectory_view.js",
+    "/public/js/apps/StaffDirectory.js": "/public/js/apps/StaffDirectory.js",
+    "/public/js/apps/StaffDirectory_view.js": "/public/js/apps/StaffDirectory_view.js"
 }
