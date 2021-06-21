@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactUserAvatar from 'react-user-avatar';
 
 const AvatarPill = props => {
     const { person, hover } = props;
@@ -36,10 +37,17 @@ const AvatarPill = props => {
                 <p className="font-semibold">{person.forename} {person.surname}</p>
                 <p className="italic text-gray-400">{person.title}</p>
             </div>
-            <img className="absolute top-0 left-0 w-16 h-16 rounded-full box-border border-2 border-gray-500 dark:border-gray-400"
-                src={`https://randomuser.me/api/portraits/lego/${Math.floor(Math.random() * 9)}.jpg`}
-                id={`photo-${person.id}`}
-                alt={`${person.forename} ${person.surname} - Photo`} />
+            {/* TODO: Allow manual photo */}
+            {
+                (person.azure_id !== undefined && person.azure_id !== null)
+                    ? (
+                        <img className="absolute top-0 left-0 w-16 h-16 rounded-full box-border border-2 border-gray-500 dark:border-gray-400"
+                            src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
+                            id={`photo-${person.id}`}
+                            alt={`${person.forename} ${person.surname} - Photo`} />
+                    )
+                    : <ReactUserAvatar size="16" name={`${person.forename} ${person.surname}`} />
+            }
         </div>
     );
 }

@@ -16,6 +16,7 @@ use WebApps\Apps\StaffDirectory\Controllers\DepartmentsController;
 use WebApps\Apps\StaffDirectory\Controllers\PersonController;
 use WebApps\Apps\StaffDirectory\Controllers\ViewController;
 use WebApps\Apps\StaffDirectory\Controllers\CustomFieldController;
+use WebApps\Apps\StaffDirectory\Controllers\MasterController;
 
 // These routes require authentication to access
 Route::group(['middleware' => 'auth:sanctum'], function () {
@@ -42,4 +43,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     
     Route::get('/customFields', [CustomFieldController::class, 'all']);
     Route::put('/customFields', [CustomFieldController::class, 'save']);
+
+    Route::get('/azure/sync', [MasterController::class, 'syncAzure']);
 });

@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import ReactUserAvatar from 'react-user-avatar';
+import { Input, withWebApps } from 'webapps-react';
 
 import { DatePicker } from '../DatePicker'
 
-const PersonalDetails = props => {
+const PersonalDetails = ({ UI, ...props }) => {
     const {
         person,
         change,
@@ -12,11 +13,11 @@ const PersonalDetails = props => {
 
     return (
         <div className="relative bg-white dark:bg-gray-800 py-6 px-6 rounded shadow-xl">
-            <div className="w-20 h-20 text-white flex items-center absolute rounded-full p-2 shadow-xl bg-indigo-600 dark:bg-indigo-500 left-4 -top-6">
-                {/* TODO: Actual picture */}
+            <div className={`w-20 h-20 text-white flex items-center absolute rounded-full p-2 shadow-xl bg-${UI.theme}-600 dark:bg-${UI.theme}-500 left-4 -top-6`}>
+                {/* TODO: Allow manual photo */}
                 {
-                    (person.forename !== undefined)
-                        ? <img className="w-20 rounded-full" src={`https://randomuser.me/api/portraits/lego/${Math.floor(Math.random() * 9)}.jpg`} id="person-photo" alt={`${person.forename} ${person.surname} - Photo`} />
+                    (person.azure_id !== undefined && person.azure_id !== null)
+                        ? <img className="w-20 rounded-full" src={`/apps/StaffDirectory/view/person/${person.id}/photo`} id="person-photo" alt={`${person.forename} ${person.surname} - Photo`} />
                         : <ReactUserAvatar size="64" name={`${person.forename || 'Creating'} ${person.surname || 'New Record'}`} />
                 }
             </div>
@@ -28,12 +29,11 @@ const PersonalDetails = props => {
                             <label className="block py-2" htmlFor="forename">Forename</label>
                         </div>
                         <div className="w-full lg:w-9/12">
-                            <input name="forename"
+                            <Input name="forename"
                                 type="text"
                                 id="forename"
                                 value={person.forename || ''}
-                                onChange={change}
-                                className="input-field" />
+                                onChange={change} />
                         </div>
                     </div>
                     <div className="w-full lg:w-6/12 flex flex-auto px-2 lg:px-5">
@@ -41,12 +41,11 @@ const PersonalDetails = props => {
                             <label className="block py-2" htmlFor="surname">Surname</label>
                         </div>
                         <div className="w-full lg:w-9/12">
-                            <input name="surname"
+                            <Input name="surname"
                                 type="text"
                                 id="surname"
                                 value={person.surname || ''}
-                                onChange={change}
-                                className="input-field" />
+                                onChange={change} />
                         </div>
                     </div>
                 </div>
@@ -56,12 +55,11 @@ const PersonalDetails = props => {
                             <label className="block py-2" htmlFor="username">Username</label>
                         </div>
                         <div className="w-full lg:w-9/12">
-                            <input name="username"
+                            <Input name="username"
                                 type="text"
                                 id="username"
                                 value={person.username || ''}
-                                onChange={change}
-                                className="input-field" />
+                                onChange={change} />
                         </div>
                     </div>
                     <div className="w-full lg:w-6/12 flex flex-auto px-2 lg:px-5">
@@ -69,12 +67,11 @@ const PersonalDetails = props => {
                             <label className="block py-2" htmlFor="employee_id">Employee ID</label>
                         </div>
                         <div className="w-full lg:w-9/12">
-                            <input name="employee_id"
+                            <Input name="employee_id"
                                 type="text"
                                 id="employee_id"
                                 value={person.employee_id || ''}
-                                onChange={change}
-                                className="input-field" />
+                                onChange={change} />
                         </div>
                     </div>
                 </div>
@@ -84,12 +81,11 @@ const PersonalDetails = props => {
                             <label className="block py-2" htmlFor="email">Email Address</label>
                         </div>
                         <div className="w-full lg:w-9/12">
-                            <input name="email"
+                            <Input name="email"
                                 type="text"
                                 id="email"
                                 value={person.email || ''}
-                                onChange={change}
-                                className="input-field" />
+                                onChange={change} />
                         </div>
                     </div>
                     <div className="w-full lg:w-6/12 flex flex-auto px-2 lg:px-5">
@@ -106,4 +102,4 @@ const PersonalDetails = props => {
     );
 }
 
-export default PersonalDetails;
+export default withWebApps(PersonalDetails);

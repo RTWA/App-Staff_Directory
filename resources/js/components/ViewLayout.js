@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Loader } from 'webapps-react';
+
 import CustomView from './CustomView';
 
 const ViewLayout = props => {
@@ -31,7 +33,7 @@ const ViewLayout = props => {
     }, []);
 
     if (view.state === "loading") {
-        return <div>Loading...</div>
+        return <Loader />
     }
 
     return <div className="StaffDirectory-view embed"><CustomView view={view} /></div>

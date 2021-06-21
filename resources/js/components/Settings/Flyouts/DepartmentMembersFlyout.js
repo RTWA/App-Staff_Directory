@@ -1,8 +1,10 @@
 import React from 'react';
+import ReactUserAvatar from 'react-user-avatar';
 import classNames from 'classnames';
 import axios from 'axios';
+import { withWebApps } from 'webapps-react';
 
-const DepartmentMembersFlyout = props => {
+const DepartmentMembersFlyout = ({UI, ...props}) => {
     const {
         department,
         setDepartment,
@@ -78,7 +80,7 @@ const DepartmentMembersFlyout = props => {
         <section className={panelClass} aria-labelledby="slide-over-heading">
             <div className="relative w-screen max-w-sm">
                 <div className="h-full flex flex-col bg-white dark:bg-gray-900 shadow-xl overflow-y-auto">
-                    <div className="px-4 sm:px-6 py-6 bg-indigo-600 dark:bg-indigo-900 text-white dark:text-gray-200 relative">
+                    <div className={`px-4 sm:px-6 py-6 bg-${UI.theme}-600 dark:bg-${UI.theme}-900 text-white dark:text-gray-200 relative`}>
                         <div className="absolute top-0 right-0 -ml-8 pt-6 pr-2 flex sm:-ml-10 sm:pr-4">
                             <button className="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                                 onClick={closeMembers}>
@@ -96,12 +98,20 @@ const DepartmentMembersFlyout = props => {
                                 (department.people.length === 0)
                                     ? <p className="text-center">This department has no members</p>
                                     : Object(department.people).map(function (person, i) {
+                                        // TODO: Allow Manual Photos
                                         return (
                                             <div className="flex flex-row py-2" key={i}>
-                                                <img className="inline-block h-10 w-10 rounded-full border-2 border-gray-500 white dark:border-gray-50 mr-4"
-                                                    src={`https://randomuser.me/api/portraits/lego/${Math.floor(Math.random() * 9)}.jpg`}
-                                                    alt={`${person.forename} ${person.surname} - Photo`}
-                                                />
+                                                {
+                                                    (person.azure_id !== undefined && person.azure_id !== null)
+                                                    ? (
+                                                        <img key={i}
+                                                            className="inline-block h-10 w-10 rounded-full border-2 border-gray-500 white dark:border-gray-50 mr-4"
+                                                            src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
+                                                            id={`photo-${person.id}`}
+                                                            alt={`${person.forename} ${person.surname} - Photo`} />
+                                                    )
+                                                    : <ReactUserAvatar key={i} size="10" name={`${person.forename} ${person.surname}`} />
+                                                }
                                                 <div className="flex flex-col justify-evenly">
                                                     <p className="font-semibold">{person.forename} {person.surname}</p>
                                                     {
@@ -126,4 +136,4 @@ const DepartmentMembersFlyout = props => {
     )
 }
 
-export default DepartmentMembersFlyout;
+export default withWebApps(DepartmentMembersFlyout);

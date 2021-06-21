@@ -1,4 +1,5 @@
 import React from 'react';
+import { Input } from 'webapps-react';
 
 const CustomFieldDetails = props => {
     const {
@@ -29,12 +30,11 @@ const CustomFieldDetails = props => {
                                 <div className="w-full lg:w-9/12">
                                     {
                                         (field.type === "text")
-                                            ? <input name={field.field}
+                                            ? <Input name={field.field}
                                                 type="text"
                                                 id={field.field}
                                                 value={person.customFields[field.field] || ''}
-                                                onChange={handleChange}
-                                                className="input-field" />
+                                                onChange={handleChange} />
                                             : (
                                                 <select name={field.field} id={field.field} value={person.customFields[field.field] || ''} onChange={handleChange} className="input-field">
                                                     <option value="">Not set</option>

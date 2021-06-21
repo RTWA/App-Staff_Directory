@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { FlyoutsContext } from '../AppSettings';
-import Input from '../../Input';
-import ConfirmDeleteButton from '../../ConfirmDeleteButton';
+import { Button, ConfirmDeleteButton, Input, withWebApps } from 'webapps-react';
 import { AvatarPill, AvatarStack } from '../../Cards';
 import DepartmentMembersFlyout from './DepartmentMembersFlyout';
 
-const DepartmentFlyout = props => {
+const DepartmentFlyout = ({ UI, ...props }) => {
     const {
         departments,
         department,
@@ -108,7 +107,7 @@ const DepartmentFlyout = props => {
             <section className="absolute inset-y-0 right-0 max-w-full flex" aria-labelledby="slide-over-heading">
                 <div className={panelClass}>
                     <div className="h-full flex flex-col bg-white dark:bg-gray-900 shadow-xl overflow-y-auto">
-                        <div className="px-4 sm:px-6 py-6 bg-indigo-600 dark:bg-indigo-900 text-white dark:text-gray-200 relative">
+                        <div className={`px-4 sm:px-6 py-6 bg-${UI.theme}-600 dark:bg-${UI.theme}-900 text-white dark:text-gray-200 relative`}>
                             <div className="absolute top-0 right-0 -ml-8 pt-6 pr-2 flex sm:-ml-10 sm:pr-4">
                                 <button className="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                                     onClick={toggleModal}>
@@ -227,14 +226,14 @@ const DepartmentFlyout = props => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex bg-gray-100 dark:bg-gray-800 border-t-2 py-3 px-4 border-indigo-600 dark:border-indigo-900">
-                            <button onClick={saveDepartment} className="px-4 py-2 bg-indigo-600 border border-indigo-800 text-white hover:bg-indigo-800 dark:hover:bg-indigo-900">Save Changes</button>
+                        <div className={`flex bg-gray-100 dark:bg-gray-800 border-t-2 py-3 px-4 border-${UI.theme}-600 dark:border-${UI.theme}-900`}>
+                            <Button onClick={saveDepartment} square style="outline">Save Changes</Button>
                             <ConfirmDeleteButton
                                 text="Delete Department"
                                 confirmText="Are you sure?"
-                                initialColor="border border-red-500 hover:bg-red-500"
-                                confirmColor="border border-orange-500 hover:bg-orange-500"
-                                className="ml-auto px-4 py-2"
+                                style="outline"
+                                square
+                                className="ml-auto flex"
                                 onClick={deleteDepartment} />
                         </div>
                     </div>
@@ -251,4 +250,4 @@ const DepartmentFlyout = props => {
     )
 }
 
-export default DepartmentFlyout;
+export default withWebApps(DepartmentFlyout);

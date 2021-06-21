@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import classNames from 'classnames';
+import { Switch, withWebApps } from 'webapps-react';
 
 import { ModalsContext } from '../Views';
 import axios from 'axios';
 
-const PermissionsModal = props => {
+const PermissionsModal = ({UI, ...props}) => {
     const {
         permissions,
         closeModal
@@ -70,7 +71,7 @@ const PermissionsModal = props => {
             <section className="h-screen w-full fixed left-0 top-0 flex justify-center items-center" aria-labelledby="slide-over-heading">
                 <div className={panelClass}>
                     <div className="h-full flex flex-col bg-white dark:bg-gray-900 shadow-xl">
-                        <div className="px-4 py-4 bg-indigo-600 dark:bg-indigo-500 text-white relative">
+                        <div className={`px-4 py-4 bg-${UI.theme}-600 dark:bg-${UI.theme}-500 text-white relative`}>
                             <div className="absolute top-0 right-0 -ml-8 pt-4 pr-2 flex sm:-ml-10 sm:pr-4">
                                 <button className="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                                     onClick={closeModal}>
@@ -89,12 +90,9 @@ const PermissionsModal = props => {
                                         <td className="py-2 pl-4 w-32 font-semibold">Everyone</td>
                                         <td className="px-6">
                                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <input type="checkbox"
-                                                    data-permission="all"
+                                                <Switch data-permission="all"
                                                     checked={permissions.all || false}
-                                                    onChange={onChange}
-                                                    className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                                <label className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                                    onChange={onChange} />
                                             </div>
                                         </td>
                                     </tr>
@@ -107,12 +105,9 @@ const PermissionsModal = props => {
 
                                                         <td className="px-6">
                                                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                                <input type="checkbox"
-                                                                    data-permission={group.name}
+                                                                <Switch data-permission={group.name}
                                                                     checked={permissions[group.name] || false}
-                                                                    onChange={onChange}
-                                                                    className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                                                <label className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                                                    onChange={onChange} />
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -130,4 +125,4 @@ const PermissionsModal = props => {
     )
 }
 
-export default PermissionsModal;
+export default withWebApps(PermissionsModal);

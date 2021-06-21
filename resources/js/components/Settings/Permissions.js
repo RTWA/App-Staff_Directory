@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Switch } from 'webapps-react';
 import UserSuggest from './UserSuggest';
 
 axios.defaults.withCredentials = true;
@@ -162,13 +163,10 @@ const Permissions = () => {
                                         return (
                                             <td key={pi} className="px-6">
                                                 <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                    <input type="checkbox"
-                                                        checked={checkState(perm, group)}
+                                                    <Switch checked={checkState(perm, group)}
                                                         data-group={group.id}
                                                         data-perm={perm.id}
-                                                        onChange={handleChange}
-                                                        className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                                    <label className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                                        onChange={handleChange} />
                                                 </div>
                                             </td>
                                         )
@@ -191,13 +189,10 @@ const Permissions = () => {
                                         return (
                                             <td key={pi} className="px-6">
                                                 <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                    <input type="checkbox"
-                                                        checked={checkState(perm, user)}
+                                                    <Switch checked={checkState(perm, user)}
                                                         data-user={user.id}
                                                         data-perm={perm.id}
-                                                        onChange={handleChange}
-                                                        className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                                    <label className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                                        onChange={handleChange} />
                                                 </div>
                                             </td>
                                         )

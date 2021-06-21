@@ -1,9 +1,10 @@
 import React, { useContext } from 'react';
 import classNames from 'classnames';
+import { Switch, withWebApps } from 'webapps-react';
 
 import { ModalsContext } from '../Views';
 
-const TableFieldsModal = props => {
+const TableFieldsModal = ({ UI, ...props }) => {
     const {
         fields,
         customFields,
@@ -54,7 +55,7 @@ const TableFieldsModal = props => {
             <section className="h-screen w-full fixed left-0 top-0 flex justify-center items-center" aria-labelledby="slide-over-heading">
                 <div className={panelClass}>
                     <div className="h-full flex flex-col bg-white dark:bg-gray-900 shadow-xl">
-                        <div className="px-4 py-4 bg-indigo-600 dark:bg-indigo-500 text-white relative">
+                        <div className={`px-4 py-4 bg-${UI.theme}-600 dark:bg-${UI.theme}-500 text-white relative`}>
                             <div className="absolute top-0 right-0 -ml-8 pt-4 pr-2 flex sm:-ml-10 sm:pr-4">
                                 <button className="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                                     onClick={closeModal}>
@@ -73,12 +74,9 @@ const TableFieldsModal = props => {
                                         <td className="py-2 pl-4 w-64">Table Headings</td>
                                         <td className="px-6">
                                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <input type="checkbox"
-                                                    data-field="table_headings"
+                                                <Switch data-field="table_headings"
                                                     checked={fields['table_headings'] || false}
-                                                    onChange={onChange}
-                                                    className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                                <label className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                                    onChange={onChange} />
                                             </div>
                                         </td>
                                     </tr>
@@ -86,12 +84,9 @@ const TableFieldsModal = props => {
                                         <td className="py-2 pl-4">Photo</td>
                                         <td className="px-6">
                                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <input type="checkbox"
-                                                    data-field="table_photo"
+                                                <Switch data-field="table_photo"
                                                     checked={fields['table_photo'] || false}
-                                                    onChange={onChange}
-                                                    className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                                <label className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                                    onChange={onChange} />
                                             </div>
                                         </td>
                                     </tr>
@@ -99,12 +94,9 @@ const TableFieldsModal = props => {
                                         <td className="py-2 pl-4">Employee ID</td>
                                         <td className="px-6">
                                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <input type="checkbox"
-                                                    data-field="table_employee_id"
+                                                <Switch data-field="table_employee_id"
                                                     checked={fields['table_employee_id'] || false}
-                                                    onChange={onChange}
-                                                    className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                                <label className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                                    onChange={onChange} />
                                             </div>
                                         </td>
                                     </tr>
@@ -112,12 +104,9 @@ const TableFieldsModal = props => {
                                         <td className="py-2 pl-4">Email Address</td>
                                         <td className="px-6">
                                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <input type="checkbox"
-                                                    data-field="table_email"
+                                                <Switch data-field="table_email"
                                                     checked={fields['table_email'] || false}
-                                                    onChange={onChange}
-                                                    className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                                <label className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                                    onChange={onChange} />
                                             </div>
                                         </td>
                                     </tr>
@@ -125,12 +114,9 @@ const TableFieldsModal = props => {
                                         <td className="py-2 pl-4">Phone Number</td>
                                         <td className="px-6">
                                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <input type="checkbox"
-                                                    data-field="table_phone"
+                                                <Switch data-field="table_phone"
                                                     checked={fields['table_phone'] || false}
-                                                    onChange={onChange}
-                                                    className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                                <label className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                                    onChange={onChange} />
                                             </div>
                                         </td>
                                     </tr>
@@ -138,12 +124,9 @@ const TableFieldsModal = props => {
                                         <td className="py-2 pl-4">Department</td>
                                         <td className="px-6">
                                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <input type="checkbox"
-                                                    data-field="table_department"
+                                                <Switch data-field="table_department"
                                                     checked={fields['table_department'] || false}
-                                                    onChange={onChange}
-                                                    className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                                <label className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                                    onChange={onChange} />
                                             </div>
                                         </td>
                                     </tr>
@@ -151,12 +134,9 @@ const TableFieldsModal = props => {
                                         <td className="py-2 pl-4">Job Title</td>
                                         <td className="px-6">
                                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <input type="checkbox"
-                                                    data-field="table_title"
+                                                <Switch data-field="table_title"
                                                     checked={fields['table_title'] || false}
-                                                    onChange={onChange}
-                                                    className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                                <label className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                                    onChange={onChange} />
                                             </div>
                                         </td>
                                     </tr>
@@ -167,12 +147,9 @@ const TableFieldsModal = props => {
                                                     <td className="py-2 pl-4">{field.label}</td>
                                                     <td className="px-6">
                                                         <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                            <input type="checkbox"
-                                                                data-field={`table_${field.field}`}
+                                                            <Switch data-field={`table_${field.field}`}
                                                                 checked={fields[`table_${field.field}`] || false}
-                                                                onChange={onChange}
-                                                                className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                                            <label className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                                                onChange={onChange} />
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -189,4 +166,4 @@ const TableFieldsModal = props => {
     )
 }
 
-export default TableFieldsModal;
+export default withWebApps(TableFieldsModal);

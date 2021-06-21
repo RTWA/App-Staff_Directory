@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
+import { Button, Input } from 'webapps-react';
 
 import { CardView, GridView, TableView } from './Views/index';
 
@@ -201,11 +202,13 @@ const CustomView = props => {
                 <div className="selectors">
                     <div className="flex flex-auto">
                         <div className="w-6/12 md:w-3/12 lg:w-2/12">
+                            <Button square className="text-white" onClick={toggleMe}>
                             {
                                 (filtered)
-                                    ? <button className="px-4 py-2 bg-indigo-600 text-white" onClick={toggleMe}>Show All Staff</button>
-                                    : <button className="px-4 py-2 bg-indigo-600 text-white" onClick={toggleMe}>Show Only Me</button>
+                                    ? 'Show All Staff'
+                                    : 'Show Only Me'
                             }
+                            </Button>
                         </div>
                         <div className="w-6/12 md:w-4/12 lg:w-5/12">
                             <Select options={options(false)} onChange={depChange} value={selectedDep(false)} className="input-field" classNamePrefix="input-select" />
@@ -223,7 +226,7 @@ const CustomView = props => {
                             <label className="block py-2" htmlFor="name">Search by name:</label>
                         </div>
                         <div className="w-6/12 md:4/12 lg:5/12">
-                            <input type="text" className="input-field" id="name" value={search} onChange={filter} />
+                            <Input type="text" id="name" value={search} onChange={filter} />
                         </div>
                     </div>
                 </div>
@@ -247,11 +250,11 @@ const CustomView = props => {
     }
 
     return (
-        <div id="content">
+        <div id="content" className="p-1">
             {leading()}
             {selectors()}
             {sorttext()}
-            <div id="data" className="m-2">
+            <div id="data" className="flex flex-row m-2">
                 {arrange()}
             </div>
         </div>

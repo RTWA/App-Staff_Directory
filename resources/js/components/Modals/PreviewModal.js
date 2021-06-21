@@ -1,10 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import classNames from 'classnames';
+import { withWebApps } from 'webapps-react';
 
 import { ModalsContext } from '../Views';
 import CustomView from '../CustomView';
 
-const PreviewModal = props => {
+const PreviewModal = ({ UI, ...props }) => {
     const {
         view,
         people,
@@ -52,7 +53,7 @@ const PreviewModal = props => {
             <section className="h-screen w-full fixed left-0 top-0 flex justify-center items-center" aria-labelledby="slide-over-heading">
                 <div className={panelClass}>
                     <div className="h-full flex flex-col bg-white dark:bg-gray-900 shadow-xl">
-                        <div className="px-4 py-4 bg-indigo-600 dark:bg-indigo-500 text-white relative">
+                        <div className={`px-4 py-4 bg-${UI.theme}-600 dark:bg-${UI.theme}-500 text-white relative`}>
                             <div className="absolute top-0 right-0 -ml-8 pt-4 pr-2 flex sm:-ml-10 sm:pr-4">
                                 <button className="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                                     onClick={closeModal}>
@@ -74,4 +75,4 @@ const PreviewModal = props => {
     )
 }
 
-export default PreviewModal;
+export default withWebApps(PreviewModal);

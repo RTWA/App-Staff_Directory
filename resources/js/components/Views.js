@@ -1,6 +1,8 @@
 import React, { createContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useToasts } from 'react-toast-notifications';
+import { Button, Input, Switch, withWebApps } from 'webapps-react';
+
 import { CustomFilter, DepartmentFilter, PersonFilter } from './Filters';
 import { PermissionsModal, PreviewModal, TableFieldsModal, UseModal } from './Modals';
 
@@ -18,7 +20,7 @@ const newView = {
     display_type: 'grid'
 };
 
-const Views = () => {
+const Views = ({ UI }) => {
     const [people, setPeople] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [custom, setCustom] = useState([]);
@@ -201,13 +203,12 @@ const Views = () => {
             <div className="w-10/12 px-4 py-6">
                 <div className="w-full flex flex-row mb-5">
                     <h6 className="text-gray-600 dark:text-gray-400 text-2xl font-bold ml-6">Manage Views</h6>
-                    <a href="#" className="px-4 py-2 ml-auto text-indigo-600 border border-indigo-600 hover:border-indigo-700 hover:bg-indigo-700 hover:text-white rounded shadow-xl"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            toggleModals('preview');
-                        }}>
+                    <Button style="outline" className="ml-auto" onClick={(e) => {
+                        e.preventDefault();
+                        toggleModals('preview');
+                    }}>
                         Preview
-                    </a>
+                    </Button>
                 </div>
                 {
                     (view.publicId === "all")
@@ -220,52 +221,42 @@ const Views = () => {
                             <label className="block py-2" htmlFor="name">Name your view</label>
                         </div>
                         <div className="w-full lg:w-9/12">
-                            <input name="name"
+                            <Input name="name"
                                 type="text"
                                 id="name"
                                 value={view.name || ''}
-                                onChange={fieldChange}
-                                className="input-field" />
+                                onChange={fieldChange} />
                         </div>
                     </div>
                     <div className="flex flex-auto py-4">
                         <div className="w-full lg:w-4/12 flex flex-auto px-2 lg:px-5">
                             <label className="block py-2 pr-4 ml-auto" htmlFor="leading">Display primary help text?</label>
                             <div className="relative inline-block w-10 mr-auto mt-2 align-middle select-none">
-                                <input type="checkbox"
-                                    name="leading"
+                                <Switch name="leading"
                                     checked={(view.settings.leading === 'true')}
                                     id="leading"
                                     onChange={checkChange}
-                                    disabled={(view.display !== "all" && view.display.includes("custom"))}
-                                    className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                <label htmlFor="onLeave" className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                    disabled={(view.display !== "all" && view.display.includes("custom"))} />
                             </div>
                         </div>
                         <div className="w-full lg:w-4/12 flex flex-auto px-2 lg:px-5">
                             <label className="block py-2 pr-4 ml-auto" htmlFor="selectors">Display department selectors and name search?</label>
                             <div className="relative inline-block w-10 mr-auto mt-2 align-middle select-none">
-                                <input type="checkbox"
-                                    name="selectors"
+                                <Switch name="selectors"
                                     checked={(view.settings.selectors === 'true')}
                                     id="selectors"
                                     onChange={checkChange}
-                                    disabled={(view.display !== "all")}
-                                    className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                <label htmlFor="onLeave" className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                    disabled={(view.display !== "all")} />
                             </div>
                         </div>
                         <div className="w-full lg:w-4/12 flex flex-auto px-2 lg:px-5">
                             <label className="block py-2 pr-4 ml-auto" htmlFor="sorttext">Display sort by text?</label>
                             <div className="relative inline-block w-10 mr-auto mt-2 align-middle select-none">
-                                <input type="checkbox"
-                                    name="sorttext"
+                                <Switch name="sorttext"
                                     checked={(view.settings.sorttext === 'true')}
                                     id="sorttext"
                                     onChange={checkChange}
-                                    disabled={(view.display !== "all" && view.display.includes("custom"))}
-                                    className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                <label htmlFor="onLeave" className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                    disabled={(view.display !== "all" && view.display.includes("custom"))} />
                             </div>
                         </div>
                     </div>
@@ -321,38 +312,38 @@ const Views = () => {
                 </div>
 
                 <div className="flex flex-row mt-6">
-                    <a href="#" className="px-4 py-2 mr-4 text-gray-500 border border-gray-500 hover:border-gray-700 hover:bg-gray-700 hover:text-white rounded shadow-xl"
-                        onClick={(e) => {
+                    <Button className="mr-4" style="outline" color="gray"
+                    onClick={(e) => {
                             e.preventDefault();
                             toggleModals('permissions');
                         }}>
                         Set who can view this
-                    </a>
+                    </Button>
                     {
                         (view.display_type === "table")
-                            ? <a href="#" className="px-4 py-2 mr-auto text-gray-500 border border-gray-500 hover:border-gray-700 hover:bg-gray-700 hover:text-white rounded shadow-xl"
+                            ? <Button className="mr-auto" style="outline" color="gray"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     toggleModals('tableFields');
                                 }}>
                                 Choose table fields
-                              </a>
+                              </Button>
                             : <span className="mr-auto">&nbsp;</span>
                     }
                     {
                         (view.publicId !== "new")
-                            ? <a href="#" className="px-4 py-2 ml-auto text-green-500 border border-green-500 hover:border-green-700 hover:bg-green-700 hover:text-white rounded shadow-xl"
+                            ? <Button className="ml-auto" style="outline" color="green"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     toggleModals('useView');
                                 }}>
                                 Use This View
-                              </a>
+                              </Button>
                             : <span className="ml-auto">&nbsp;</span>
                     }
                     {
                         (view.publicId !== "all")
-                            ? <a href="#" className="px-4 py-2 ml-4 bg-green-500 hover:bg-green-700 hover:text-white rounded shadow-xl" onClick={saveView}>Save View</a>
+                            ? <Button className="ml-4" color="green" onClick={saveView}>Save View</Button>
                             : null
                     }
                 </div>
@@ -409,4 +400,4 @@ const Views = () => {
     )
 }
 
-export default Views;
+export default withWebApps(Views);

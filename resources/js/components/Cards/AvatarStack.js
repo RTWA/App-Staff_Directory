@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactUserAvatar from 'react-user-avatar';
 
 const AvatarStack = props => {
     const { people, fade, fadeTo, darkFadeTo } = props;
@@ -32,21 +33,26 @@ const AvatarStack = props => {
             <div id={id} className="flex -space-x-2">
                 {
                     Object(people).map(function (person, i) {
+                        // TODO: Allow manual photo
                         return (
-                            <img key={i}
-                                className="inline-block h-10 w-10 rounded-full border-2 border-gray-500 white dark:border-gray-50"
-                                src={`https://randomuser.me/api/portraits/lego/${Math.floor(Math.random() * 9)}.jpg`}
-                                alt={`${person.forename} ${person.surname} - Photo`}
-                            />
-                        );
+                            (person.azure_id !== undefined && person.azure_id !== null)
+                                ? (
+                                    <img key={i}
+                                        className="inline-block h-10 w-10 rounded-full border-2 border-gray-500 white dark:border-gray-50"
+                                        src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
+                                        id={`photo-${person.id}`}
+                                        alt={`${person.forename} ${person.surname} - Photo`} />
+                                )
+                                : <ReactUserAvatar key={i} size="10" name={`${person.forename} ${person.surname}`} />
+                        )
                     })
                 }
             </div>
             {
                 (fade)
-                ? <div className={`absolute bg-gradient-to-r from-transparent to-${fadeTo} dark:to-${darkFadeTo} w-full h-full top-0 left-0`}></div>
-                : null
-            }            
+                    ? <div className={`absolute bg-gradient-to-r from-transparent to-${fadeTo} dark:to-${darkFadeTo} w-full h-full top-0 left-0`}></div>
+                    : null
+            }
         </div>
     )
 }

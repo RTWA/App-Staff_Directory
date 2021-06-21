@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import ReactUserAvatar from 'react-user-avatar';
 
 import './styles/TableView.css';
 
@@ -80,9 +81,16 @@ const TableView = props => {
             if (fields.table_photo || fields.table_photo === "true") {
                 _row.push(
                     <td key={`photo-${person.id}`} className="photo">
-                        <img alt={`${person.forename} ${person.surname} - Photo`}
-                            src={`https://randomuser.me/api/portraits/lego/${Math.floor(Math.random() * 9)}.jpg`}
-                            id={`photo-${person.id}`} />
+                        {/* TODO: Allow Manual Photos */}
+                        {
+                            (person.azure_id !== undefined && person.azure_id !== null)
+                                ? (
+                                    <img src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
+                                        id={`photo-${person.id}`}
+                                        alt={`${person.forename} ${person.surname} - Photo`} />
+                                )
+                                : <ReactUserAvatar key={i} size="10" name={`${person.forename} ${person.surname}`} />
+                        }
                     </td>);
             }
 
@@ -130,9 +138,16 @@ const TableView = props => {
         if (fields.table_photo || fields.table_photo === "true") {
             _row.push(
                 <td key={`photo-${person.id}`} className="photo">
-                    <img alt={`${person.forename} ${person.surname} - Photo`}
-                        src={`https://randomuser.me/api/portraits/lego/${Math.floor(Math.random() * 9)}.jpg`}
-                        id={`photo-${person.id}`} />
+                    {/* TODO: Allow Manual Photos */}
+                    {
+                        (person.azure_id !== undefined && person.azure_id !== null)
+                            ? (
+                                <img src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
+                                    id={`photo-${person.id}`}
+                                    alt={`${person.forename} ${person.surname} - Photo`} />
+                            )
+                            : <ReactUserAvatar key={i} size="10" name={`${person.forename} ${person.surname}`} />
+                    }
                 </td>);
         }
 

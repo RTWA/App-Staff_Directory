@@ -24,6 +24,7 @@ class Person extends Model
         'onLeave',
         'isCover',
         'isSenior',
+        'azure_id',
     ];
 
     public function __construct(array $attributes = [])

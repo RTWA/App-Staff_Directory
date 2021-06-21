@@ -18,6 +18,8 @@ mix
     /**
      * Uncomment this lines during development to copy your updated JS
      * file automatically (you must have installed and activated your app)
-     */    
-    .copy('public/StaffDirectory.js', '../../../../public/js/apps/StaffDirectory.js')
-    .copy('public/StaffDirectory_view.js', '../../../../public/js/apps/StaffDirectory_view.js')
+     * 
+     * Update the path to your WebApps Directory
+     */
+    .copy('public/StaffDirectory.js', '../../../WebApps/public/js/apps/StaffDirectory.js')
+    .copy('public/StaffDirectory_view.js', '../../../WebApps/public/js/apps/StaffDirectory_view.js')

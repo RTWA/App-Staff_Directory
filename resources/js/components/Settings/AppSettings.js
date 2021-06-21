@@ -1,7 +1,10 @@
 import React, { createContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useToasts } from 'react-toast-notifications';
+import { Input, Switch } from 'webapps-react';
+
 import { CreateDepartmentFlyout, DepartmentFlyout } from './Flyouts';
+
 axios.defaults.withCredentials = true;
 
 export const FlyoutsContext = createContext({});
@@ -245,58 +248,48 @@ const AppSettings = () => {
             </div>
             <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
                 <div className="w-full lg:w-3/12">
-                    <label className="block py-2" htmlFor="newNotify">Send E-Mail when record is created</label>
+                    <label className="block py-2" htmlFor="app.StaffDirectory.newRecord.sendNotification">Send Email when record is created</label>
                 </div>
                 <div className="relative inline-block w-10 mr-2 mt-2 align-middle select-none">
-                    <input type="checkbox"
-                        name="newNotify"
+                    <Switch name="app.StaffDirectory.newRecord.sendNotification"
                         checked={(notifications.newRecord === 'true')}
-                        id="app.StaffDirectory.newRecord.sendNotification"
-                        onChange={onChange}
-                        className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                    <label htmlFor="newNotify" className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                        onChange={onChange} />
                 </div>
             </div>
             <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
                 <div className="w-full lg:w-3/12">
-                    <label className="block py-2" htmlFor="newNotifyTo">Send new record notification to</label>
+                    <label className="block py-2" htmlFor="app.StaffDirectory.newRecord.notifyTo">Send new record notification to</label>
                 </div>
                 <div className="w-full lg:w-9/12">
-                    <input name="newNotifyTo"
+                    <Input name="app.StaffDirectory.newRecord.notifyTo"
                         type="text"
                         id="app.StaffDirectory.newRecord.notifyTo"
                         value={notifications.newNotifyTo || ''}
                         onChange={onType}
-                        onBlur={onChange}
-                        className="input-field" />
+                        onBlur={onChange} />
                 </div>
             </div>
             <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
                 <div className="w-full lg:w-3/12">
-                    <label className="block py-2" htmlFor="deletedNotify">Send E-Mail when record is deleted</label>
+                    <label className="block py-2" htmlFor="app.StaffDirectory.deleteRecord.sendNotification">Send Email when record is deleted</label>
                 </div>
                 <div className="relative inline-block w-10 mr-2 mt-2 align-middle select-none">
-                    <input type="checkbox"
-                        name="deletedNotify"
+                    <Switch name="app.StaffDirectory.deleteRecord.sendNotification"
                         checked={(notifications.deleteRecord === 'true')}
-                        id="app.StaffDirectory.deleteRecord.sendNotification"
-                        onChange={onChange}
-                        className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                    <label htmlFor="deletedNotify" className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                        onChange={onChange} />
                 </div>
             </div>
             <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
                 <div className="w-full lg:w-3/12">
-                    <label className="block py-2" htmlFor="deletedNotifyTo">Send deleted record notification to</label>
+                    <label className="block py-2" htmlFor="app.StaffDirectory.deleteRecord.notifyTo">Send deleted record notification to</label>
                 </div>
                 <div className="w-full lg:w-9/12">
-                    <input name="deletedNotifyTo"
+                    <Input name="app.StaffDirectory.deleteRecord.notifyTo"
                         type="text"
                         id="app.StaffDirectory.deleteRecord.notifyTo"
                         value={notifications.deleteNotifyTo || ''}
                         onChange={onType}
-                        onBlur={onChange}
-                        className="input-field" />
+                        onBlur={onChange} />
                 </div>
             </div>
 

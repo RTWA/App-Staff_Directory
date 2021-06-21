@@ -66,6 +66,7 @@ class AppManagerController extends Controller
                 $table->boolean('onLeave');
                 $table->boolean('isCover');
                 $table->boolean('isSenior');
+                $table->string('azure_id')->nullable();
                 $table->timestamps();
                 $table->softDeletes();
             });

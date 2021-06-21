@@ -1,5 +1,6 @@
 import React from 'react';
-import {DepartmentSelect} from '../Selects';
+import { Switch } from 'webapps-react';
+import { DepartmentSelect } from '../Selects';
 
 const DepartmentDetails = props => {
     const { person, departments } = props;
@@ -27,14 +28,11 @@ const DepartmentDetails = props => {
                                 <div className="flex flex-row pl-2">
                                     <span className="block py-2 pr-4">Head of Department</span>
                                     <div className="relative inline-block w-10 mr-2 mt-2 align-middle select-none">
-                                        <input type="checkbox"
-                                            checked={(department['head_id'] == person.id)}
+                                        <Switch checked={(department['head_id'] == person.id)}
                                             id={`hod-${i}`}
                                             onChange={() => {
                                                 departments.toggleHod(department, i)
-                                            }}
-                                            className="checked:bg-gray-500 outline-none focus:ring-0 focus:outline-none right-4 checked:right-0 duration-200 ease-in absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                                        <label htmlFor={`hod-${i}`} className="block overflow-hidden h-6 rounded-full bg-gray-300 dark:bg-gray-700 cursor-pointer" />
+                                            }} />
                                     </div>
                                 </div>
                             </div>

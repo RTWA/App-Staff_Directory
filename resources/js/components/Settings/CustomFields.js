@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import classNames from 'classnames';
 import { useToasts } from 'react-toast-notifications';
+import { Button, Input } from 'webapps-react';
 
 const CustomFields = props => {
     const [tab, setTab] = useState(-1);
@@ -95,7 +96,7 @@ const CustomFields = props => {
         <>
             {
                 (changed)
-                    ? <button className="block ml-auto mb-2 -mt-3 px-4 py-2 bg-green-500 hover:bg-green-700 hover:text-white rounded outline-none" onClick={saveData}>Save Changes</button>
+                    ? <Button color="green" className="block ml-auto mb-1 text-white hover:text-white" onClick={saveData}>Save Changes</Button>
                     : null
             }
             {
@@ -126,7 +127,7 @@ const CustomFields = props => {
                                         <label className="block py-2">Field Name</label>
                                     </div>
                                     <div className="w-full lg:w-9/12">
-                                        <input type="text" name="label" value={field.label} data-for={i} onChange={onChange} className="input-field" />
+                                        <Input type="text" name="label" value={field.label} data-for={i} onChange={onChange} />
                                     </div>
                                 </div>
                                 <div className={`flex flex-auto p-2 ${(field.type === "select") ? '' : 'hidden'}`}>
@@ -140,7 +141,6 @@ const CustomFields = props => {
                                         </small>
                                     </div>
                                 </div>
-                                {/* TODO: AAD Provisioning links */}
                             </div>
                         </div>
                     );

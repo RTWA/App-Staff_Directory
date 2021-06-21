@@ -3,8 +3,9 @@ import axios from 'axios';
 import { useToasts } from 'react-toast-notifications';
 import Moment from 'moment';
 import { Prompt } from 'react-router';
+import { ConfirmDeleteButton } from 'webapps-react';
+
 import { CustomFieldDetails, DepartmentDetails, EmploymentDetails, PersonalDetails } from './Staff/index';
-import ConfirmDeleteButton from './ConfirmDeleteButton';
 
 const Manage = () => {
     const [people, setPeople] = useState([]);

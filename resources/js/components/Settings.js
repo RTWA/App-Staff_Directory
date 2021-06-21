@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
-import { AppSettings, CustomFields, Permissions } from './Settings/index';
+import { AppSettings, AzureSettings, CustomFields, Permissions } from './Settings/index';
 
 const Settings = () => {
     const [tab, setTab] = useState(0);
@@ -34,13 +34,16 @@ const Settings = () => {
         <div className="w-full px-4 py-6">
             <div className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded">
                 <nav className="flex flex-col sm:flex-row border-b border-gray-200 dark:border-gray-600">
-                    <button className={tabClass(0)} onClick={() => setTab(0)}>
+                    <button className={tabClass(0)} onClick={() => toggle(0)}>
                         App Settings
                     </button>
-                    <button className={tabClass(1)} onClick={() => setTab(1)}>
+                    <button className={tabClass(1)} onClick={() => toggle(1)}>
+                        Microsoft Azure Integration
+                    </button>
+                    <button className={tabClass(2)} onClick={() => toggle(2)}>
                         App Permissions
                     </button>
-                    <button className={tabClass(2)} onClick={() => setTab(2)}>
+                    <button className={tabClass(3)} onClick={() => toggle(3)}>
                         Custom Fields
                     </button>
                 </nav>
@@ -48,9 +51,12 @@ const Settings = () => {
                     <AppSettings />
                 </div>
                 <div className={paneClass(1)}>
-                    <Permissions />
+                    <AzureSettings />
                 </div>
                 <div className={paneClass(2)}>
+                    <Permissions />
+                </div>
+                <div className={paneClass(3)}>
                     <CustomFields />
                 </div>
             </div>
