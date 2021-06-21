@@ -11,6 +11,7 @@ let _mounted = false;
 const AzureSettings = () => {
     const [graph, setGraph] = useState({ tenantId: '', client_id: '', client_secret: '' });
     const [app, setApp] = useState({});
+    const [changed, setChanged] = useState({});
     const [syncGroups, setSyncGroups] = useState([]);
     const [accessToken, setAccessToken] = useState(null);
     const [azGroups, setAzGroups] = useState([]);
@@ -48,11 +49,20 @@ const AzureSettings = () => {
 
     useEffect(() => {
         if (_mounted) {
-            // Update create_departments
-            let formData = new FormData();
-            formData.append('_method', 'PUT');
-            formData.append('value', app.create_departments);
-            axios.post('/api/setting/app.StaffDirectory.azure.create_departments', formData);
+            if (changed.create_departments) {
+                // Update create_departments
+                let formData = new FormData();
+                formData.append('_method', 'PUT');
+                formData.append('value', app.create_departments);
+                axios.post('/api/setting/app.StaffDirectory.azure.create_departments', formData);
+            }
+            if (changed.technical_contact) {
+                // Update technical_contact
+                let formData = new FormData();
+                formData.append('_method', 'PUT');
+                formData.append('value', app.technical_contact);
+                axios.post('/api/setting/app.StaffDirectory.azure.technical_contact', formData);
+            }
         }
     }, [app]);
 
@@ -79,6 +89,8 @@ const AzureSettings = () => {
         let formData = new FormData();
         formData.append("key", JSON.stringify([
             "app.StaffDirectory.azure.sync_groups",
+            "app.StaffDirectory.azure.create_departments",
+            "app.StaffDirectory.azure.technical_contact",
             "app.StaffDirectory.azure.last_sync",
         ]));
 
@@ -86,6 +98,7 @@ const AzureSettings = () => {
             .then(json => {
                 if (_mounted) {
                     app.create_departments = json.data['app.StaffDirectory.azure.create_departments'];
+                    app.technical_contact = json.data['app.StaffDirectory.azure.technical_contact'];
                     app.last_sync = json.data['app.StaffDirectory.azure.last_sync'];
                     setApp({ ...app });
                     if (json.data['app.StaffDirectory.azure.sync_groups'] !== null) {
@@ -138,10 +151,17 @@ const AzureSettings = () => {
         setSyncGroups([...syncGroups]);
     }
 
+    const onType = e => {
+        app.technical_contact = e.target.value;
+        setApp({ ...app });
+    }
+
     const onChange = e => {
         if (e.target.id === "create_departments") {
             app.create_departments = (app.create_departments === 'true') ? 'false' : 'true';
         }
+        changed[e.target.id] = true;
+        setChanged({ ...changed });
         setApp({ ...app });
     }
 
@@ -214,6 +234,20 @@ const AzureSettings = () => {
                     <span className="mt-2 text-xs text-gray-400">
                         The Department string will be split on a '-' character to create sub-departments.
                     </span>
+                </div>
+            </div>
+
+            <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
+                <div className="w-full lg:w-3/12">
+                    <label className="block py-2" htmlFor="azure.technical_contact">Technical Contact Email Address</label>
+                </div>
+                <div className="w-full lg:w-9/12">
+                    <Input name="azure.technical_contact"
+                        type="text"
+                        id="azure.technical_contact"
+                        value={app.technical_contact || ''}
+                        onChange={onType}
+                        onBlur={onChange} />
                 </div>
             </div>
 

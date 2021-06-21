@@ -133,6 +133,7 @@ class AppManagerController extends Controller
         $this->createPermissions();
         $this->createSettings();
         $this->copyAppJS();
+        $this->addScheduledTask();
     }
 
     public function uninstall()
@@ -146,6 +147,7 @@ class AppManagerController extends Controller
         $this->dropPermissions();
         $this->dropSettings();
         $this->dropAppJS();
+        $this->dropScheduledTask();
     }
 
     private function createPermissions()
@@ -229,6 +231,33 @@ class AppManagerController extends Controller
         $path = public_path("js/apps/");
         if (file_exists($path.$this->slug.'.js')) {
             unlink($path.$this->slug.'.js');
+        }
+    }
+
+    private function addScheduledTask()
+    {
+        if (!Schema::hasTable('apps_scheduler')) {
+            abort(500, 'Apps scheduler table does not exist');
+        }
+
+        if (!DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:azure-sync')->first()) {
+            DB::table('apps_scheduler')->insert([
+                'app' => 'StaffDirectory',
+                'command' => 'StaffDirectory:azure-sync',
+                'last_run' => date('Y-m-d H:i:s'),
+                'schedule' => '+30 minutes',
+            ]);
+        }
+    }
+
+    private function dropScheduledTask()
+    {
+        if (!Schema::hasTable('apps_scheduler')) {
+            abort(500, 'Apps scheduler table does not exist');
+        }
+
+        if (!DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:azure-sync')->first()) {
+            DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:azure-sync')->delete();
         }
     }
 

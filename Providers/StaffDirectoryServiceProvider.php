@@ -5,6 +5,8 @@ namespace WebApps\Apps\StaffDirectory\Providers;
 use App\Models\App;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use WebApps\Apps\StaffDirectory\Commands\StaffDirectoryAzureSync;
+use WebApps\Apps\StaffDirectory\Commands\StaffDirectoryCheckLastSyncTime;
 
 class StaffDirectoryServiceProvider extends ServiceProvider
 {
@@ -23,7 +25,15 @@ class StaffDirectoryServiceProvider extends ServiceProvider
     public function boot()
     {
         // Find files that are required by this app
-        $folders = ["Controllers", "Models", "Database\\Seeders", "Database\\Factories"];
+        $folders = [
+            "Commands",
+            "Controllers",
+            "Models",
+            "Mail",
+            "Database\\Seeders",
+            "Database\\Factories"
+        ];
+
         foreach ($folders as $folder) {
             foreach (GLOB(__DIR__.'/../'.$folder.'/*.php') as $file) {
                 $className = str_replace(__DIR__.'/../'.$folder.'/', '', str_replace('.php', '', $file));
@@ -35,6 +45,8 @@ class StaffDirectoryServiceProvider extends ServiceProvider
         }
         // Add the Apps views
         $this->loadViewsFrom(__DIR__.'/../Views', "StaffDirectory");
+        // Add the Apps Commands
+        $this->loadCommands();
     }
 
     /**
@@ -78,5 +90,15 @@ class StaffDirectoryServiceProvider extends ServiceProvider
         ], function () {
             require App::path() . 'StaffDirectory/routes/api.php';
         });
+    }
+
+    private function loadCommands()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                StaffDirectoryAzureSync::class,
+                StaffDirectoryCheckLastSyncTime::class,
+            ]);
+        }
     }
 }

@@ -250,10 +250,15 @@ const AppSettings = () => {
                 <div className="w-full lg:w-3/12">
                     <label className="block py-2" htmlFor="app.StaffDirectory.newRecord.sendNotification">Send Email when record is created</label>
                 </div>
-                <div className="relative inline-block w-10 mr-2 mt-2 align-middle select-none">
-                    <Switch name="app.StaffDirectory.newRecord.sendNotification"
-                        checked={(notifications.newRecord === 'true')}
-                        onChange={onChange} />
+                <div className="w-full lg:w-9/12 flex flex-col">
+                    <div className="relative inline-block w-10 mr-2 mt-2 align-middle select-none">
+                        <Switch name="app.StaffDirectory.newRecord.sendNotification"
+                            checked={(notifications.newRecord === 'true')}
+                            onChange={onChange} />
+                    </div>
+                    <span className="mt-2 text-xs text-gray-400">
+                        This will not trigger for records created by Microsoft Azure Integration
+                    </span>
                 </div>
             </div>
             <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
@@ -273,10 +278,15 @@ const AppSettings = () => {
                 <div className="w-full lg:w-3/12">
                     <label className="block py-2" htmlFor="app.StaffDirectory.deleteRecord.sendNotification">Send Email when record is deleted</label>
                 </div>
-                <div className="relative inline-block w-10 mr-2 mt-2 align-middle select-none">
-                    <Switch name="app.StaffDirectory.deleteRecord.sendNotification"
-                        checked={(notifications.deleteRecord === 'true')}
-                        onChange={onChange} />
+                <div className="w-full lg:w-9/12 flex flex-col">
+                    <div className="relative inline-block w-10 mr-2 mt-2 align-middle select-none">
+                        <Switch name="app.StaffDirectory.deleteRecord.sendNotification"
+                            checked={(notifications.deleteRecord === 'true')}
+                            onChange={onChange} />
+                    </div>
+                    <span className="mt-2 text-xs text-gray-400">
+                        This will not trigger for records deleted by Microsoft Azure Integration
+                    </span>
                 </div>
             </div>
             <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">

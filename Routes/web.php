@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 use WebApps\Apps\StaffDirectory\Controllers\DepartmentsController;
 use WebApps\Apps\StaffDirectory\Controllers\MasterController;
 use WebApps\Apps\StaffDirectory\Controllers\PersonController;
+use WebApps\Apps\StaffDirectory\Mail\NoAzureSyncMail;
 
 Route::get('/view/depseed', [DepartmentsController::class, 'seed']);
 Route::get('/view/perseed', [PersonController::class, 'seed']);
