@@ -254,7 +254,7 @@ const CustomView = props => {
             {leading()}
             {selectors()}
             {sorttext()}
-            <div id="data" className="flex flex-row m-2">
+            <div id="data" className="flex flex-row flex-wrap m-2">
                 {arrange()}
             </div>
         </div>
