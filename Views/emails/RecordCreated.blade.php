@@ -19,12 +19,16 @@
 
         body,
         .email-body,
-        .email-body_inner,
         .email-content,
         .email-wrapper,
         .email-masthead,
         .email-footer {
           background-color: #333333 !important;
+          color: #ffffff !important;
+        }
+
+        .email-body_inner {
+          background-color: #222222 !important;
           color: #ffffff !important;
         }
 
