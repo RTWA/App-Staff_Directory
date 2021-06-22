@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import classNames from 'classnames';
+import { WebAppsContext } from 'webapps-react';
+
 import { AppSettings, AzureSettings, CustomFields, Permissions, RecycleBin } from './Settings/index';
 
 const Settings = () => {
     const [tab, setTab] = useState(0);
+    const { UI } = useContext(WebAppsContext);
 
     const toggle = _tab => {
         if (tab !== _tab) {
@@ -21,8 +24,8 @@ const Settings = () => {
         'focus:outline-none',
         (tab === id) ? 'border-b-2' : '',
         (tab === id) ? 'font-medium' : '',
-        (tab === id) ? 'border-indigo-600' : '',
-        (tab === id) ? 'dark:border-indigo:500' : ''
+        (tab === id) ? `border-${UI.theme}-600` : '',
+        (tab === id) ? `dark:border-${UI.theme}.500` : ''
     )
 
     const paneClass = id => classNames(

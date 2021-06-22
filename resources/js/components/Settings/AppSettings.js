@@ -10,6 +10,7 @@ axios.defaults.withCredentials = true;
 export const FlyoutsContext = createContext({});
 
 const AppSettings = () => {
+    const [states, setStates] = useState({});
     const [departments, setDepartments] = useState([]);
     const [department, setDepartment] = useState({ children: [] });
     const [modals, setModals] = useState({ manage: false, new: false });
@@ -112,6 +113,9 @@ const AppSettings = () => {
     }
 
     const onChange = e => {
+        states[key] = 'saving';
+        setStates({ ...states });
+
         let key = e.target.id;
         let value = e.target.value;
 
@@ -134,22 +138,22 @@ const AppSettings = () => {
                 return response;
             })
             .then(json => {
-                document.getElementById(key).classList.add('text-green-500');
-                document.getElementById(key).classList.add('border-green-500');
+                states[key] = 'saved';
+                setStates({ ...states });
                 setTimeout(function () {
-                    document.getElementById(key).classList.remove('text-green-500');
-                    document.getElementById(key).classList.remove('border-green-500');
+                    states[key] = '';
+                    setStates({ ...states });
                 }, 2500);
             })
             .catch(error => {
                 // TODO: handle errors
                 console.log(error);
 
-                document.getElementById(key).classList.add('text-red-500');
-                document.getElementById(key).classList.add('border-red-500');
+                states[key] = 'error';
+                setStates({ ...states });
                 setTimeout(function () {
-                    document.getElementById(key).classList.remove('text-red-500');
-                    document.getElementById(key).classList.remove('border-red-500');
+                    states[key] = '';
+                    setStates({ ...states });
                 }, 2500);
             });
     }
@@ -248,7 +252,8 @@ const AppSettings = () => {
                     <div className="relative inline-block w-10 mr-2 mt-2 align-middle select-none">
                         <Switch name="app.StaffDirectory.newRecord.sendNotification"
                             checked={(notifications.newRecord === 'true')}
-                            onChange={onChange} />
+                            onChange={onChange}
+                            state={states['app.StaffDirectory.newRecord.sendNotification']} />
                     </div>
                     <span className="mt-2 text-xs text-gray-400">
                         This will not trigger for records created by Microsoft Azure Integration
@@ -265,7 +270,8 @@ const AppSettings = () => {
                         id="app.StaffDirectory.newRecord.notifyTo"
                         value={notifications.newNotifyTo || ''}
                         onChange={onType}
-                        onBlur={onChange} />
+                        onBlur={onChange}
+                        state={states['app.StaffDirectory.newRecord.notifyTo']} />
                 </div>
             </div>
             <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
@@ -276,7 +282,8 @@ const AppSettings = () => {
                     <div className="relative inline-block w-10 mr-2 mt-2 align-middle select-none">
                         <Switch name="app.StaffDirectory.deleteRecord.sendNotification"
                             checked={(notifications.deleteRecord === 'true')}
-                            onChange={onChange} />
+                            onChange={onChange}
+                            state={states['app.StaffDirectory.deleteRecord.sendNotification']} />
                     </div>
                     <span className="mt-2 text-xs text-gray-400">
                         This will not trigger for records deleted by Microsoft Azure Integration
@@ -293,7 +300,8 @@ const AppSettings = () => {
                         id="app.StaffDirectory.deleteRecord.notifyTo"
                         value={notifications.deleteNotifyTo || ''}
                         onChange={onType}
-                        onBlur={onChange} />
+                        onBlur={onChange}
+                        state={states['app.StaffDirectory.deleteRecord.notifyTo']} />
                 </div>
             </div>
 

@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useToasts } from 'react-toast-notifications';
-import { Badge, Button, Input, Switch } from 'webapps-react';
 import moment from 'moment';
+import { Badge, Button, Input, Switch } from 'webapps-react';
 
 axios.defaults.withCredentials = true;
 
 let _mounted = false;
 
 const AzureSettings = () => {
+    const [states, setStates] = useState({});
     const [graph, setGraph] = useState({ tenantId: '', client_id: '', client_secret: '' });
     const [app, setApp] = useState({});
     const [changed, setChanged] = useState({});
     const [syncGroups, setSyncGroups] = useState([]);
     const [accessToken, setAccessToken] = useState(null);
     const [azGroups, setAzGroups] = useState([]);
-
-    const { addToast } = useToasts();
 
     useEffect(() => {
         _mounted = true;
@@ -54,14 +52,58 @@ const AzureSettings = () => {
                 let formData = new FormData();
                 formData.append('_method', 'PUT');
                 formData.append('value', app.create_departments);
-                axios.post('/api/setting/app.StaffDirectory.azure.create_departments', formData);
+                axios.post('/api/setting/app.StaffDirectory.azure.create_departments', formData)
+                    .then(json => {
+                        states['create_departments'] = 'saved';
+                        setStates({ ...states });
+                        setTimeout(function () {
+                            states['create_departments'] = '';
+                            setStates({ ...states });
+                        }, 2500);
+
+                        changed.create_departments = false;
+                        setChanged({ ...changed });
+                    })
+                    .catch(error => {
+                        // TODO: handle errors
+                        console.log(error);
+
+                        states['create_departments'] = 'error';
+                        setStates({ ...states });
+                        setTimeout(function () {
+                            states['create_departments'] = '';
+                            setStates({ ...states });
+                        }, 2500);
+                    });
             }
             if (changed.technical_contact) {
                 // Update technical_contact
                 let formData = new FormData();
                 formData.append('_method', 'PUT');
                 formData.append('value', app.technical_contact);
-                axios.post('/api/setting/app.StaffDirectory.azure.technical_contact', formData);
+                axios.post('/api/setting/app.StaffDirectory.azure.technical_contact', formData)
+                    .then(json => {
+                        states['technical_contact'] = 'saved';
+                        setStates({ ...states });
+                        setTimeout(function () {
+                            states['technical_contact'] = '';
+                            setStates({ ...states });
+                        }, 2500);
+
+                        changed.technical_contact = false;
+                        setChanged({ ...changed });
+                    })
+                    .catch(error => {
+                        // TODO: handle errors
+                        console.log(error);
+
+                        states['technical_contact'] = 'error';
+                        setStates({ ...states });
+                        setTimeout(function () {
+                            states['technical_contact'] = '';
+                            setStates({ ...states });
+                        }, 2500);
+                    });
             }
         }
     }, [app]);
@@ -157,11 +199,15 @@ const AzureSettings = () => {
     }
 
     const onChange = e => {
+        states[e.target.id] = 'saving';
+        setStates({ ...states });
+
+        changed[e.target.id] = true;
+        setChanged({ ...changed });
+
         if (e.target.id === "create_departments") {
             app.create_departments = (app.create_departments === 'true') ? 'false' : 'true';
         }
-        changed[e.target.id] = true;
-        setChanged({ ...changed });
         setApp({ ...app });
     }
 
@@ -229,7 +275,8 @@ const AzureSettings = () => {
                     <div className="relative inline-block w-10 mr-2 mt-2 align-middle select-none">
                         <Switch name="create_departments"
                             checked={(app.create_departments === 'true')}
-                            onChange={onChange} />
+                            onChange={onChange}
+                            state={states['create_departments']} />
                     </div>
                     <span className="mt-2 text-xs text-gray-400">
                         The Department string will be split on a '-' character to create sub-departments.
@@ -239,15 +286,16 @@ const AzureSettings = () => {
 
             <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
                 <div className="w-full lg:w-3/12">
-                    <label className="block py-2" htmlFor="azure.technical_contact">Technical Contact Email Address</label>
+                    <label className="block py-2" htmlFor="technical_contact">Technical Contact Email Address</label>
                 </div>
                 <div className="w-full lg:w-9/12">
-                    <Input name="azure.technical_contact"
+                    <Input name="technical_contact"
                         type="text"
-                        id="azure.technical_contact"
+                        id="technical_contact"
                         value={app.technical_contact || ''}
                         onChange={onType}
-                        onBlur={onChange} />
+                        onBlur={onChange}
+                        state={states['technical_contact']} />
                 </div>
             </div>
 

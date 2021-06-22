@@ -1,5 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import PropTypes from "prop-types";
+import { Input } from 'webapps-react';
 
 class UserSuggest extends Component {
     static propTypes = {
@@ -124,7 +125,7 @@ class UserSuggest extends Component {
 
         return (
             <Fragment>
-                <input type="text" className="input-field" onChange={onChange} onKeyDown={onKeyDown} value={userInput}
+                <Input type="text" onChange={onChange} onKeyDown={onKeyDown} value={userInput}
                        placeholder="Start typing a username..." autoComplete="no"/>
                 {usersListComponent}
             </Fragment>
