@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useToasts } from 'react-toast-notifications';
 import Moment from 'moment';
 import { Prompt } from 'react-router';
-import { ConfirmDeleteButton } from 'webapps-react';
+import { Button, ConfirmDeleteButton } from 'webapps-react';
 
 import { CustomFieldDetails, DepartmentDetails, EmploymentDetails, PersonalDetails } from './Staff/index';
 
@@ -220,10 +220,12 @@ const Manage = () => {
                 <CustomFieldDetails person={person} fields={custom} change={customChange} />
 
                 <div className="flex flex-row mt-6">
-                    <a href="#" className="px-4 py-2 mr-auto bg-green-500 hover:bg-green-700 hover:text-white rounded shadow-xl" onClick={savePerson}>Save Record</a>
+                    <Button className="mr-auto" color="green" onClick={savePerson}>Save Record</Button>
                     {
                         (person.id !== 0)
-                            ? <ConfirmDeleteButton text="DELETE This Record" className="ml-auto px-4 py-2 rounded shadow-xl hover:text-white" initialColor="bg-red-500 hover:bg-red-700" confirmColor="bg-orange-500 hover:bg-orange-700" onClick={deletePerson} />
+                            ? <ConfirmDeleteButton text="DELETE This Record"
+                                className="ml-auto"
+                                onClick={deletePerson} />
                             : null
                     }
                 </div>
