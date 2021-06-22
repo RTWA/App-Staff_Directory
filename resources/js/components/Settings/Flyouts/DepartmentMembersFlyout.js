@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import axios from 'axios';
 import { withWebApps } from 'webapps-react';
 
-const DepartmentMembersFlyout = ({UI, ...props}) => {
+const DepartmentMembersFlyout = ({ UI, ...props }) => {
     const {
         department,
         setDepartment,
@@ -100,17 +100,17 @@ const DepartmentMembersFlyout = ({UI, ...props}) => {
                                     : Object(department.people).map(function (person, i) {
                                         // TODO: Allow Manual Photos
                                         return (
-                                            <div className="flex flex-row py-2" key={i}>
+                                            <div className="flex flex-row items-center py-2" key={i}>
                                                 {
                                                     (person.azure_id !== undefined && person.azure_id !== null)
-                                                    ? (
-                                                        <img key={i}
+                                                        ? <img key={i}
                                                             className="inline-block h-10 w-10 rounded-full border-2 border-gray-500 white dark:border-gray-50 mr-4"
                                                             src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
                                                             id={`photo-${person.id}`}
                                                             alt={`${person.forename} ${person.surname} - Photo`} />
-                                                    )
-                                                    : <ReactUserAvatar key={i} size="10" name={`${person.forename} ${person.surname}`} />
+                                                        : <ReactUserAvatar key={i} size="38"
+                                                            className="inline-block rounded-full border-2 border-gray-500 white dark:border-gray-50 mr-4"
+                                                            name={`${person.forename} ${person.surname}`} />
                                                 }
                                                 <div className="flex flex-col justify-evenly">
                                                     <p className="font-semibold">{person.forename} {person.surname}</p>

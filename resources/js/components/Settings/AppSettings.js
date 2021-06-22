@@ -28,9 +28,6 @@ const AppSettings = () => {
 
     const loadData = () => {
         axios.get('/api/apps/StaffDirectory/departments')
-            .then(response => {
-                return response;
-            })
             .then(json => {
                 setDepartments(json.data.departments);
             })
@@ -46,10 +43,7 @@ const AppSettings = () => {
             "app.StaffDirectory.deleteRecord.sendNotification",
             "app.StaffDirectory.deleteRecord.notifyTo"
         ]));
-        axios.post('/api/setting')
-            .then(response => {
-                return response;
-            })
+        axios.post('/api/setting', formData)
             .then(json => {
                 notifications.newRecord = json.data["app.StaffDirectory.newRecord.sendNotification"];
                 notifications.newNotifyTo = json.data["app.StaffDirectory.newRecord.notifyTo"];

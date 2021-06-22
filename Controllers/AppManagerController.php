@@ -63,9 +63,9 @@ class AppManagerController extends Controller
                 $table->string('title')->nullable();
                 $table->date('startDate')->nullable();
                 $table->string('phone')->nullable();
-                $table->boolean('onLeave');
-                $table->boolean('isCover');
-                $table->boolean('isSenior');
+                $table->boolean('onLeave')->default(0);
+                $table->boolean('isCover')->default(0);
+                $table->boolean('isSenior')->default(0);
                 $table->string('azure_id')->nullable();
                 $table->timestamps();
                 $table->softDeletes();
@@ -248,6 +248,24 @@ class AppManagerController extends Controller
                 'schedule' => '+30 minutes',
             ]);
         }
+
+        if (!DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:check-last-sync-time')->first()) {
+            DB::table('apps_scheduler')->insert([
+                'app' => 'StaffDirectory',
+                'command' => 'StaffDirectory:check-last-sync-time',
+                'last_run' => date('Y-m-d H:00:00'),
+                'schedule' => '+30 minutes',
+            ]);
+        }
+
+        if (!DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:delete-trash')->first()) {
+            DB::table('apps_scheduler')->insert([
+                'app' => 'StaffDirectory',
+                'command' => 'StaffDirectory:delete-trash',
+                'last_run' => date('Y-m-d 00:00:00'),
+                'schedule' => '+1 day',
+            ]);
+        }
     }
 
     private function dropScheduledTask()
@@ -258,6 +276,14 @@ class AppManagerController extends Controller
 
         if (!DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:azure-sync')->first()) {
             DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:azure-sync')->delete();
+        }
+        
+        if (!DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:check-last-sync-time')->first()) {
+            DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:check-last-sync-time')->delete();
+        }
+
+        if (!DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:delete-trash')->first()) {
+            DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:delete-trash')->delete();
         }
     }
 

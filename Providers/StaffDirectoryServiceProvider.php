@@ -7,6 +7,7 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Route;
 use WebApps\Apps\StaffDirectory\Commands\StaffDirectoryAzureSync;
 use WebApps\Apps\StaffDirectory\Commands\StaffDirectoryCheckLastSyncTime;
+use WebApps\Apps\StaffDirectory\Commands\StaffDirectoryDeleteTrash;
 
 class StaffDirectoryServiceProvider extends ServiceProvider
 {
@@ -98,6 +99,7 @@ class StaffDirectoryServiceProvider extends ServiceProvider
             $this->commands([
                 StaffDirectoryAzureSync::class,
                 StaffDirectoryCheckLastSyncTime::class,
+                StaffDirectoryDeleteTrash::class,
             ]);
         }
     }

@@ -159,8 +159,10 @@ class MasterController extends AppsController
         ApplicationSettings::set('app.StaffDirectory.azure.last_sync', new \DateTime());
     }    
 
-    public function getPersonPhoto(Person $person)
+    public function getPersonPhoto($id)
     {
+        $person = Person::withTrashed()->find($id);
+
         if ($person->azure_id) {
             $photo = $this->graphController->getUserPhoto($person->azure_id);
         

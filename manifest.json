@@ -67,6 +67,22 @@
     ],
     "settings": [
         {
+            "key": "app.StaffDirectory.azure.create_departments",
+            "value": "false"
+        },
+        {
+            "key": "app.StaffDirectory.azure.last_sync",
+            "value": "1970-01-01 00:00:00"
+        },
+        {
+            "key": "app.StaffDirectory.azure.sync_groups",
+            "value": ""
+        },
+        {
+            "key": "app.StaffDirectory.azure.technical_contact",
+            "value": ""
+        },
+        {
             "key": "app.StaffDirectory.newRecord.sendNotification",
             "value": "false"
         },

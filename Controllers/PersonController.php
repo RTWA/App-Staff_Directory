@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use RobTrehy\LaravelApplicationSettings\ApplicationSettings;
 use WebApps\Apps\StaffDirectory\Database\Seeders\PersonSeeder;
+use WebApps\Apps\StaffDirectory\Mail\RecordCreatedMail;
+use WebApps\Apps\StaffDirectory\Mail\RecordDeletedMail;
 use WebApps\Apps\StaffDirectory\Models\Department;
 use WebApps\Apps\StaffDirectory\Models\Person;
 
@@ -21,6 +25,13 @@ class PersonController extends Controller
         }
 
         return response()->json(['list' => $list], 200);
+    }
+
+    public function trashedPeople()
+    {
+        return response()->json([
+            'people' => Person::onlyTrashed()->select('id', 'forename', 'surname')->orderBy('surname', 'ASC')->get()
+        ], 200);
     }
     
     public function me()
@@ -72,34 +83,36 @@ class PersonController extends Controller
         $current->departments()->sync($deps);
         
         // Update Custom Fields
-        foreach ($custom as $field => $value) {
-            $oldValue = DB::table(AppManagerController::PeopleCustomFieldsTable())
+        if (!empty($custom[0])) {
+            foreach ($custom as $field => $value) {
+                $oldValue = DB::table(AppManagerController::PeopleCustomFieldsTable())
                     ->where('field', $field)
                     ->where('person_id', $current->id)
                     ->value('value');
-            if ($oldValue <> null && $oldValue <> $value && $value <> '') {
-                DB::table(AppManagerController::PeopleCustomFieldsTable())
+                if ($oldValue <> null && $oldValue <> $value && $value <> '') {
+                    DB::table(AppManagerController::PeopleCustomFieldsTable())
                     ->where('field', $field)
                     ->where('person_id', $current->id)
                     ->update(['value' => $value]);
-            } elseif ($oldValue <> $value && $value === '') {
-                DB::table(AppManagerController::PeopleCustomFieldsTable())
+                } elseif ($oldValue <> $value && $value === '') {
+                    DB::table(AppManagerController::PeopleCustomFieldsTable())
                     ->where('field', $field)
                     ->where('person_id', $current->id)
                     ->delete();
-            } elseif ($oldValue === null && $value <> '') {
-                DB::table(AppManagerController::PeopleCustomFieldsTable())->insert([
+                } elseif ($oldValue === null && $value <> '') {
+                    DB::table(AppManagerController::PeopleCustomFieldsTable())->insert([
                     'field' => $field,
                     'person_id' => $current->id,
                     'value' => $value,
                 ]);
+                }
             }
         }
-
-        // TODO: Event
-        // if ($id === 0) {
-        //     event(new NewStaffRecordEvent($current));
-        // }
+        
+        if ($id === 0 && ApplicationSettings::get('app.StaffDirectory.newRecord.sendNotification') === "true") {
+            Mail::to(ApplicationSettings::get('app.StaffDirectory.newRecord.notifyTo'))
+                ->send(new RecordCreatedMail($current));
+        }
 
         return response()->json(['message' => 'Record saved successfully'], 201);
     }
@@ -117,11 +130,31 @@ class PersonController extends Controller
         DB::table(AppManagerController::PeopleCustomFieldsTable())->where('person_id', $id)->delete();
         Person::find($id)->delete();
 
-        // TODO: Event
-        // event(new DeletedStaffRecordEvent($person->forename, $person->surname));
+        if (ApplicationSettings::get('app.StaffDirectory.deleteRecord.sendNotification') === "true") {
+            Mail::to(ApplicationSettings::get('app.StaffDirectory.deleteRecord.notifyTo'))
+                ->send(new RecordDeletedMail(Person::onlyTrashed()->find($id)));
+        }
 
         return response()->json([
             'message' => 'Record deleted successfully'
+        ], 200);
+    }
+
+    public function restore($id)
+    {
+        Person::onlyTrashed()->find($id)->restore();
+
+        return response()->json([
+            'message' => 'Record restored successfully'
+        ], 200);
+    }
+
+    public function deleteTrashed()
+    {
+        Person::onlyTrashed()->forceDelete();
+
+        return response()->json([
+            'people' => Person::onlyTrashed()->select('id', 'forename', 'surname')->orderBy('surname', 'ASC')->get()
         ], 200);
     }
 

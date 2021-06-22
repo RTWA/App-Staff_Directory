@@ -36,7 +36,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/person/me', [PersonController::class, 'me']);
     Route::get('/person/{id}', [PersonController::class, 'get']);
     Route::post('/person/{id}', [PersonController::class, 'save']);
+
     Route::delete('/person/{id}', [PersonController::class, 'delete']);
+    Route::get('/person/{id}/restore', [PersonController::class, 'restore']);
+    Route::get('/people/trashed', [PersonController::class, 'trashedPeople']);
+    Route::get('/people/trashed/delete', [PersonController::class, 'deleteTrashed']);
 
     Route::delete('/person/{person}/department/{department}', [PersonController::class, 'removeFromDepartment']);
     Route::put('/department/{department}/head/{head_id}', [DepartmentsController::class, 'setHead']);

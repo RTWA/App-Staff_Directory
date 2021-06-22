@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
-import { AppSettings, AzureSettings, CustomFields, Permissions } from './Settings/index';
+import { AppSettings, AzureSettings, CustomFields, Permissions, RecycleBin } from './Settings/index';
 
 const Settings = () => {
     const [tab, setTab] = useState(0);
@@ -46,6 +46,9 @@ const Settings = () => {
                     <button className={tabClass(3)} onClick={() => toggle(3)}>
                         Custom Fields
                     </button>
+                    <button className={classNames(tabClass(4), 'ml-auto text-red-600 dark:text-red-500')} onClick={() => toggle(4)}>
+                        Recycle Bin
+                    </button>
                 </nav>
                 <div className={paneClass(0)}>
                     <AppSettings />
@@ -58,6 +61,9 @@ const Settings = () => {
                 </div>
                 <div className={paneClass(3)}>
                     <CustomFields />
+                </div>
+                <div className={classNames(paneClass(4), 'relative')}>
+                    <RecycleBin />
                 </div>
             </div>
         </div>
