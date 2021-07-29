@@ -216,10 +216,11 @@ const AzureSettings = () => {
         axios.get('/api/apps/StaffDirectory/azure/sync');
     }
 
-    if (graph.tenantId === '' || graph.client_id === "" || graph.client_secret === "") {
+    if (graph.tenantId === '' || graph.client_id === "" || graph.client_secret === "" ||
+        graph.tenantId === null || graph.client_id === null || graph.client_secret === null) {
         return (
             // TODO: Improve the look of this!
-            <div>
+            <div className="px-4 lg:px-10 py-10 text-center">
                 You must configure Microsoft Azure Integration in WebApps Settings first!
             </div>
         )
@@ -279,7 +280,7 @@ const AzureSettings = () => {
                             state={states['create_departments']} />
                     </div>
                     <span className="mt-2 text-xs text-gray-400">
-                        The Department string will be split on a '-' character to create sub-departments.
+                        The Department string will be split on a '-' character (with a space either side) to create sub-departments.
                     </span>
                 </div>
             </div>

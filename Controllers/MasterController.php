@@ -131,7 +131,7 @@ class MasterController extends AppsController
                 }
                 $person->save();
 
-                $userDeps = explode('-', $azUser['department']);
+                $userDeps = explode(' - ', $azUser['department']);
                 $createStore = [];
                 foreach ($userDeps as $i => $userDep) {
                     $userDep = trim($userDep);

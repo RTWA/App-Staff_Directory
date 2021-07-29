@@ -59,13 +59,13 @@ const Settings = () => {
                 <div className={paneClass(1)}>
                     <AzureSettings />
                 </div>
-                <div className={paneClass(2)}>
+                <div className={classNames(paneClass(2), 'px-4 lg:px-10 py-10 pt-5')}>
                     <Permissions />
                 </div>
-                <div className={paneClass(3)}>
+                <div className={classNames(paneClass(3), 'px-4 lg:px-10 py-10 pt-5')}>
                     <CustomFields />
                 </div>
-                <div className={classNames(paneClass(4), 'relative')}>
+                <div className={classNames(paneClass(4), 'relative', 'px-4 lg:px-10 py-10 pt-5')}>
                     <RecycleBin />
                 </div>
             </div>
