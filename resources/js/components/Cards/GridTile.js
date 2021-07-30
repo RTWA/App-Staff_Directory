@@ -23,12 +23,12 @@ const GridTile = ({ UI, ...props }) => {
                         ((person.azure_id !== undefined && person.azure_id !== null) ||
                             (person.local_photo !== undefined && person.local_photo !== null))
                             ? (
-                                <img className={`h-44 ${(person.onLeave) ? 'opacity-40' : ''}`}
+                                <img className={`h-44 ${(person.onLeave === "1") ? 'opacity-40' : ''}`}
                                     src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
                                     id={`photo-${person.id}`}
                                     alt={`${person.forename} ${person.surname} - Photo`} />
                             )
-                            : <ReactUserAvatar size="176" name={`${person.forename} ${person.surname}`} className="text-6xl font-semibold square" />
+                            : <ReactUserAvatar size="176" name={`${person.forename} ${person.surname}`} className={`text-6xl font-semibold square ${(person.onLeave === "1") ? 'opacity-40' : ''}`} />
                     }
                     <p className={`absolute bottom-0 w-full py-1 text-center font-medium text-white bg-${UI.theme}-600 bg-opacity-60 text-sm`}>
                         {person.forename} {person.surname}
