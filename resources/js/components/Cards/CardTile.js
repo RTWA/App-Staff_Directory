@@ -77,16 +77,16 @@ const CardTile = ({ UI, ...props }) => {
             className="card-tile inline-flex flex-row mx-3 mb-4 w-80 h-44 rounded-lg shadow-lg overflow-hidden">
 
             <div className="w-44">
-                {/* TODO: Allow Manual Photos */}
                 {
-                    (person.azure_id !== undefined && person.azure_id !== null)
+                    ((person.azure_id !== undefined && person.azure_id !== null) ||
+                        (person.local_photo !== undefined && person.local_photo !== null))
                         ? (
                             <img className="h-44 w-full"
                                 src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
                                 id={`photo-${person.id}`}
                                 alt={`${person.forename} ${person.surname} - Photo`} />
                         )
-                        : <ReactUserAvatar key={i} size="10" name={`${person.forename} ${person.surname}`} />
+                        : <ReactUserAvatar size="10" name={`${person.forename} ${person.surname}`} />
                 }
             </div>
 

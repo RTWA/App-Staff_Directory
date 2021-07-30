@@ -17,6 +17,7 @@ use WebApps\Apps\StaffDirectory\Controllers\PersonController;
 use WebApps\Apps\StaffDirectory\Controllers\ViewController;
 use WebApps\Apps\StaffDirectory\Controllers\CustomFieldController;
 use WebApps\Apps\StaffDirectory\Controllers\MasterController;
+use WebApps\Apps\StaffDirectory\Controllers\PhotoController;
 
 // These routes require authentication to access
 Route::group(['middleware' => 'auth:sanctum'], function () {
@@ -42,6 +43,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/people/trashed', [PersonController::class, 'trashedPeople']);
     Route::get('/people/trashed/delete', [PersonController::class, 'deleteTrashed']);
 
+    Route::post('/person/{person}/photo', [PhotoController::class, 'store']);
+
     Route::delete('/person/{person}/department/{department}', [PersonController::class, 'removeFromDepartment']);
     Route::put('/department/{department}/head/{head_id}', [DepartmentsController::class, 'setHead']);
     
@@ -49,4 +52,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::put('/customFields', [CustomFieldController::class, 'save']);
 
     Route::get('/azure/sync', [MasterController::class, 'syncAzure']);
+
+    Route::get('/departments/sample', [DepartmentsController::class, 'seed']);
+    Route::get('/people/sample', [PersonController::class, 'seed']);
 });

@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useToasts } from 'react-toast-notifications';
-import { Button, Input, Switch, withWebApps } from 'webapps-react';
+import { Button, Input, Loader, Switch, withWebApps } from 'webapps-react';
 
 import { CustomFilter, DepartmentFilter, PersonFilter } from './Filters';
 import { PermissionsModal, PreviewModal, TableFieldsModal, UseModal } from './Modals';
@@ -21,7 +21,7 @@ const newView = {
 };
 
 const Views = ({ UI }) => {
-    const [people, setPeople] = useState([]);
+    const [people, setPeople] = useState(null);
     const [departments, setDepartments] = useState([]);
     const [custom, setCustom] = useState([]);
     const [views, setViews] = useState([]);
@@ -196,6 +196,10 @@ const Views = ({ UI }) => {
     const toggleModals = modal => {
         modals[modal] = !modals[modal];
         setModals({ ...modals });
+    }
+
+    if (people === null) {
+        return <Loader className="min-h-screen flex items-center" />
     }
 
     return (

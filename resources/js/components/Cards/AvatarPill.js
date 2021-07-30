@@ -37,9 +37,9 @@ const AvatarPill = props => {
                 <p className="font-semibold">{person.forename} {person.surname}</p>
                 <p className="italic text-gray-400">{person.title}</p>
             </div>
-            {/* TODO: Allow manual photo */}
             {
-                (person.azure_id !== undefined && person.azure_id !== null)
+                ((person.azure_id !== undefined && person.azure_id !== null) ||
+                    (person.local_photo !== undefined && person.local_photo !== null))
                     ? (
                         <img className="absolute top-0 left-0 w-16 h-16 rounded-full box-border border-2 border-gray-500 dark:border-gray-400"
                             src={`/apps/StaffDirectory/view/person/${person.id}/photo`}

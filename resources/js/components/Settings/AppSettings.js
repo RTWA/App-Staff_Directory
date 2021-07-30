@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useToasts } from 'react-toast-notifications';
-import { Input, Switch } from 'webapps-react';
+import { Button, Input, Loader, Switch } from 'webapps-react';
 
 import { CreateDepartmentFlyout, DepartmentFlyout } from './Flyouts';
 
@@ -11,7 +11,7 @@ export const FlyoutsContext = createContext({});
 
 const AppSettings = () => {
     const [states, setStates] = useState({});
-    const [departments, setDepartments] = useState([]);
+    const [departments, setDepartments] = useState(null);
     const [department, setDepartment] = useState({ children: [] });
     const [modals, setModals] = useState({ manage: false, new: false });
     const [notifications, setNotifications] = useState({
@@ -203,7 +203,16 @@ const AppSettings = () => {
             });
     }
 
-    //render
+    const installSampleData = () => {
+        axios.get('/api/apps/StaffDirectory/departments/sample');
+        axios.get('/api/apps/StaffDirectory/people/sample');
+        loadData();
+    }
+
+    if (departments === null) {
+        return <Loader className="flex items-center h-48" />
+    }
+
     return (
         <>
             <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5 border-b">
@@ -304,6 +313,19 @@ const AppSettings = () => {
                         state={states['app.StaffDirectory.deleteRecord.notifyTo']} />
                 </div>
             </div>
+            {
+                (departments.length === 0)
+                    ? (
+                        <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5 border-t">
+                            <div className="w-full lg:w-3/12">
+                                <label className="block py-2">Sample Data</label>
+                            </div>
+                            <div className="w-full lg:w-9/12">
+                                <Button onClick={installSampleData}>Install Sample Data</Button>
+                            </div>
+                        </div>
+                    ) : null
+            }
 
             <FlyoutsContext.Provider value={{
                 modals,

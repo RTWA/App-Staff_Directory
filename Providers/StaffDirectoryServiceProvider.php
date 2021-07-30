@@ -31,15 +31,15 @@ class StaffDirectoryServiceProvider extends ServiceProvider
             "Controllers",
             "Models",
             "Mail",
-            "Database\\Seeders",
-            "Database\\Factories"
+            "Database/Seeders",
+            "Database/Factories"
         ];
 
         foreach ($folders as $folder) {
             foreach (GLOB(__DIR__.'/../'.$folder.'/*.php') as $file) {
                 $className = str_replace(__DIR__.'/../'.$folder.'/', '', str_replace('.php', '', $file));
                 if ($folder === 'Controllers' && class_exists($this->namespace.'\\'.$className)) {
-                    return;
+                    continue;
                 }
                 include $file;
             }
@@ -73,7 +73,7 @@ class StaffDirectoryServiceProvider extends ServiceProvider
             'namespace' => $this->namespace,
             'prefix' => 'apps/StaffDirectory'
         ], function () {
-            require App::path() . 'StaffDirectory/routes/web.php';
+            require App::path() . 'StaffDirectory/Routes/web.php';
         });
     }
 
@@ -89,7 +89,7 @@ class StaffDirectoryServiceProvider extends ServiceProvider
             'namespace' => $this->namespace,
             'prefix' => 'api/apps/StaffDirectory'
         ], function () {
-            require App::path() . 'StaffDirectory/routes/api.php';
+            require App::path() . 'StaffDirectory/Routes/api.php';
         });
     }
 

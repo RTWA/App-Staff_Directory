@@ -13,9 +13,9 @@ const DepartmentDetails = props => {
                     Object.keys(person.departments).map(function (d, i) {
                         let department = person.departments[d];
                         return (
-                            <div className="flex flex-row py-2 px-2 lg:px-5" key={i}>
-                                <span className="block py-2 pr-4">Department</span>
-                                <div className="m-1 pt-2">
+                            <div className="flex flex-row items-center py-2 px-2 lg:px-5" key={i}>
+                                <span className="block pr-4">Department</span>
+                                <div className="pt-2">
                                     <a href="#" onClick={e => { e.preventDefault(); departments.remove(i); }} className="text-red-500 inline-block ml-auto">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
@@ -25,9 +25,9 @@ const DepartmentDetails = props => {
                                 <div className="flex-1">
                                     <DepartmentSelect departments={departments.list} selected={department} index={i} onChange={departments.change} />
                                 </div>
-                                <div className="flex flex-row pl-2">
-                                    <span className="block py-2 pr-4">Head of Department</span>
-                                    <div className="relative inline-block w-10 mr-2 mt-2 align-middle select-none">
+                                <div className="flex flex-row items-center pl-2">
+                                    <span className="block pr-4">Head of Department</span>
+                                    <div className="relative inline-block w-10 mr-2 align-middle select-none">
                                         <Switch checked={(department['head_id'] == person.id)}
                                             id={`hod-${i}`}
                                             onChange={() => {
@@ -39,9 +39,9 @@ const DepartmentDetails = props => {
                         )
                     })
                 }
-                <div className="w-full text-center">
-                    <a href="#" onClick={departments.add}>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500 inline-block" viewBox="0 0 20 20" fill="currentColor">
+                <div className="flex justify-center">
+                    <a href="#" className="flex items-center" onClick={departments.add}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1 text-green-500 inline-block" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
                         </svg>
                             Add another Department

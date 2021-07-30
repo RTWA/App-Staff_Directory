@@ -33,9 +33,9 @@ const AvatarStack = props => {
             <div id={id} className="flex -space-x-2">
                 {
                     Object(people).map(function (person, i) {
-                        // TODO: Allow manual photo
                         return (
-                            (person.azure_id !== undefined && person.azure_id !== null)
+                            ((person.azure_id !== undefined && person.azure_id !== null) ||
+                                (person.local_photo !== undefined && person.local_photo !== null))
                                 ? (
                                     <img key={i}
                                         className="inline-block h-10 w-10 rounded-full border-2 border-gray-500 white dark:border-gray-50"

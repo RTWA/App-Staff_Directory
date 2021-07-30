@@ -98,11 +98,11 @@ const DepartmentMembersFlyout = ({ UI, ...props }) => {
                                 (department.people.length === 0)
                                     ? <p className="text-center">This department has no members</p>
                                     : Object(department.people).map(function (person, i) {
-                                        // TODO: Allow Manual Photos
                                         return (
                                             <div className="flex flex-row items-center py-2" key={i}>
                                                 {
-                                                    (person.azure_id !== undefined && person.azure_id !== null)
+                                                    ((person.azure_id !== undefined && person.azure_id !== null) ||
+                                                        (person.local_photo !== undefined && person.local_photo !== null))
                                                         ? <img key={i}
                                                             className="inline-block h-10 w-10 rounded-full border-2 border-gray-500 white dark:border-gray-50 mr-4"
                                                             src={`/apps/StaffDirectory/view/person/${person.id}/photo`}

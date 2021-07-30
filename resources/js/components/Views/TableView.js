@@ -81,9 +81,9 @@ const TableView = props => {
             if (fields.table_photo || fields.table_photo === "true") {
                 _row.push(
                     <td key={`photo-${person.id}`} className="photo">
-                        {/* TODO: Allow Manual Photos */}
                         {
-                            (person.azure_id !== undefined && person.azure_id !== null)
+                            ((person.azure_id !== undefined && person.azure_id !== null) ||
+                                (person.local_photo !== undefined && person.local_photo !== null))
                                 ? (
                                     <img src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
                                         id={`photo-${person.id}`}

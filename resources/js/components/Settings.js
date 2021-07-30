@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import classNames from 'classnames';
-import { WebAppsContext } from 'webapps-react';
+import { Loader, WebAppsContext } from 'webapps-react';
 
 import { AppSettings, AzureSettings, CustomFields, Permissions, RecycleBin } from './Settings/index';
 
@@ -32,6 +32,10 @@ const Settings = () => {
         'p-5',
         (tab === id) ? 'block' : 'hidden'
     )
+
+    if (UI.theme === undefined || UI.theme === null) {
+        return <Loader className="min-h-screen flex items-center" />
+    }
 
     return (
         <div className="w-full px-4 py-6">

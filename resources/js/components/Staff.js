@@ -3,12 +3,12 @@ import axios from 'axios';
 import { useToasts } from 'react-toast-notifications';
 import Moment from 'moment';
 import { Prompt } from 'react-router';
-import { Button, ConfirmDeleteButton } from 'webapps-react';
+import { Button, ConfirmDeleteButton, Loader } from 'webapps-react';
 
 import { CustomFieldDetails, DepartmentDetails, EmploymentDetails, PersonalDetails } from './Staff/index';
 
 const Manage = () => {
-    const [people, setPeople] = useState([]);
+    const [people, setPeople] = useState(null);
     const [person, setPerson] = useState({ departments: [{}], id: 0, customFields: [{}] });
     const [departments, setDepartments] = useState([]);
     const [custom, setCustom] = useState([]);
@@ -198,6 +198,10 @@ const Manage = () => {
         // 'sortEnd': repeaterSortEnd
     };
 
+    if (people === null) {
+        return <Loader className="min-h-screen flex items-center" />
+    }
+
     return (
         <>
             <Prompt when={changed} message="You have unsaved changes, are you sure you want to leave?" />
@@ -214,7 +218,7 @@ const Manage = () => {
                     }
                 </select>
 
-                <PersonalDetails person={person} change={fieldChange} dateChange={dateChange} />
+                <PersonalDetails person={person} setPerson={setPerson} change={fieldChange} dateChange={dateChange} />
                 <DepartmentDetails person={person} departments={department} />
                 <EmploymentDetails person={person} change={fieldChange} check={checkChange} />
                 <CustomFieldDetails person={person} fields={custom} change={customChange} />

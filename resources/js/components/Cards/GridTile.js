@@ -19,16 +19,16 @@ const GridTile = ({ UI, ...props }) => {
         <div data-order={index} data-surname={person.surname} data-id={person.id} className="flip-container mx-1 my-3 w-44 h-44">
             <div className="flipper relative duration-700">
                 <div className="front w-44 h-44 overflow-hidden inline-block duration-700 absolute top-0 left-0 z-10">
-                    {/* TODO: Allow Manual Photos */}
                     {
-                        (person.azure_id !== undefined && person.azure_id !== null)
+                        ((person.azure_id !== undefined && person.azure_id !== null) ||
+                            (person.local_photo !== undefined && person.local_photo !== null))
                             ? (
                                 <img className={`h-44 ${(person.onLeave) ? 'opacity-40' : ''}`}
                                     src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
                                     id={`photo-${person.id}`}
                                     alt={`${person.forename} ${person.surname} - Photo`} />
                             )
-                            : <ReactUserAvatar key={i} size="10" name={`${person.forename} ${person.surname}`} />
+                            : <ReactUserAvatar size="176" name={`${person.forename} ${person.surname}`} className="text-6xl font-semibold square" />
                     }
                     <p className={`absolute bottom-0 w-full py-1 text-center font-medium text-white bg-${UI.theme}-600 bg-opacity-60 text-sm`}>
                         {person.forename} {person.surname}

@@ -25,6 +25,7 @@ const CustomView = props => {
     const [onlyMe, setOnlyMe] = useState(false);
     const [filtered, setFiltered] = useState(false);
     const [search, setSearch] = useState('');
+    const [sortOrder, setSortOrder] = useState('(Sorted by Employment Start Date)');
 
     useEffect(() => {
         let formData = new FormData();
@@ -147,7 +148,20 @@ const CustomView = props => {
     }
 
     const depChange = _selected => {
-        if (_selected.label !== "All Sub-Departments") {
+        if (_selected.label === "All Departments") {
+            setDepartment(emptyDepartment);
+            setSubDepartment(emptySubDepartment);
+            setSelected(emptyDepartment);
+            setSortOrder('(Sorted by Employment Start Date)');
+            tmpPeople.sort(function (a, b) {
+                let keyA = new Date(a.startDate),
+                    keyB = new Date(b.startDate);
+                if (keyA > keyB) return -1;
+                if (keyA < keyB) return 1;
+                return 0;
+            });
+            setPeople(tmpPeople);
+        } else if (_selected.label !== "All Sub-Departments") {
             Object(departments).map(function (dep) {
                 if (dep.id == _selected.value) {
                     setDepartment(dep);
@@ -164,12 +178,17 @@ const CustomView = props => {
                     });
                 }
             });
+            setSortOrder('(Sorted by Surname)');
+            tmpPeople.sort((a, b) => (a.surname > b.surname ? 1 : -1));
+            setPeople(tmpPeople);
         } else {
             setDepartment(department);
             setSelected(emptySubDepartment);
+            setSortOrder('(Sorted by Surname)');
+            tmpPeople.sort((a, b) => (a.surname > b.surname ? 1 : -1));
+            setPeople(tmpPeople);
         }
 
-        setPeople(tmpPeople);
         setSearch('');
         setOnlyMe(false);
         setFiltered(true);
@@ -191,7 +210,7 @@ const CustomView = props => {
 
     const sorttext = () => {
         if (view.settings.sorttext === "true" || view.settings.sorttext === true) {
-            return <h3 id="filter">Showing All Staff <small>(Sorted by Employment Start Date)</small></h3>
+            return <h3 id="filter">Showing All Staff <small>{sortOrder}</small></h3>
         }
         return null;
     }
@@ -203,11 +222,11 @@ const CustomView = props => {
                     <div className="flex flex-auto">
                         <div className="w-6/12 md:w-3/12 lg:w-2/12">
                             <Button square className="text-white" onClick={toggleMe}>
-                            {
-                                (filtered)
-                                    ? 'Show All Staff'
-                                    : 'Show Only Me'
-                            }
+                                {
+                                    (filtered)
+                                        ? 'Show All Staff'
+                                        : 'Show Only Me'
+                                }
                             </Button>
                         </div>
                         <div className="w-6/12 md:w-4/12 lg:w-5/12">

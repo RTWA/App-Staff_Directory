@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactUserAvatar from 'react-user-avatar';
+import { useToasts } from 'react-toast-notifications';
 import { Input, withWebApps } from 'webapps-react';
 
 import { DatePicker } from '../DatePicker'
@@ -7,18 +8,92 @@ import { DatePicker } from '../DatePicker'
 const PersonalDetails = ({ UI, ...props }) => {
     const {
         person,
+        setPerson,
         change,
         dateChange
     } = props;
 
+    const [image, setImage] = useState(null);
+
+    const { addToast, updateToast } = useToasts();
+    let toastId = '';
+
+    const imageUpload = e => {
+        let file = e.target.files.length ? e.target.files[0] : null;
+
+        if (person.id === 0) {
+            addToast('Please save the record first', { appearence: 'warning', autoDismiss: 5000 });
+            return;
+        }
+
+        // Check if a file has actually been selected
+        if (file !== null) {
+            addToast('Uploading photo...', { appearence: 'info', autoDismiss: false }, id => toastId = id);
+
+            // Set Preview Image
+            setImage(URL.createObjectURL(file));
+
+            // Upload the Image 
+            let formData = new FormData();
+            formData.append('file', file);
+            axios.post(`/api/apps/StaffDirectory/person/${person.id}/photo`, formData)
+                .then(json => {
+                    person.local_photo = json.data.local_photo;
+                    setPerson({ ...person });
+
+                    document.getElementById('person-photo')
+                        .src = `/apps/StaffDirectory/view/person/${person.id}/photo?v=${new Date().getTime()}`
+
+                    updateToast(
+                        toastId,
+                        {
+                            appearance: 'success',
+                            autoDismiss: true,
+                            autoDismissTimeout: 3000,
+                            content: "Photo uploaded!"
+                        }
+                    );
+                })
+                .catch(error => {
+                    console.log(error);
+                    updateToast(
+                        toastId,
+                        {
+                            appearance: 'error',
+                            autoDismiss: true,
+                            autoDismissTimeout: 5000,
+                            content: 'Failed to upload photo.'
+                        }
+                    );
+                })
+        }
+    }
+
     return (
         <div className="relative bg-white dark:bg-gray-800 py-6 px-6 rounded shadow-xl">
             <div className={`w-20 h-20 text-white flex items-center absolute rounded-full p-2 shadow-xl bg-${UI.theme}-600 dark:bg-${UI.theme}-500 left-4 -top-6`}>
-                {/* TODO: Allow manual photo */}
                 {
                     (person.azure_id !== undefined && person.azure_id !== null)
                         ? <img className="w-20 rounded-full" src={`/apps/StaffDirectory/view/person/${person.id}/photo`} id="person-photo" alt={`${person.forename} ${person.surname} - Photo`} />
-                        : <ReactUserAvatar size="64" name={`${person.forename || 'Creating'} ${person.surname || 'New Record'}`} />
+                        : (person.local_photo !== undefined && person.local_photo !== null)
+                            ? (
+                                <div className="relative cursor-pointer">
+                                    <img className="w-20 rounded-full" src={`/apps/StaffDirectory/view/person/${person.id}/photo`} id="person-photo" alt={`${person.forename} ${person.surname} - Photo`} />
+                                    <input type="file" name="image" accept="image/png, image/jpeg" onChange={imageUpload}
+                                        className="absolute inset-0 w-full cursor-pointer opacity-0 m-0 p-0" />
+                                </div>
+                            )
+                            : (
+                                <div className="relative cursor-pointer">
+                                    {
+                                        (image === null)
+                                            ? <ReactUserAvatar size="64" name={`${person.forename || 'Creating'} ${person.surname || 'New Record'}`} />
+                                            : <img className="w-20 rounded-full" src={image} id="person-photo" alt={`${person.forename} ${person.surname} - Photo`} />
+                                    }
+                                    <input type="file" name="image" accept="image/png, image/jpeg" onChange={imageUpload}
+                                        className="absolute inset-0 w-full cursor-pointer opacity-0 m-0 p-0" />
+                                </div>
+                            )
                 }
             </div>
             <section>
