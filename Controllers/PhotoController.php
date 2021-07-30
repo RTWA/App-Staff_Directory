@@ -3,6 +3,7 @@
 namespace WebApps\Apps\StaffDirectory\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\MSGraphController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -15,7 +16,7 @@ class PhotoController extends Controller
         $person = Person::withTrashed()->find($id);
 
         if ($person->azure_id) {
-            $photo = $this->graphController->getUserPhoto($person->azure_id);
+            $photo = (new MSGraphController())->getUserPhoto($person->azure_id);
         
             if ($photo) {
                 return response(base64_decode($photo))->header('Content-Type', 'image/png');
