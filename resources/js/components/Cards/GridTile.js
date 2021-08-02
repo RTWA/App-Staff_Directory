@@ -35,7 +35,7 @@ const GridTile = ({ UI, ...props }) => {
                     </p>
                     {
                         (hod)
-                            ? <p className={`absolute py-1 text-center font-medium text-white bg-${UI.theme}-600 text-xs hod`}>Head of Department</p>
+                            ? <p className={`absolute w-full py-1 text-center font-medium text-white bg-${UI.theme}-600 text-xs hod`}>Head of Department</p>
                             : null
                     }
                 </div>

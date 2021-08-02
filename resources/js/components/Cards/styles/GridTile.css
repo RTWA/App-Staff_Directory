@@ -1,74 +1,48 @@
 /* Staff Directory GridTile Component */
 
-/* TO KEEP */
-  /* entire container, keeps perspective */
-  .flip-container {
-    transform-style: preserve-3d;
-  }
-  .flip-container:hover .back,
-  .flip-container.flipped .back {
-    transform: rotateY(0deg);
-  }  
-  .flip-container:hover .front,
-  .flip-container.flipped .front {
-    transform: rotateY(180deg);
-  }
-  .flipper {
-    transform-style: preserve-3d;
-  }
+/* entire container, keeps perspective */
+.flip-container {
+  transform-style: preserve-3d;
+}
+.flip-container:hover .back, .flip-container.flipped .back {
+  transform: rotateY(0deg);
+}
+.flip-container:hover .front, .flip-container.flipped .front {
+  transform: rotateY(180deg);
+}
+.flipper {
+  transform-style: preserve-3d;
+}
+.front, .back {
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+.front {
+  transform: rotateY(0deg);
+}
+.back {
+  transform: rotateY(-180deg);
+}
 
-  .front, .back {
-    backface-visibility: hidden;
-    transform-style: preserve-3d;
-  }
-  .front {
-    transform: rotateY(0deg);
-  }
-  .back {
-    transform: rotateY(-180deg);
-  }
 
-/* TODO: This may or may not be needed
-  .pic.table {
-    width: 42px;
-    height: 42px;
-    margin: 0;
-  }
-  
-  .info li a {
-    font-size: 0.9rem;
-  }
+.front p.hod {
+  width: 100%;
+  padding: 7px 0;
+  text-align: center;
+  color: #FFF;
+  font-weight: bold;
+  bottom: -35px;
+  animation: inout 6s infinite;
+}
 
-  .onleave,
-  .iscover,
-  .isenior,
-  .info a {
-    font-size: 0.7rem
+@-webkit-keyframes inout {
+  40%, 60% {
+    bottom: 0;
   }
-  
-  .front p.not {
-    display: none;
+}
+
+@keyframes inout {
+  40%, 60% {
+    bottom: 0;
   }
-  
-  .front p.hod {
-    width: 100%;
-    padding: 7px 0;
-    text-align: center;
-    color: #FFF;
-    font-weight: bold;
-    bottom: -35px;
-    animation: inout 6s infinite;
-  }
-  
-  @-webkit-keyframes inout {
-    40%, 60% {
-      bottom: 0;
-    }
-  }
-  
-  @keyframes inout {
-    40%, 60% {
-      bottom: 0;
-    }
-  }
-*/
+}

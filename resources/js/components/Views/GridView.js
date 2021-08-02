@@ -21,7 +21,7 @@ const GridView = props => {
             Object(person.departments).map(function (dep) {
                 if (dep.id === selected.id && !_people.includes(person)) {
                     _people.push(person);
-                    _tiles.push(<GridTile index={i} key={i} person={person} hod={(person.id === dep.head_id)} />);
+                    _tiles.push(<GridTile index={i} key={i} person={person} hod={(person.id == dep.head_id)} />);
                 }
                 if (selected.children !== undefined) {
                     return (
