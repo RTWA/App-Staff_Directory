@@ -1,11 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { Loader } from 'webapps-react';
+import { AuthContext, Loader } from 'webapps-react';
 
 import CustomView from './CustomView';
 
 const ViewLayout = props => {
     const [view, setView] = useState({ state: 'loading' });
+
+    const { authenticated } = useContext(AuthContext);
+
+    if (!authenticated) {
+        localStorage.setItem('WA_Login', window.location.href);
+        window.location.replace("/login");
+    }
 
     useEffect(() => {
         let publicId = props.match.params.publicId;
