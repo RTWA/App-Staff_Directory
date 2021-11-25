@@ -34,6 +34,9 @@ class CustomFieldController extends Controller
             if ($field['id'] === "new") {
                 unset($field['id']);
                 CustomField::create($field);
+            } else if ($field['type'] === '') {
+                $field = CustomField::find($field['id']);
+                $field->delete();
             } else {
                 $custom = CustomField::find($field['id']);
                 unset($field['id']);
