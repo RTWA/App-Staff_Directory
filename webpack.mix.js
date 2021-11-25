@@ -14,7 +14,7 @@ const mix = require('laravel-mix');
 mix
     .setPublicPath('public')
     .js('resources/js/app.js', 'public/StaffDirectory.js').react()
-    .js('resources/js/view.js', 'public/StaffDirectory_view.js').react()
+    .js('resources/js/view.js', 'public/StaffDirectory_View.js').react()
     /**
      * Uncomment these lines during development to copy your updated JS
      * file automatically (you must have installed and activated your app)
@@ -22,4 +22,4 @@ mix
      * Update the relative path to your WebApps Directory
      */
     .copy('public/StaffDirectory.js', '../../../WebApps/public/js/apps/StaffDirectory.js')
-    .copy('public/StaffDirectory_view.js', '../../../WebApps/public/js/apps/StaffDirectory_view.js')
+    .copy('public/StaffDirectory_View.js', '../../../WebApps/public/js/apps/StaffDirectory_View.js')
