@@ -37,19 +37,16 @@ const Views = ({ UI }) => {
 
     const { addToast, updateToast } = useToasts();
 
-    useEffect(() => {
-        getData();
+    useEffect(async () => {
+        await getData();
     }, []);
 
     useEffect(() => {
         window.onbeforeunload = (changed) ? () => true : undefined;
     }, [changed]);
 
-    const getData = () => {
-        axios.get('/api/apps/StaffDirectory/peopleList')
-            .then(response => {
-                return response;
-            })
+    const getData = async () => {
+        await axios.get('/api/apps/StaffDirectory/peopleList')
             .then(json => {
                 json.data.list.shift();
                 setPeople(json.data.list);
@@ -58,10 +55,7 @@ const Views = ({ UI }) => {
                 // TODO: handle errors
                 console.log(error);
             });
-        axios.get('/api/apps/StaffDirectory/departmentList')
-            .then(response => {
-                return response;
-            })
+        await axios.get('/api/apps/StaffDirectory/departmentList')
             .then(json => {
                 setDepartments(json.data.list);
             })
@@ -69,10 +63,7 @@ const Views = ({ UI }) => {
                 // TODO: handle errors
                 console.log(error);
             });
-        axios.get('/api/apps/StaffDirectory/customFields')
-            .then(response => {
-                return response;
-            })
+        await axios.get('/api/apps/StaffDirectory/customFields')
             .then(json => {
                 setCustom(json.data.list);
             })
@@ -80,10 +71,7 @@ const Views = ({ UI }) => {
                 // TODO: handle errors
                 console.log(error);
             });
-        axios.get('/api/apps/StaffDirectory/views')
-            .then(response => {
-                return response;
-            })
+        await axios.get('/api/apps/StaffDirectory/views')
             .then(json => {
                 setViews(json.data.views);
             })
@@ -93,7 +81,7 @@ const Views = ({ UI }) => {
             });
     }
 
-    const loadView = e => {
+    const loadView = async e => {
         e.preventDefault();
         let publicId = e.target.id;
 
@@ -103,10 +91,7 @@ const Views = ({ UI }) => {
             }
         }
 
-        axios.get(`/api/apps/StaffDirectory/view/${publicId}`)
-            .then(response => {
-                return response;
-            })
+        await axios.get(`/api/apps/StaffDirectory/view/${publicId}`)
             .then(json => {
                 let _view = json.data.view;
                 _view.settings = JSON.parse(_view.settings);
@@ -127,7 +112,7 @@ const Views = ({ UI }) => {
             });
     }
 
-    const saveView = e => {
+    const saveView = async e => {
         e.preventDefault();
 
         let save = null;
@@ -135,10 +120,7 @@ const Views = ({ UI }) => {
 
         let formData = new FormData();
         formData.append('view', JSON.stringify(view));
-        axios.post(`/api/apps/StaffDirectory/view/${view.publicId}`, formData)
-            .then(response => {
-                return response;
-            })
+        await axios.post(`/api/apps/StaffDirectory/view/${view.publicId}`, formData)
             .then(json => {
                 updateToast(save, { appearance: 'success', autoDismiss: true, content: json.data.message });
 
@@ -203,8 +185,8 @@ const Views = ({ UI }) => {
     }
 
     return (
-        <div className="flex flex-auto">
-            <div className="w-10/12 px-4 py-6">
+        <div className="flex flex-col 2xl:flex-row">
+            <div className="w-full 2xl:w-10/12 2xl:pr-2 py-6">
                 <div className="w-full flex flex-row mb-5">
                     <h6 className="text-gray-600 dark:text-gray-400 text-2xl font-bold ml-6">Manage Views</h6>
                     <Button style="outline" className="ml-auto" onClick={(e) => {
@@ -220,81 +202,63 @@ const Views = ({ UI }) => {
                         : null
                 }
                 <div className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded">
-                    <div className="flex flex-auto px-4 lg:px-10 py-4">
-                        <div className="w-full lg:w-3/12">
-                            <label className="block py-2" htmlFor="name">Name your view</label>
+                    <div className="w-full flex flex-col xl:flex-row py-4 px-4">
+                        <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="name">Name your view</label>
+                        <Input name="name"
+                            type="text"
+                            id="name"
+                            value={view.name || ''}
+                            onChange={fieldChange} />
+                    </div>
+                    <div className="flex flex-col lg:flex-row items-center mt-2">
+                        <div className="w-full lg:w-4/12 flex flex-row items-center px-4 py-2 xl:py-0">
+                            <label className="w-11/12 font-medium xl:font-normal text-sm xl:text-base" htmlFor="leading">Display primary help text?</label>
+                            <Switch name="leading"
+                                checked={(view.settings.leading === 'true')}
+                                id="leading"
+                                onChange={checkChange}
+                                disabled={(view.display !== "all" && view.display.includes("custom"))} />
                         </div>
-                        <div className="w-full lg:w-9/12">
-                            <Input name="name"
-                                type="text"
-                                id="name"
-                                value={view.name || ''}
-                                onChange={fieldChange} />
+                        <div className="w-full lg:w-4/12 flex flex-row items-center py-2 px-4 xl:py-0">
+                            <label className="w-11/12 font-medium xl:font-normal text-sm xl:text-base" htmlFor="selectors">Display department selectors and name search?</label>
+                            <Switch name="selectors"
+                                checked={(view.settings.selectors === 'true')}
+                                id="selectors"
+                                onChange={checkChange}
+                                disabled={(view.display !== "all")} />
+                        </div>
+                        <div className="w-full lg:w-4/12 flex flex-row items-center px-4 py-2 xl:py-0">
+                            <label className="w-11/12 font-medium xl:font-normal text-sm xl:text-base" htmlFor="sorttext">Display sort by text?</label>
+                            <Switch name="sorttext"
+                                checked={(view.settings.sorttext === 'true')}
+                                id="sorttext"
+                                onChange={checkChange}
+                                disabled={(view.display !== "all" && view.display.includes("custom"))} />
                         </div>
                     </div>
-                    <div className="flex flex-auto py-4">
-                        <div className="w-full lg:w-4/12 flex flex-auto px-2 lg:px-5">
-                            <label className="block py-2 pr-4 ml-auto" htmlFor="leading">Display primary help text?</label>
-                            <div className="relative inline-block w-10 mr-auto mt-2 align-middle select-none">
-                                <Switch name="leading"
-                                    checked={(view.settings.leading === 'true')}
-                                    id="leading"
-                                    onChange={checkChange}
-                                    disabled={(view.display !== "all" && view.display.includes("custom"))} />
-                            </div>
+                    <div className="flex flex-col lg:flex-row items-center my-2">
+                        <div className="w-full lg:w-6/12 flex flex-col xl:flex-row py-2 px-4">
+                            <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="display">Records to display</label>
+                            <select className="input-field" id="display" value={view.display} onChange={fieldChange}>
+                                <option value="all">Everyone</option>
+                                <option value="department">A Department</option>
+                                <option value="person">A Single Person</option>
+                                {
+                                    Object(custom).map(function (field, i) {
+                                        if (field.type === "select") {
+                                            return <option value={field.field} key={i}>Based on {field.label}</option>
+                                        }
+                                    })
+                                }
+                            </select>
                         </div>
-                        <div className="w-full lg:w-4/12 flex flex-auto px-2 lg:px-5">
-                            <label className="block py-2 pr-4 ml-auto" htmlFor="selectors">Display department selectors and name search?</label>
-                            <div className="relative inline-block w-10 mr-auto mt-2 align-middle select-none">
-                                <Switch name="selectors"
-                                    checked={(view.settings.selectors === 'true')}
-                                    id="selectors"
-                                    onChange={checkChange}
-                                    disabled={(view.display !== "all")} />
-                            </div>
-                        </div>
-                        <div className="w-full lg:w-4/12 flex flex-auto px-2 lg:px-5">
-                            <label className="block py-2 pr-4 ml-auto" htmlFor="sorttext">Display sort by text?</label>
-                            <div className="relative inline-block w-10 mr-auto mt-2 align-middle select-none">
-                                <Switch name="sorttext"
-                                    checked={(view.settings.sorttext === 'true')}
-                                    id="sorttext"
-                                    onChange={checkChange}
-                                    disabled={(view.display !== "all" && view.display.includes("custom"))} />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex flex-auto px-4 lg:px-10 py-4">
-                        <div className="flex flex-auto w-full lg:w-6/12 pr-4">
-                            <div className="w-full lg:w-3/12">
-                                <label className="block py-2" htmlFor="display">Records to display</label>
-                            </div>
-                            <div className="w-full lg:w-9/12">
-                                <select className="input-field" id="display" value={view.display} onChange={fieldChange}>
-                                    <option value="all">Everyone</option>
-                                    <option value="department">A Department</option>
-                                    <option value="person">A Single Person</option>
-                                    {
-                                        Object(custom).map(function (field, i) {
-                                            if (field.type === "select") {
-                                                return <option value={field.field} key={i}>Based on {field.label}</option>
-                                            }
-                                        })
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                        <div className="flex flex-auto w-full lg:w-6/12">
-                            <div className="w-full lg:w-3/12">
-                                <label className="block py-2" htmlFor="display_type">Display Type</label>
-                            </div>
-                            <div className="w-full lg:w-9/12">
-                                <select className="input-field" id="display_type" value={view.display_type} onChange={fieldChange}>
-                                    <option value="grid">3D Flip Photo Grid</option>
-                                    <option value="table">Table</option>
-                                    <option value="card">Profile Card</option>
-                                </select>
-                            </div>
+                        <div className="w-full lg:w-6/12 flex flex-col xl:flex-row py-2 px-4">
+                            <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="display_type">Display Type</label>
+                            <select className="input-field" id="display_type" value={view.display_type} onChange={fieldChange}>
+                                <option value="grid">3D Flip Photo Grid</option>
+                                <option value="table">Table</option>
+                                <option value="card">Profile Card</option>
+                            </select>
                         </div>
                     </div>
                     <DepartmentFilter
@@ -317,7 +281,7 @@ const Views = ({ UI }) => {
 
                 <div className="flex flex-row mt-6">
                     <Button className="mr-4" style="outline" color="gray"
-                    onClick={(e) => {
+                        onClick={(e) => {
                             e.preventDefault();
                             toggleModals('permissions');
                         }}>
@@ -331,7 +295,7 @@ const Views = ({ UI }) => {
                                     toggleModals('tableFields');
                                 }}>
                                 Choose table fields
-                              </Button>
+                            </Button>
                             : <span className="mr-auto">&nbsp;</span>
                     }
                     {
@@ -342,7 +306,7 @@ const Views = ({ UI }) => {
                                     toggleModals('useView');
                                 }}>
                                 Use This View
-                              </Button>
+                            </Button>
                             : <span className="ml-auto">&nbsp;</span>
                     }
                     {
@@ -352,32 +316,38 @@ const Views = ({ UI }) => {
                     }
                 </div>
             </div>
-            <div className="w-2/12 px-4 py-6">
-                <h6 className="text-gray-600 dark:text-gray-400 text-xl font-semibold ml-6 mb-8">Default Views</h6>
-                <ul className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded divide-y overflow-hidden">
-                    <li className="relative block p-4 hover:bg-gray-50 hover:text-indigo-600 dark:hover:bg-gray-700 dark:hover:text-text-indigo-500">
-                        <a href="#" id="all" onClick={loadView}>All Staff</a>
-                    </li>
-                </ul>
+            <div className="w-full 2xl:w-2/12 2xl:pl-2 py-6">
+                <div className="flex flex-col sm:flex-row 2xl:flex-col">
+                    <div className="flex flex-col w-full sm:w-6/12 2xl:w-full sm:pr-2 2xl:pr-0 mb-4 sm:mb-0">
+                        <h6 className="text-gray-600 dark:text-gray-400 text-xl font-semibold 2xl:ml-6 mb-4 2xl:mb-8">Default Views</h6>
+                        <ul className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded divide-y overflow-hidden">
+                            <li className="relative block p-4 hover:bg-gray-50 hover:text-indigo-600 dark:hover:bg-gray-700 dark:hover:text-text-indigo-500">
+                                <a href="#" id="all" onClick={loadView}>All Staff</a>
+                            </li>
+                        </ul>
+                    </div>
 
-                <h6 className="text-gray-600 dark:text-gray-400 text-xl font-semibold ml-6 my-8">My Custom Views</h6>
-                <ul className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded divide-y overflow-hidden">
-                    {
-                        (views.length !== 0)
-                            ? Object(views).map(function (_view, idx) {
-                                return (
-                                    <li className="relative block p-4 hover:bg-gray-50 hover:text-indigo-600 dark:hover:bg-gray-700 dark:hover:text-text-indigo-500" key={idx}>
-                                        <a href="#" id={_view.publicId} onClick={loadView}>{_view.name}</a>
-                                    </li>
-                                );
-                            })
-                            : (
-                                <li className="relative block p-4">
-                                    You have no custom views
-                                </li>
-                            )
-                    }
-                </ul>
+                    <div className="flex flex-col w-full sm:w-6/12 2xl:w-full sm:pl-2 2xl:pl-0">
+                        <h6 className="text-gray-600 dark:text-gray-400 text-xl font-semibold 2xl:ml-6 mb-4 2xl:my-8">My Custom Views</h6>
+                        <ul className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded divide-y overflow-hidden">
+                            {
+                                (views.length !== 0)
+                                    ? Object(views).map(function (_view, idx) {
+                                        return (
+                                            <li className="relative block p-4 hover:bg-gray-50 hover:text-indigo-600 dark:hover:bg-gray-700 dark:hover:text-text-indigo-500" key={idx}>
+                                                <a href="#" id={_view.publicId} onClick={loadView}>{_view.name}</a>
+                                            </li>
+                                        );
+                                    })
+                                    : (
+                                        <li className="relative block p-4">
+                                            You have no custom views
+                                        </li>
+                                    )
+                            }
+                        </ul>
+                    </div>
+                </div>
             </div>
 
             <ModalsContext.Provider value={{
