@@ -102,9 +102,9 @@ class AppManagerController extends Controller
                         'perms' => [
                             "Standard Users" => true
                         ],
-                        "leading" => true,
-                        "selectors" => true,
-                        "sorttext" => true
+                        "leading" => "true",
+                        "selectors" => "true",
+                        "sorttext" => "true"
                     ])
                 ]
             );
