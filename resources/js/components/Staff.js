@@ -206,7 +206,7 @@ const Manage = () => {
         <>
             <Prompt when={changed} message="You have unsaved changes, are you sure you want to leave?" />
 
-            <div className="w-full px-4 py-6">
+            <div className="w-full py-4">
                 <label htmlFor="staffSelect">Select person to update from the list below, or complete the form to create a new record.</label>
                 <select className="input-field mb-16 mt-2" onChange={select} value={person.id} >
                     {

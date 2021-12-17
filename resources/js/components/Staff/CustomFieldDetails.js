@@ -17,17 +17,15 @@ const CustomFieldDetails = props => {
     }
 
     return (
-        <div className="bg-white dark:bg-gray-800 py-6 px-6 rounded shadow-xl mt-8">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded shadow-xl mt-8">
             <section>
                 <p className="text-xl font-semibold mb-6">Custom Fields</p>
-                {
-                    Object(fields).map(function (field) {
-                        return (
-                            <div className="flex flex-auto py-2" key={field.field}>
-                                <div className="w-full lg:w-3/12">
-                                    <label className="block py-2" htmlFor={field.field}>{field.label}</label>
-                                </div>
-                                <div className="w-full lg:w-9/12">
+                <div className="grid grid-cols-1 sm:grid-cols-2 mt-2">
+                    {
+                        Object(fields).map(function (field, index) {
+                            return (
+                                <div className="w-full flex flex-col xl:flex-row py-4 px-2" key={field.field}>
+                                    <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor={field.field}>{field.label}</label>
                                     {
                                         (field.type === "text")
                                             ? <Input name={field.field}
@@ -39,7 +37,7 @@ const CustomFieldDetails = props => {
                                                 <select name={field.field} id={field.field} value={person.customFields[field.field] || ''} onChange={handleChange} className="input-field">
                                                     <option value="">Not set</option>
                                                     {
-                                                        Object.keys(field.options).map(function(o) {
+                                                        Object.keys(field.options).map(function (o) {
                                                             return <option value={o} key={o}>{field.options[o]}</option>
                                                         })
                                                     }
@@ -47,10 +45,10 @@ const CustomFieldDetails = props => {
                                             )
                                     }
                                 </div>
-                            </div>
-                        );
-                    })
-                }
+                            );
+                        })
+                    }
+                </div>
             </section>
         </div>
     )

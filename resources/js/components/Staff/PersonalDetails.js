@@ -65,100 +65,78 @@ const PersonalDetails = ({ UI, ...props }) => {
     }
 
     return (
-        <div className="relative bg-white dark:bg-gray-800 py-6 px-6 rounded shadow-xl">
-            <div className={`w-20 h-20 text-white flex items-center absolute rounded-full p-2 shadow-xl bg-${UI.theme}-600 dark:bg-${UI.theme}-500 left-4 -top-6`}>
+        <div className="relative bg-white dark:bg-gray-800 p-4 rounded shadow-xl">
+            <div className={`w-20 h-20 text-white flex items-center absolute rounded-full p-2 shadow-xl bg-${UI.theme}-600 dark:bg-${UI.theme}-500 left-1/2 transform -translate-x-1/2 sm:translate-x-0 sm:left-4 -top-12 sm:-top-6`}>
                 {
-                    (person.azure_id !== undefined && person.azure_id !== null)
-                        ? <img className="w-20 rounded-full" src={`/apps/StaffDirectory/view/person/${person.id}/photo`} id="person-photo" alt={`${person.forename} ${person.surname} - Photo`} />
-                        : (person.id !== 0)
-                            ? (
-                                <div className="relative cursor-pointer">
-                                    <img className="w-20 rounded-full" src={`/apps/StaffDirectory/view/person/${person.id}/photo`} id="person-photo" alt={`${person.forename} ${person.surname} - Photo`} />
-                                    <input type="file" name="image" accept="image/png, image/jpeg" onChange={imageUpload}
-                                        className="absolute inset-0 w-full cursor-pointer opacity-0 m-0 p-0" />
-                                </div>
-                            )
-                            : (
-                                <div className="relative cursor-pointer" onClick={e => imageUpload(e)}>
-                                    <ReactUserAvatar size="64" name={`${person.forename || 'Creating'} ${person.surname || 'New Record'}`} />
-                                </div>
-                            )
+                    (person.id !== 0)
+                        ? (
+                            <div className="relative cursor-pointer">
+                                <img className="w-20 rounded-full" src={`/apps/StaffDirectory/view/person/${person.id}/photo`} id="person-photo" alt={`${person.forename} ${person.surname} - Photo`} />
+                                {
+                                    (person.azure_id !== undefined && person.azure_id !== null)
+                                        ? null
+                                        : <input type="file" name="image" accept="image/png, image/jpeg" onChange={imageUpload}
+                                            className="absolute inset-0 w-full cursor-pointer opacity-0 m-0 p-0" />
+                                }
+                            </div>
+                        )
+                        : (
+                            <div className="relative cursor-pointer" onClick={e => imageUpload(e)}>
+                                <ReactUserAvatar size="64" name={`${person.forename || 'Creating'} ${person.surname || 'New Record'}`} />
+                            </div>
+                        )
                 }
             </div>
             <section>
-                <p className="text-xl font-semibold my-2 ml-20 -mt-3">{person.forename || 'Creating'} {person.surname || 'New Record'}</p>
-                <div className="flex flex-auto py-2 mt-8">
-                    <div className="w-full lg:w-6/12 flex flex-auto px-2 lg:px-5">
-                        <div className="w-full lg:w-3/12">
-                            <label className="block py-2" htmlFor="forename">Forename</label>
-                        </div>
-                        <div className="w-full lg:w-9/12">
-                            <Input name="forename"
-                                type="text"
-                                id="forename"
-                                value={person.forename || ''}
-                                onChange={change} />
-                        </div>
+                <p className="text-xl font-semibold my-2 ml-0 text-center sm:text-left mt-4 sm:ml-24 sm:-mt-0">{person.forename || 'Creating'} {person.surname || 'New Record'}</p>
+                <div className="flex flex-col sm:flex-row mt-2 sm:mt-6">
+                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-4 px-2">
+                        <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="forename">Forename</label>
+                        <Input name="forename"
+                            type="text"
+                            id="forename"
+                            value={person.forename || ''}
+                            onChange={change} />
                     </div>
-                    <div className="w-full lg:w-6/12 flex flex-auto px-2 lg:px-5">
-                        <div className="w-full lg:w-3/12">
-                            <label className="block py-2" htmlFor="surname">Surname</label>
-                        </div>
-                        <div className="w-full lg:w-9/12">
-                            <Input name="surname"
-                                type="text"
-                                id="surname"
-                                value={person.surname || ''}
-                                onChange={change} />
-                        </div>
+                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-4 px-2">
+                        <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="surname">Surname</label>
+                        <Input name="surname"
+                            type="text"
+                            id="surname"
+                            value={person.surname || ''}
+                            onChange={change} />
                     </div>
                 </div>
-                <div className="flex flex-auto py-2">
-                    <div className="w-full lg:w-6/12 flex flex-auto px-2 lg:px-5">
-                        <div className="w-full lg:w-3/12">
-                            <label className="block py-2" htmlFor="username">Username</label>
-                        </div>
-                        <div className="w-full lg:w-9/12">
-                            <Input name="username"
-                                type="text"
-                                id="username"
-                                value={person.username || ''}
-                                onChange={change} />
-                        </div>
+                <div className="flex flex-col sm:flex-row">
+                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-4 px-2">
+                        <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="username">Username</label>
+                        <Input name="username"
+                            type="text"
+                            id="username"
+                            value={person.username || ''}
+                            onChange={change} />
                     </div>
-                    <div className="w-full lg:w-6/12 flex flex-auto px-2 lg:px-5">
-                        <div className="w-full lg:w-3/12">
-                            <label className="block py-2" htmlFor="employee_id">Employee ID</label>
-                        </div>
-                        <div className="w-full lg:w-9/12">
-                            <Input name="employee_id"
-                                type="text"
-                                id="employee_id"
-                                value={person.employee_id || ''}
-                                onChange={change} />
-                        </div>
+                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-4 px-2">
+                        <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="employee_id">Employee ID</label>
+                        <Input name="employee_id"
+                            type="text"
+                            id="employee_id"
+                            value={person.employee_id || ''}
+                            onChange={change} />
                     </div>
                 </div>
-                <div className="flex flex-auto py-2">
-                    <div className="w-full lg:w-6/12 flex flex-auto px-2 lg:px-5">
-                        <div className="w-full lg:w-3/12">
-                            <label className="block py-2" htmlFor="email">Email Address</label>
-                        </div>
-                        <div className="w-full lg:w-9/12">
-                            <Input name="email"
-                                type="text"
-                                id="email"
-                                value={person.email || ''}
-                                onChange={change} />
-                        </div>
+                <div className="flex flex-col sm:flex-row">
+                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-4 px-2">
+                        <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="email">Email Address</label>
+                        <Input name="email"
+                            type="text"
+                            id="email"
+                            value={person.email || ''}
+                            onChange={change} />
                     </div>
-                    <div className="w-full lg:w-6/12 flex flex-auto px-2 lg:px-5">
-                        <div className="w-full lg:w-3/12">
-                            <label className="block py-2" htmlFor="employee_id">Start Date</label>
-                        </div>
-                        <div className="w-full lg:w-9/12">
-                            <DatePicker value={person.startDate || ''} onDateChange={dateChange} />
-                        </div>
+                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-4 px-2">
+                        <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="employee_id">Start Date</label>
+                        <DatePicker value={person.startDate || ''} onDateChange={dateChange} />
                     </div>
                 </div>
             </section>
