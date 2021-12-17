@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ReactUserAvatar from 'react-user-avatar';
 import { useToasts } from 'react-toast-notifications';
 import { Input, withWebApps } from 'webapps-react';
@@ -13,25 +13,20 @@ const PersonalDetails = ({ UI, ...props }) => {
         dateChange
     } = props;
 
-    const [image, setImage] = useState(null);
-
     const { addToast, updateToast } = useToasts();
     let toastId = '';
 
     const imageUpload = e => {
-        let file = e.target.files.length ? e.target.files[0] : null;
-
         if (person.id === 0) {
             addToast('Please save the record first', { appearence: 'warning', autoDismiss: 5000 });
             return;
         }
 
+        let file = e.target.files.length ? e.target.files[0] : null;
+
         // Check if a file has actually been selected
         if (file !== null) {
             addToast('Uploading photo...', { appearence: 'info', autoDismiss: false }, id => toastId = id);
-
-            // Set Preview Image
-            setImage(URL.createObjectURL(file));
 
             // Upload the Image 
             let formData = new FormData();
@@ -75,7 +70,7 @@ const PersonalDetails = ({ UI, ...props }) => {
                 {
                     (person.azure_id !== undefined && person.azure_id !== null)
                         ? <img className="w-20 rounded-full" src={`/apps/StaffDirectory/view/person/${person.id}/photo`} id="person-photo" alt={`${person.forename} ${person.surname} - Photo`} />
-                        : (person.local_photo !== undefined && person.local_photo !== null)
+                        : (person.id !== 0)
                             ? (
                                 <div className="relative cursor-pointer">
                                     <img className="w-20 rounded-full" src={`/apps/StaffDirectory/view/person/${person.id}/photo`} id="person-photo" alt={`${person.forename} ${person.surname} - Photo`} />
@@ -84,14 +79,8 @@ const PersonalDetails = ({ UI, ...props }) => {
                                 </div>
                             )
                             : (
-                                <div className="relative cursor-pointer">
-                                    {
-                                        (image === null)
-                                            ? <ReactUserAvatar size="64" name={`${person.forename || 'Creating'} ${person.surname || 'New Record'}`} />
-                                            : <img className="w-20 rounded-full" src={image} id="person-photo" alt={`${person.forename} ${person.surname} - Photo`} />
-                                    }
-                                    <input type="file" name="image" accept="image/png, image/jpeg" onChange={imageUpload}
-                                        className="absolute inset-0 w-full cursor-pointer opacity-0 m-0 p-0" />
+                                <div className="relative cursor-pointer" onClick={e => imageUpload(e)}>
+                                    <ReactUserAvatar size="64" name={`${person.forename || 'Creating'} ${person.surname || 'New Record'}`} />
                                 </div>
                             )
                 }

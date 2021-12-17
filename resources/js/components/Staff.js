@@ -101,7 +101,7 @@ const Manage = () => {
             })
             .then(json => {
                 setChanged(false);
-                setPerson({ departments: [{}], id: 0 });
+                setPerson({ departments: [{}], id: 0, customFields: [{}] });
                 getPeople();
             })
             .catch(error => {

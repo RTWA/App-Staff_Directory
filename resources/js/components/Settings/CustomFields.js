@@ -105,36 +105,23 @@ const CustomFields = props => {
                         <div className="border cursor-pointer rounded bg-gray-100 dark:bg-gray-900 dark:border-gray-700 mb-2" key={i}>
                             <div className="flex flex-row w-full">
                                 <p className="flex-1 p-4" onClick={() => toggle(i)}>Custom Field {i + 1}: {field.label}</p>
-                                {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 m-4" viewBox="0 0 20 20" fill="currentColor" onClick={() => removeField(i)}>
-                                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                                </svg> */}
                             </div>
                             <div className={paneClass(i)}>
-                                <div className="flex flex-auto p-2">
-                                    <div className="w-full lg:w-3/12">
-                                        <label className="block py-2">Field Type</label>
-                                    </div>
-                                    <div className="w-full lg:w-9/12">
-                                        <select name="type" value={field.type} data-for={i} onChange={onChange} className="input-field">
-                                            <option value="">Unused</option>
-                                            <option value="text">Text Box</option>
-                                            <option value="select">Select List</option>
-                                        </select>
-                                    </div>
+                                <div className="flex flex-col xl:flex-row py-4">
+                                    <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base">Field Type</label>
+                                    <select name="type" value={field.type} data-for={i} onChange={onChange} className="input-field">
+                                        <option value="">Unused</option>
+                                        <option value="text">Text Box</option>
+                                        <option value="select">Select List</option>
+                                    </select>
                                 </div>
-                                <div className={`flex flex-auto p-2 ${(field.type === "select" || field.type === "text") ? '' : 'hidden'}`}>
-                                    <div className="w-full lg:w-3/12">
-                                        <label className="block py-2">Field Name</label>
-                                    </div>
-                                    <div className="w-full lg:w-9/12">
-                                        <Input type="text" name="label" value={field.label} data-for={i} onChange={onChange} />
-                                    </div>
+                                <div className={`flex flex-col xl:flex-row py-4 ${(field.type === "select" || field.type === "text") ? '' : 'hidden'}`}>
+                                    <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base">Field Name</label>
+                                    <Input type="text" name="label" value={field.label} data-for={i} onChange={onChange} />
                                 </div>
-                                <div className={`flex flex-auto p-2 ${(field.type === "select") ? '' : 'hidden'}`}>
-                                    <div className="w-full lg:w-3/12">
-                                        <label className="block py-2">Select Options</label>
-                                    </div>
-                                    <div className="w-full lg:w-9/12">
+                                <div className={`flex flex-col xl:flex-row py-4 ${(field.type === "select") ? '' : 'hidden'}`}>
+                                    <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base">Select Options</label>
+                                    <div className="w-full">
                                         <textarea name="options" className="input-field" onChange={optChange} data-for={i} rows={field.options.length} value={field.options.join("\n")} />
                                         <small id={`${i}Help`} className="text-gray-500 text-sm">
                                             Type each option on a new line. Do not re-order existing options.

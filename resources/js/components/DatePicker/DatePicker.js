@@ -32,7 +32,7 @@ class DatePicker extends React.Component {
         const newDate = getDateISO(date);
 
         (currentDate !== newDate) && this.setState({ date: newDate, calendarOpen: false }, () => {
-            (typeof onDatePicked === 'function') && onDateChange(newDate);
+            (typeof onDateChange === 'function') && onDateChange(newDate);
         });
     }
 

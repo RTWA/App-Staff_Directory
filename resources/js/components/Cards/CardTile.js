@@ -51,7 +51,7 @@ const CardTile = ({ UI, ...props }) => {
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M14.243 5.757a6 6 0 10-.986 9.284 1 1 0 111.087 1.678A8 8 0 1118 10a3 3 0 01-4.8 2.401A4 4 0 1114 10a1 1 0 102 0c0-1.537-.586-3.07-1.757-4.243zM12 10a2 2 0 10-4 0 2 2 0 004 0z" clipRule="evenodd" />
                         </svg>
-                        E-Mail
+                        Email
                     </a>
                 </span>
             )
@@ -77,17 +77,10 @@ const CardTile = ({ UI, ...props }) => {
             className="card-tile inline-flex flex-row mx-3 mb-4 w-80 h-44 rounded-lg shadow-lg overflow-hidden">
 
             <div className="w-44">
-                {
-                    ((person.azure_id !== undefined && person.azure_id !== null) ||
-                        (person.local_photo !== undefined && person.local_photo !== null))
-                        ? (
-                            <img className="h-44 w-full"
-                                src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
-                                id={`photo-${person.id}`}
-                                alt={`${person.forename} ${person.surname} - Photo`} />
-                        )
-                        : <ReactUserAvatar size="10" name={`${person.forename} ${person.surname}`} />
-                }
+                <img className="h-44 w-full"
+                    src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
+                    id={`photo-${person.id}`}
+                    alt={`${person.forename} ${person.surname} - Photo`} />
             </div>
 
             <div className={`user-info inline-flex flex-col py-6 px-2 relative h-44 w-full bg-${UI.theme}-600 text-white text-center border-l-4 border-gray-800`}>

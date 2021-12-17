@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import moment from 'moment';
-import { Badge, Button, Input, Switch } from 'webapps-react';
+import { Button, Input, Switch } from 'webapps-react';
+
+import { TypeAhead } from '../TypeAhead';
 
 axios.defaults.withCredentials = true;
 
@@ -172,19 +174,12 @@ const AzureSettings = () => {
             .then(data => setAzGroups(data.value));
     }
 
-    const addSyncGroup = e => {
-        if (e.target.value !== "") {
-            let azGroup = {
-                displayName: e.target.options[e.target.selectedIndex].dataset.name,
-                id: e.target.options[e.target.selectedIndex].value
-            };
-
-            if (syncGroups.findIndex(elem => elem.id === azGroup.id) < 0) {
-                setSyncGroups([
-                    ...syncGroups,
-                    azGroup
-                ]);
-            }
+    const addSyncGroup = selected => {
+        if (syncGroups.findIndex(elem => elem.id === selected.id) < 0) {
+            setSyncGroups([
+                ...syncGroups,
+                selected
+            ]);
         }
     }
 
@@ -228,91 +223,73 @@ const AzureSettings = () => {
 
     return (
         <>
-            <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
-                <div className="w-full lg:w-3/12">
-                    <label className="block py-2" htmlFor="depList">Add Azure Group to Sync</label>
-                </div>
-                <div className="w-full lg:w-9/12">
-                    {/* TODO: Replace with TypeAhead */}
-                    <select id="azGroupsList" onChange={addSyncGroup} className="input-field">
-                        <option value="">Select...</option>
-                        {
-                            Object(azGroups).map(function (azGroup, i) {
-                                return <option key={i} data-name={azGroup.displayName} value={azGroup.id}>{azGroup.displayName}</option>
-                            })
-                        }
-                    </select>
+            <div className="flex flex-col xl:flex-row py-4">
+                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="depList">Add Azure Group to Sync</label>
+                <TypeAhead id="depList" name="depList" select={addSyncGroup} data={azGroups} labelKey="displayName" />
+            </div>
+            <div className="flex flex-col xl:flex-row py-4">
+                <p className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base">Currently Syncing Groups</p>
+                <div className="w-full rounded border px-2 pb-2 pt-1.5 mt-1 xl:mt-0">
+                    <span className="inline-flex w-0 py-1 text-xs font-bold leading-none">&nbsp;</span>
+                    {
+                        Object(syncGroups).map(function (group, i) {
+                            return (
+                                <span key={i} className="inline-flex flex-row items-center justify-center text-xs font-bold leading-none mr-2">
+                                    <div className="flex-grow px-2 py-1.5 bg-blue-200 dark:bg-blue-800">{group.displayName}</div>
+                                    <div className="flex flex-grow-0 bg-blue-400 dark:bg-blue-900 px-1 py-1.5 cursor-pointer" onClick={() => removeSyncGroup(i)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </div>
+                                </span>
+                            )
+                        })
+                    }
                 </div>
             </div>
-            <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
-                <div className="w-full lg:w-3/12">
-                    <p className="block py-2">Currently Syncing Groups</p>
-                </div>
-                <div className="w-full lg:w-9/12">
-                    <div className="rounded border px-2 py-2">
-                        <span className="inline-flex w-0 py-1 text-xs font-bold leading-none">&nbsp;</span>
-                        {
-                            Object(syncGroups).map(function (group, i) {
-                                return (
-                                    <Badge key={i} color="blue-200" className="mr-2 flex flex-row">
-                                        <div className="flex-grow">{group.displayName}</div>
-                                        <div className="flex flex-grow-0 bg-blue-400 ml-1 -mr-2 -my-1 px-1 py-1 cursor-pointer" onClick={() => removeSyncGroup(i)}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
-                                        </div>
-                                    </Badge>
-                                )
-                            })
-                        }
-                    </div>
-                </div>
-            </div>
-            <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
-                <div className="w-full lg:w-3/12">
-                    <label className="block py-2" htmlFor="create_departments">Create Departments from User properties</label>
-                </div>
-                <div className="w-full lg:w-9/12 flex flex-col">
-                    <div className="relative inline-block w-10 mr-2 mt-2 align-middle select-none">
-                        <Switch name="create_departments"
+            <div className="flex flex-col xl:flex-row py-4">
+                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base"
+                    htmlFor="create_departments">
+                    Create Departments from User properties
+                </label>
+                <div className="mt-1 xl:mt-0 w-full">
+                <Switch name="create_departments"
                             checked={(app.create_departments === 'true')}
                             onChange={onChange}
                             state={states['create_departments']} />
-                    </div>
-                    <span className="mt-2 text-xs text-gray-400">
-                        The Department string will be split on a '-' character (with a space either side) to create sub-departments.
-                    </span>
+                    <p className="text-xs text-gray-400 dark:text-gray-200">
+                    The Department string will be split on a '-' character (with a space either side) to create sub-departments.
+                    </p>
                 </div>
             </div>
-
-            <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
-                <div className="w-full lg:w-3/12">
-                    <label className="block py-2" htmlFor="technical_contact">Technical Contact Email Address</label>
-                </div>
-                <div className="w-full lg:w-9/12">
-                    <Input name="technical_contact"
+            <div className="flex flex-col xl:flex-row py-4">
+                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base"
+                    htmlFor="technical_contact">
+                    Technical Contact Email Address
+                </label>
+                <Input name="technical_contact"
                         type="text"
                         id="technical_contact"
                         value={app.technical_contact || ''}
                         onChange={onType}
                         onBlur={onChange}
                         state={states['technical_contact']} />
-                </div>
-            </div>
-
-            <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
-                <div className="w-full lg:w-3/12">
-                    <label className="block py-2" htmlFor="app">Last Synced</label>
-                </div>
-                <div className="w-full lg:w-9/12 relative">
-                    <Input name="app.last_sync"
+            </div>            
+            <div className="flex flex-col xl:flex-row py-4">
+                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="app">Last Synced</label>
+                <div className="relative w-full">
+                <Input name="app.last_sync"
                         id="app.last_sync"
                         type="text"
                         value={moment(app.last_sync).calendar()}
                         readOnly disabled />
 
-                    <div className="absolute inset-y-0 right-0 flex items-center">
-                        <Button size="small" style="ghost" onClick={syncNow}>Sync Now</Button>
+                    <div className="w-full sm:w-auto sm:absolute inset-y-0 right-0 sm:flex items-center">
+                        <Button style="ghost" color="gray" size="small" square
+                            className="uppercase mr-1 w-full sm:w-auto sm:rounded-md"
+                            onClick={syncNow}>
+                            Sync Now
+                        </Button>
                     </div>
                 </div>
             </div>

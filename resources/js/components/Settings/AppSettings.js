@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useToasts } from 'react-toast-notifications';
-import { Button, Input, Loader, Switch } from 'webapps-react';
+import { Button, Input, Loader, Switch, withWebApps } from 'webapps-react';
 
 import { CreateDepartmentFlyout, DepartmentFlyout } from './Flyouts';
 
@@ -9,7 +9,7 @@ axios.defaults.withCredentials = true;
 
 export const FlyoutsContext = createContext({});
 
-const AppSettings = () => {
+const AppSettings = UI => {
     const [states, setStates] = useState({});
     const [departments, setDepartments] = useState(null);
     const [department, setDepartment] = useState({ children: [] });
@@ -215,20 +215,18 @@ const AppSettings = () => {
 
     return (
         <>
-            <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5 border-b">
-                <div className="w-full lg:w-3/12">
-                    <label className="block py-2" htmlFor="depList">Manage Departments</label>
-                </div>
-                <div className="w-full lg:w-9/12">
+            <div className="flex flex-col xl:flex-row py-4">
+                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="depList">Manage Departments</label>
+                <div className="relative w-full">
                     {
                         (departments.length === 0) ?
                             (
-                                <select id="depList" value={department.id} onChange={onDepChange} className="input-field">
+                                <select id="depList" value={department.id} onChange={onDepChange} className={`input-field focus:border-${UI.theme}-600 dark:focus:border-${UI.theme}-500`}>
                                     <option value="">No departments have been created yet</option>
                                 </select>
                             ) :
                             (
-                                <select id="depList" value={department.id} onChange={onDepChange} className="input-field">
+                                <select id="depList" value={department.id} onChange={onDepChange} className={`input-field focus:border-${UI.theme}-600 dark:focus:border-${UI.theme}-500`}>
                                     <option value="">Select...</option>
                                     {
                                         Object(departments).map(function (department, i) {
@@ -250,78 +248,83 @@ const AppSettings = () => {
                                 </select>
                             )
                     }
-                    <a href="#" onClick={toggleNew}>Create a new Department</a>
+                    <div className="w-full sm:w-auto sm:absolute inset-y-0 right-8 sm:flex items-center">
+                        <Button style="ghost" color="gray" size="small" square
+                            className="uppercase mr-1 w-full sm:w-auto sm:rounded-md"
+                            onClick={toggleNew}>
+                            Create a new Department
+                        </Button>
+                    </div>
                 </div>
             </div>
-            <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
-                <div className="w-full lg:w-3/12">
-                    <label className="block py-2" htmlFor="app.StaffDirectory.newRecord.sendNotification">Send Email when record is created</label>
-                </div>
-                <div className="w-full lg:w-9/12 flex flex-col">
-                    <div className="relative inline-block w-10 mr-2 mt-2 align-middle select-none">
-                        <Switch name="app.StaffDirectory.newRecord.sendNotification"
-                            checked={(notifications.newRecord === 'true')}
-                            onChange={onChange}
-                            state={states['app.StaffDirectory.newRecord.sendNotification']} />
-                    </div>
-                    <span className="mt-2 text-xs text-gray-400">
+            <div className="h-px bg-gray-300 dark:bg-gray-700 my-4" />
+            <div className="flex flex-col xl:flex-row py-4">
+                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base"
+                    htmlFor="app.StaffDirectory.newRecord.sendNotification">
+                    Send Email when record is created
+                </label>
+                <div className="mt-1 xl:mt-0 w-full">
+                    <Switch name="app.StaffDirectory.newRecord.sendNotification"
+                        checked={(notifications.newRecord === 'true')}
+                        onChange={onChange}
+                        state={states['app.StaffDirectory.newRecord.sendNotification']} />
+                    <p className="text-xs text-gray-400 dark:text-gray-200">
                         This will not trigger for records created by Microsoft Azure Integration
-                    </span>
+                    </p>
                 </div>
             </div>
-            <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
-                <div className="w-full lg:w-3/12">
-                    <label className="block py-2" htmlFor="app.StaffDirectory.newRecord.notifyTo">Send new record notification to</label>
-                </div>
-                <div className="w-full lg:w-9/12">
-                    <Input name="app.StaffDirectory.newRecord.notifyTo"
-                        type="text"
-                        id="app.StaffDirectory.newRecord.notifyTo"
-                        value={notifications.newNotifyTo || ''}
-                        onChange={onType}
-                        onBlur={onChange}
-                        state={states['app.StaffDirectory.newRecord.notifyTo']} />
-                </div>
+            <div className="flex flex-col xl:flex-row py-4">
+                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base"
+                    htmlFor="app.StaffDirectory.newRecord.notifyTo">
+                    Send new record notification to
+                </label>
+                <Input name="app.StaffDirectory.newRecord.notifyTo"
+                    type="text"
+                    id="app.StaffDirectory.newRecord.notifyTo"
+                    value={notifications.newNotifyTo || ''}
+                    onChange={onType}
+                    onBlur={onChange}
+                    state={states['app.StaffDirectory.newRecord.notifyTo']} />
             </div>
-            <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
-                <div className="w-full lg:w-3/12">
-                    <label className="block py-2" htmlFor="app.StaffDirectory.deleteRecord.sendNotification">Send Email when record is deleted</label>
-                </div>
-                <div className="w-full lg:w-9/12 flex flex-col">
-                    <div className="relative inline-block w-10 mr-2 mt-2 align-middle select-none">
-                        <Switch name="app.StaffDirectory.deleteRecord.sendNotification"
-                            checked={(notifications.deleteRecord === 'true')}
-                            onChange={onChange}
-                            state={states['app.StaffDirectory.deleteRecord.sendNotification']} />
-                    </div>
-                    <span className="mt-2 text-xs text-gray-400">
+            <div className="flex flex-col xl:flex-row py-4">
+                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base"
+                    htmlFor="app.StaffDirectory.deleteRecord.sendNotification">
+                    Send Email when record is deleted
+                </label>
+                <div className="mt-1 xl:mt-0 w-full">
+                    <Switch name="app.StaffDirectory.deleteRecord.sendNotification"
+                        checked={(notifications.deleteRecord === 'true')}
+                        onChange={onChange}
+                        state={states['app.StaffDirectory.deleteRecord.sendNotification']} />
+                    <p className="text-xs text-gray-400 dark:text-gray-200">
                         This will not trigger for records deleted by Microsoft Azure Integration
-                    </span>
+                    </p>
                 </div>
             </div>
-            <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5">
-                <div className="w-full lg:w-3/12">
-                    <label className="block py-2" htmlFor="app.StaffDirectory.deleteRecord.notifyTo">Send deleted record notification to</label>
-                </div>
-                <div className="w-full lg:w-9/12">
-                    <Input name="app.StaffDirectory.deleteRecord.notifyTo"
-                        type="text"
-                        id="app.StaffDirectory.deleteRecord.notifyTo"
-                        value={notifications.deleteNotifyTo || ''}
-                        onChange={onType}
-                        onBlur={onChange}
-                        state={states['app.StaffDirectory.deleteRecord.notifyTo']} />
-                </div>
+            <div className="flex flex-col xl:flex-row py-4">
+                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base"
+                    htmlFor="app.StaffDirectory.deleteRecord.notifyTo">
+                    Send deleted record notification to
+                </label>
+                <Input name="app.StaffDirectory.deleteRecord.notifyTo"
+                    type="text"
+                    id="app.StaffDirectory.deleteRecord.notifyTo"
+                    value={notifications.deleteNotifyTo || ''}
+                    onChange={onType}
+                    onBlur={onChange}
+                    state={states['app.StaffDirectory.deleteRecord.notifyTo']} />
             </div>
             {
                 (departments.length === 0)
                     ? (
-                        <div className="flex flex-auto px-4 lg:px-10 py-10 pt-5 border-t">
-                            <div className="w-full lg:w-3/12">
-                                <label className="block py-2">Sample Data</label>
-                            </div>
-                            <div className="w-full lg:w-9/12">
-                                <Button onClick={installSampleData}>Install Sample Data</Button>
+                        <div className="flex flex-col xl:flex-row py-4">
+                            <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base">
+                                Sample Data
+                            </label>
+                            <div className="w-full">
+                                <Button onClick={installSampleData} square className="w-full mt-2 sm:mt-0 sm:w-auto sm:rounded-md">
+                                    Install Sample Data
+                                </Button>
                             </div>
                         </div>
                     ) : null
@@ -339,4 +342,4 @@ const AppSettings = () => {
     );
 }
 
-export default AppSettings;
+export default withWebApps(AppSettings);

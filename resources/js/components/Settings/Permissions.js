@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Switch } from 'webapps-react';
-import UserSuggest from './UserSuggest';
+import { UserSuggest, Switch } from 'webapps-react';
+// import UserSuggest from './UserSuggest';
 
 axios.defaults.withCredentials = true;
 
@@ -79,9 +79,6 @@ const Permissions = () => {
             formData.append('permission', perm);
 
             axios.post('/api/permissions/user', formData)
-                .then(response => {
-                    return response;
-                })
                 .then(json => {
                     let _permitted = [];
                     permitted.map(function (u,) { _permitted.push(u); });
@@ -98,14 +95,11 @@ const Permissions = () => {
             formData.append('permission', perm);
 
             axios.post('/api/permissions/group', formData)
-                .then(response => {
-                    return response;
-                })
                 .then(json => {
                     let _groups = [];
-                    groups.map(function (g) { _groups.push(g);  });
+                    groups.map(function (g) { _groups.push(g); });
                     _groups.map(function (g, i) { if (g.id == group) _groups[i] = json.data.group });
-                    setGroups(_group);
+                    setGroups(_groups);
                 })
                 .catch(error => {
                     // TODO: Handle errors
@@ -125,7 +119,7 @@ const Permissions = () => {
             if (u.id === user.id)
                 return;
         });
-        
+
         user.permissions = [];
         delete user.roles;
         _permitted.push(user);
@@ -139,74 +133,67 @@ const Permissions = () => {
     }
 
     return (
-        <table className="table-fixed w-full">
-            <thead>
-                <tr>
-                    <th className="w-32">&nbsp;</th>
-                    {
-                        permissions.map(function (perm, i) {
-                            return (
-                                <th key={i} className="min-w-20 px-4 text-left">{perm.title}</th>
-                            )
-                        })
-                    }
-                </tr>
-            </thead>
-            <tbody>
+        <>
+            <div className={`hidden lg:grid lg:grid-cols-${permissions.length + 1}`}>
+                <div>&nbsp;</div>
                 {
-                    groups.map(function (group, ri) {
+                    permissions.map(function (perm, i) {
                         return (
-                            <tr key={ri} className={(ri % 2) ? 'bg-gray-100' : ''}>
-                                <td className="py-2 pl-4">{group.name}</td>
-                                {
-                                    permissions.map(function (perm, pi) {
-                                        return (
-                                            <td key={pi} className="px-6">
-                                                <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                    <Switch checked={checkState(perm, group)}
-                                                        data-group={group.id}
-                                                        data-perm={perm.id}
-                                                        onChange={handleChange} />
-                                                </div>
-                                            </td>
-                                        )
-                                    })
-                                }
-                            </tr>
+                            <h6 key={i} className="text-left font-semibold">{perm.title}</h6>
                         )
                     })
                 }
-                <tr className="border-t border-b border-gray-200 bg-gray-100 dark:text-black">
-                    <td className="py-2 pl-6" colSpan={permissions.length + 1}>Add extra permissions for specified users...</td>
-                </tr>
-                {
-                    permitted.map(function (user, ri) {
-                        return (
-                            <tr key={ri} className={(ri % 2) ? 'bg-gray-100' : ''}>
-                                <td className="py-2 pl-4">{user.name}</td>
-                                {
-                                    permissions.map(function (perm, pi) {
-                                        return (
-                                            <td key={pi} className="px-6">
-                                                <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                    <Switch checked={checkState(perm, user)}
-                                                        data-user={user.id}
-                                                        data-perm={perm.id}
-                                                        onChange={handleChange} />
-                                                </div>
-                                            </td>
-                                        )
-                                    })
-                                }
-                            </tr>
-                        )
-                    })
-                }
-                <tr>
-                    <td colSpan={permissions.length + 1}><UserSuggest users={users} select={select} /></td>
-                </tr>
-            </tbody>
-        </table>
+            </div>
+            {
+                groups.map(function (group, gi) {
+                    return (
+                        <div key={gi} className={(gi % 2) ? `py-2 lg:grid lg:grid-cols-${permissions.length + 1} bg-gray-200 dark:bg-gray-600 -mx-5 px-5` : `py-2 lg:grid lg:grid-cols-${permissions.length + 1}`}>
+                            <h6 className="font-semibold lg:font-normal text-center lg:text-left">{group.name}</h6>
+                            {
+                                permissions.map(function (perm, pi) {
+                                    return (/* istanbul ignore next */
+                                        <div key={pi} className="pl-5 lg:pl-0">
+                                            <div className="lg:hidden">{perm.title}</div>
+                                            <Switch checked={checkState(perm, group)}
+                                                data-group={group.id}
+                                                data-perm={perm.id}
+                                                name={`${perm.id}-${group.id}`}
+                                                onChange={handleChange} />
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                    )
+                })
+            }
+            <div className="py-2 border-t border-b border-gray-200 dark:border-gray-900 bg-gray-500 dark:text-black -mx-5 px-5">
+                Add extra permissions for specified users...
+            </div>
+            {
+                permitted.map(function (user, gi) {
+                    return (
+                        <div key={gi} className={(gi % 2) ? `py-2 lg:grid lg:grid-cols-${permissions.length + 1} bg-gray-200 dark:bg-gray-600 -mx-5 px-5` : `py-2 lg:grid lg:grid-cols-${permissions.length + 1}`}>
+                            <h6 className="font-semibold lg:font-normal text-center lg:text-left">{user.name}</h6>
+                            {
+                                permissions.map(function (perm, pi) {
+                                    return (
+                                        <div key={pi} className="pl-5 lg:pl-0">
+                                            <div className="lg:hidden">{perm.title}</div>
+                                            <Switch checked={checkState(perm, user)}
+                                                data-user={user.id}
+                                                data-perm={perm.id}
+                                                onChange={handleChange} />
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                    )
+                })
+            }
+            <UserSuggest users={users} select={select} />
+        </>
     );
 }
 

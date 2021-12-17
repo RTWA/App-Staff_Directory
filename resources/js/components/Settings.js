@@ -40,7 +40,7 @@ const Settings = () => {
     return (
         <div className="w-full px-4 py-6">
             <div className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded">
-                <nav className="flex flex-col sm:flex-row border-b border-gray-200 dark:border-gray-600">
+                <nav className="flex flex-col md:flex-row border-b border-gray-200 dark:border-gray-600">
                     <button className={tabClass(0)} onClick={() => toggle(0)}>
                         App Settings
                     </button>
@@ -53,7 +53,7 @@ const Settings = () => {
                     <button className={tabClass(3)} onClick={() => toggle(3)}>
                         Custom Fields
                     </button>
-                    <button className={classNames(tabClass(4), 'ml-auto text-red-600 dark:text-red-500')} onClick={() => toggle(4)}>
+                    <button className={classNames(tabClass(4), 'md:ml-auto text-red-600 dark:text-red-500')} onClick={() => toggle(4)}>
                         Recycle Bin
                     </button>
                 </nav>
@@ -63,10 +63,10 @@ const Settings = () => {
                 <div className={paneClass(1)}>
                     <AzureSettings />
                 </div>
-                <div className={classNames(paneClass(2), 'px-4 lg:px-10 py-10 pt-5')}>
+                <div className={paneClass(2)}>
                     <Permissions />
                 </div>
-                <div className={classNames(paneClass(3), 'px-4 lg:px-10 py-10 pt-5')}>
+                <div className={paneClass(3)}>
                     <CustomFields />
                 </div>
                 <div className={classNames(paneClass(4), 'relative', 'px-4 lg:px-10 py-10 pt-5')}>

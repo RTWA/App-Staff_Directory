@@ -52,17 +52,17 @@ const RecycleBin = props => {
 
     return (
         <>
-            <Banner className="absolute top-0 left-0 right-0">
+            <Banner className="absolute top-0 left-0 right-0 text-center lg:text-left">
                 Items in the Recycle Bin are deleted after 30 days.
                 <Button style="link" color="gray" className="-my-2" onClick={empty}>
                     Empty the Recycle Bin now.
                 </Button>
             </Banner>
-            <div className="flex flex-row px-10 mt-10">
+            <div className="grid gap-y-2 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 mt-20 sm:mt-14 lg:mt-10">
                 {
                     Object(people).map(function (person, index) {
                         return (
-                            <div className="flex flex-row items-center py-2 px-5 mr-10 bg-gray-100 dark:bg-gray-700 rounded-lg" key={index}>
+                            <div className="w-full sm:w-auto flex flex-row items-center py-2 pl-5 mr-10 bg-gray-100 dark:bg-gray-700 rounded-lg" key={index}>
                                 {
                                     (person.azure_id !== undefined && person.azure_id !== null)
                                         ? <img className="inline-block h-10 w-10 rounded-full border-2 border-gray-500 white dark:border-gray-50 mr-4"
