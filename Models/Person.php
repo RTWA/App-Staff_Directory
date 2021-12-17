@@ -25,6 +25,7 @@ class Person extends Model
         'isCover',
         'isSenior',
         'azure_id',
+        'local_photo',
     ];
 
     public function __construct(array $attributes = [])

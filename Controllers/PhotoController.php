@@ -7,6 +7,7 @@ use App\Http\Controllers\MSGraphController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use LasseRafn\InitialAvatarGenerator\InitialAvatar;
 use WebApps\Apps\StaffDirectory\Models\Person;
 
 class PhotoController extends Controller
@@ -17,7 +18,7 @@ class PhotoController extends Controller
 
         if ($person->azure_id) {
             $photo = (new MSGraphController())->getUserPhoto($person->azure_id);
-        
+
             if ($photo) {
                 return response(base64_decode($photo))->header('Content-Type', 'image/png');
             }
@@ -26,7 +27,13 @@ class PhotoController extends Controller
             return response($photo)->header('Content-Type', 'image/png');
         }
 
-        return response('', 204);
+        return response(
+            (new InitialAvatar())
+                ->size(500)
+                ->name($person->forename . ' ' . $person->surname)
+                ->generate()
+                ->stream('png', 100)
+        )->header('Content-Type', 'image/png');
     }
 
     public function store(Request $request, Person $person)
@@ -39,5 +46,5 @@ class PhotoController extends Controller
         $person->save();
 
         return response()->json(['local_photo' => $person->local_photo], 201);
-    } 
+    }
 }

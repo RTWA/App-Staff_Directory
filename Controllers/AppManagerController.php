@@ -45,6 +45,7 @@ class AppManagerController extends Controller
                 $table->boolean('isCover')->default(0);
                 $table->boolean('isSenior')->default(0);
                 $table->string('azure_id')->nullable();
+                $table->string('local_photo')->nullable();
                 $table->timestamps();
                 $table->softDeletes();
             });
