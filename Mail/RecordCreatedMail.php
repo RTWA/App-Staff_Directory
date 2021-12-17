@@ -23,7 +23,7 @@ class RecordCreatedMail extends Mailable
         'orange' => 'EA580C',
         'yellow' => 'CA8A04',
         'lime' => '65A30D',
-        'greay' => '52525B',
+        'gray' => '52525B',
     ];
 
     public function __construct(Person $person)
