@@ -34,12 +34,14 @@ const CardTile = ({ UI, ...props }) => {
     }
 
     const department = () => {
-        if (person.departmentString.length <= 26 && person.departmentString !== null) {
-            return <p className="font-semibold mb-6">{person.departmentString}</p>
+        if (person.departmentString.length === 0) {
+            return <div className="mb-2 sm:mb-6" />
+        } else if (person.departmentString.length <= 26 && person.departmentString !== null) {
+            return <p className="font-semibold sm:mb-6">{person.departmentString}</p>
         } else if (person.departmentString.length <= 44) {
-            return <p className="font-semibold mb-6" style={{ fontSize: '.5rem', lineHeight: '1rem' }}>{person.departmentString}</p>
+            return <p className="font-semibold sm:mb-6" style={{ fontSize: '.5rem', lineHeight: '1rem' }}>{person.departmentString}</p>
         } else if (person.departmentString.length <= 64) {
-            return <p className="font-semibold mb-6" style={{ fontSize: '.43rem', lineHeight: '1rem' }}>{person.departmentString}</p>
+            return <p className="font-semibold sm:mb-6" style={{ fontSize: '.43rem', lineHeight: '1rem' }}>{person.departmentString}</p>
         }
     }
 
