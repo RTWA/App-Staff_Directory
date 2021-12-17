@@ -27,14 +27,11 @@ const CustomView = props => {
     const [search, setSearch] = useState('');
     const [sortOrder, setSortOrder] = useState('(Sorted by Employment Start Date)');
 
-    useEffect(() => {
+    useEffect(async () => {
         let formData = new FormData();
         formData.append('view', JSON.stringify(props.view));
 
-        axios.post('/api/apps/StaffDirectory/view', formData)
-            .then(response => {
-                return response;
-            })
+        await axios.post('/api/apps/StaffDirectory/view', formData)
             .then(json => {
                 setTmpPeople(json.data.people);
                 setPeople(json.data.people);
@@ -219,9 +216,9 @@ const CustomView = props => {
         if (view.settings.selectors === "true" || view.settings.selectors === true) {
             return (
                 <div className="selectors">
-                    <div className="flex flex-auto">
-                        <div className="w-6/12 md:w-3/12 lg:w-2/12">
-                            <Button square className="text-white" onClick={toggleMe}>
+                    <div className="flex flex-col sm:flex-row">
+                        <div className="w-full sm:w-3/12 lg:w-2/12">
+                            <Button square className="text-white w-full sm:w-auto" onClick={toggleMe}>
                                 {
                                     (filtered)
                                         ? 'Show All Staff'
@@ -229,10 +226,10 @@ const CustomView = props => {
                                 }
                             </Button>
                         </div>
-                        <div className="w-6/12 md:w-4/12 lg:w-5/12">
+                        <div className="w-full sm:w-4/12 lg:w-5/12">
                             <Select options={options(false)} onChange={depChange} value={selectedDep(false)} className="input-field" classNamePrefix="input-select" />
                         </div>
-                        <div className="w-6/12 md:w-4/12 lg:w-5/12">
+                        <div className="w-full sm:w-4/12 lg:w-5/12">
                             {
                                 (options(true).length === 1)
                                     ? null
@@ -240,13 +237,9 @@ const CustomView = props => {
                             }
                         </div>
                     </div>
-                    <div className="flex flex-auto">
-                        <div className="w-6/12 md:w-3/12 lg:w-2/12">
-                            <label className="block py-2" htmlFor="name">Search by name:</label>
-                        </div>
-                        <div className="w-6/12 md:4/12 lg:5/12">
-                            <Input type="text" id="name" value={search} onChange={filter} />
-                        </div>
+                    <div className="flex flex-col sm:flex-row items-center py-4">
+                        <label className="w-full sm:w-3/12 lg:w-2/12 font-medium sm:font-normal text-sm sm:text-base" htmlFor="name">Search by name:</label>
+                        <Input type="text" id="name" name="name" className="w-full lg:w-10/12" value={search} onChange={filter} />
                     </div>
                 </div>
             );

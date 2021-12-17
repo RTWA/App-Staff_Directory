@@ -14,12 +14,9 @@ const ViewLayout = props => {
         window.location.replace("/login");
     }
 
-    useEffect(() => {
+    useEffect(async () => {
         let publicId = props.match.params.publicId;
-        axios.get(`/api/apps/StaffDirectory/view/${publicId}`)
-            .then(response => {
-                return response;
-            })
+        await axios.get(`/api/apps/StaffDirectory/view/${publicId}`)
             .then(json => {
                 let _view = json.data.view;
                 _view.settings = JSON.parse(_view.settings);
