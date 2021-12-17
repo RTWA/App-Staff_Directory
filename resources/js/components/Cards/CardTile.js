@@ -74,20 +74,18 @@ const CardTile = ({ UI, ...props }) => {
 
     return (
         <div data-order={index} data-surname={person.surname} data-id={person.id}
-            className="card-tile inline-flex flex-row mx-3 mb-4 w-80 h-44 rounded-lg shadow-lg overflow-hidden">
-
-            <div className="w-44">
+            className="card-tile inline-flex flex-col sm:flex-row mx-3 mb-4 w-80 h-80 sm:h-44 rounded-lg shadow-lg overflow-hidden">
+            <div className="w-full sm:w-44">
                 <img className="h-44 w-full"
                     src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
                     id={`photo-${person.id}`}
                     alt={`${person.forename} ${person.surname} - Photo`} />
             </div>
-
-            <div className={`user-info inline-flex flex-col py-6 px-2 relative h-44 w-full bg-${UI.theme}-600 text-white text-center border-l-4 border-gray-800`}>
+            <div className={`-mt-18 sm:mt-0 user-info inline-flex flex-col py-1 sm:py-6 px-2 relative h-44 w-full bg-${UI.theme}-600 text-white text-center border-t-4 sm:border-t-0 sm:border-l-4 border-gray-800`}>
                 {fullName()}
                 {jobTitle()}
                 {department()}
-                <p className="flex flex-row justify-center text-sm">
+                <p className="flex flex-col sm:flex-row items-center gap-y-2 sm:gap-y-0 gap-x-2 justify-center text-sm">
                     {email()}
                     {phone()}
                 </p>
