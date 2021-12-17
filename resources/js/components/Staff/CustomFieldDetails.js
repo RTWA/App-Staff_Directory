@@ -24,7 +24,7 @@ const CustomFieldDetails = props => {
                     {
                         Object(fields).map(function (field, index) {
                             return (
-                                <div className="w-full flex flex-col xl:flex-row py-4 px-2" key={field.field}>
+                                <div className="w-full flex flex-col xl:flex-row py-1 px-2" key={field.field}>
                                     <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor={field.field}>{field.label}</label>
                                     {
                                         (field.type === "text")

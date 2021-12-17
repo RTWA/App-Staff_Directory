@@ -147,7 +147,7 @@ const Permissions = () => {
             {
                 groups.map(function (group, gi) {
                     return (
-                        <div key={gi} className={(gi % 2) ? `py-2 lg:grid lg:grid-cols-${permissions.length + 1} bg-gray-200 dark:bg-gray-600 -mx-5 px-5` : `py-2 lg:grid lg:grid-cols-${permissions.length + 1}`}>
+                        <div key={gi} className={(gi % 2) ? `py-2 lg:grid lg:grid-cols-${permissions.length + 1} bg-gray-200 dark:bg-gray-800 border-t border-b border-gray-200 dark:border-gray-600 -mx-5 px-5` : `py-2 lg:grid lg:grid-cols-${permissions.length + 1}`}>
                             <h6 className="font-semibold lg:font-normal text-center lg:text-left">{group.name}</h6>
                             {
                                 permissions.map(function (perm, pi) {
@@ -167,13 +167,13 @@ const Permissions = () => {
                     )
                 })
             }
-            <div className="py-2 border-t border-b border-gray-200 dark:border-gray-900 bg-gray-500 dark:text-black -mx-5 px-5">
+            <div className="py-2 bg-gray-300 dark:bg-gray-700 -mx-5 px-5">
                 Add extra permissions for specified users...
             </div>
             {
                 permitted.map(function (user, gi) {
                     return (
-                        <div key={gi} className={(gi % 2) ? `py-2 lg:grid lg:grid-cols-${permissions.length + 1} bg-gray-200 dark:bg-gray-600 -mx-5 px-5` : `py-2 lg:grid lg:grid-cols-${permissions.length + 1}`}>
+                        <div key={gi} className={(gi % 2) ? `py-2 lg:grid lg:grid-cols-${permissions.length + 1} bg-gray-200 dark:bg-gray-800 border-t border-b border-gray-200 dark:border-gray-600 -mx-5 px-5` : `py-2 lg:grid lg:grid-cols-${permissions.length + 1}`}>
                             <h6 className="font-semibold lg:font-normal text-center lg:text-left">{user.name}</h6>
                             {
                                 permissions.map(function (perm, pi) {

@@ -38,7 +38,7 @@ const Settings = () => {
     }
 
     return (
-        <div className="w-full px-4 py-6">
+        <div className="w-full py-4">
             <div className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded">
                 <nav className="flex flex-col md:flex-row border-b border-gray-200 dark:border-gray-600">
                     <button className={tabClass(0)} onClick={() => toggle(0)}>

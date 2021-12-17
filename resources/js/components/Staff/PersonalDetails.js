@@ -90,7 +90,7 @@ const PersonalDetails = ({ UI, ...props }) => {
             <section>
                 <p className="text-xl font-semibold my-2 ml-0 text-center sm:text-left mt-4 sm:ml-24 sm:-mt-0">{person.forename || 'Creating'} {person.surname || 'New Record'}</p>
                 <div className="flex flex-col sm:flex-row mt-2 sm:mt-6">
-                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-4 px-2">
+                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-1 px-2">
                         <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="forename">Forename</label>
                         <Input name="forename"
                             type="text"
@@ -98,7 +98,7 @@ const PersonalDetails = ({ UI, ...props }) => {
                             value={person.forename || ''}
                             onChange={change} />
                     </div>
-                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-4 px-2">
+                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-1 px-2">
                         <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="surname">Surname</label>
                         <Input name="surname"
                             type="text"
@@ -108,7 +108,7 @@ const PersonalDetails = ({ UI, ...props }) => {
                     </div>
                 </div>
                 <div className="flex flex-col sm:flex-row">
-                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-4 px-2">
+                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-1 px-2">
                         <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="username">Username</label>
                         <Input name="username"
                             type="text"
@@ -116,7 +116,7 @@ const PersonalDetails = ({ UI, ...props }) => {
                             value={person.username || ''}
                             onChange={change} />
                     </div>
-                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-4 px-2">
+                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-1 px-2">
                         <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="employee_id">Employee ID</label>
                         <Input name="employee_id"
                             type="text"
@@ -126,7 +126,7 @@ const PersonalDetails = ({ UI, ...props }) => {
                     </div>
                 </div>
                 <div className="flex flex-col sm:flex-row">
-                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-4 px-2">
+                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-1 px-2">
                         <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="email">Email Address</label>
                         <Input name="email"
                             type="text"
@@ -134,7 +134,7 @@ const PersonalDetails = ({ UI, ...props }) => {
                             value={person.email || ''}
                             onChange={change} />
                     </div>
-                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-4 px-2">
+                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-1 px-2">
                         <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="employee_id">Start Date</label>
                         <DatePicker value={person.startDate || ''} onDateChange={dateChange} />
                     </div>
