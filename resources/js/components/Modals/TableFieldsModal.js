@@ -71,7 +71,7 @@ const TableFieldsModal = ({ UI, ...props }) => {
                             <table className="table-fixed w-full">
                                 <tbody>
                                     <tr>
-                                        <td className="py-2 pl-4 w-64">Table Headings</td>
+                                        <td className="py-2 pl-4 w-48">Table Headings</td>
                                         <td className="px-6">
                                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
                                                 <Switch data-field="table_headings"
@@ -80,7 +80,7 @@ const TableFieldsModal = ({ UI, ...props }) => {
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <tr className="bg-gray-200 dark:bg-gray-800 border-t border-b border-gray-200 dark:border-gray-600">
                                         <td className="py-2 pl-4">Photo</td>
                                         <td className="px-6">
                                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
@@ -100,7 +100,7 @@ const TableFieldsModal = ({ UI, ...props }) => {
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <tr className="bg-gray-200 dark:bg-gray-800 border-t border-b border-gray-200 dark:border-gray-600">
                                         <td className="py-2 pl-4">Email Address</td>
                                         <td className="px-6">
                                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
@@ -120,7 +120,7 @@ const TableFieldsModal = ({ UI, ...props }) => {
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr>
+                                    <tr className="bg-gray-200 dark:bg-gray-800 border-t border-b border-gray-200 dark:border-gray-600">
                                         <td className="py-2 pl-4">Department</td>
                                         <td className="px-6">
                                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
@@ -143,7 +143,7 @@ const TableFieldsModal = ({ UI, ...props }) => {
                                     {
                                         customFields.map(function (field, i) {
                                             return (
-                                                <tr key={i}>
+                                                <tr key={i} className={(i % 2) ? '' : 'bg-gray-200 dark:bg-gray-800 border-t border-b border-gray-200 dark:border-gray-600'}>
                                                     <td className="py-2 pl-4">{field.label}</td>
                                                     <td className="px-6">
                                                         <div className="relative inline-block w-10 mr-2 align-middle select-none">

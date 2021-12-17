@@ -20,7 +20,7 @@ const PersonSelect = props => {
         return _value;
     }
 
-    return <Select options={options} onChange={onChange} value={getValue()} className="input-field" classNamePrefix="input-select" />
+    return <Select {...props} options={options} onChange={onChange} value={getValue()} className="input-field" classNamePrefix="input-select" />
 }
 
 export default PersonSelect;

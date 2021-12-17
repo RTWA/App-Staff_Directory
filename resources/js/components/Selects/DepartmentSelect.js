@@ -64,7 +64,7 @@ const DepartmentSelect = props => {
         return value;
     }
 
-    return <Select options={options()} onChange={onChange} value={selected()} className="input-field" classNamePrefix="input-select" />
+    return <Select {...props} options={options()} onChange={onChange} value={selected()} className="input-field" classNamePrefix="input-select" />
 }
 
 export default DepartmentSelect;

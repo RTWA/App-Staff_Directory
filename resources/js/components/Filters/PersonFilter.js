@@ -13,13 +13,16 @@ const PersonFilter = props => {
     }
 
     return (
-        <div className="flex flex-auto px-4 lg:px-10 py-4">
-            <div className="w-full lg:w-3/12">
-                <label className="block py-2">Select the person you wish to display</label>
-            </div>
-            <div className="w-full lg:w-9/12">
-                <PersonSelect options={people} onChange={onChange} value={value} />
-            </div>
+        <div className="w-full flex flex-col xl:flex-row py-4 px-4">
+            <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="person_select">
+                Select the person you wish to display
+            </label>
+            <PersonSelect
+                name="person_select"
+                id="person_select"
+                options={people}
+                onChange={onChange}
+                value={value} />
         </div>
     )
 }

@@ -100,7 +100,7 @@ const PermissionsModal = ({UI, ...props}) => {
                                         groups.map(function (group, i) {
                                             if (group.name !== "Administrators") {
                                                 return (
-                                                    <tr key={i} className={(i % 2) ? 'bg-gray-100' : ''}>
+                                                    <tr key={i} className={(i % 2) ? 'bg-gray-200 dark:bg-gray-800 border-t border-b border-gray-200 dark:border-gray-600' : ''}>
                                                         <td className="py-2 pl-4">{group.name}</td>
 
                                                         <td className="px-6">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { CustomSelect } from '../Selects';
 
 const CustomFilter = props => {
@@ -13,22 +13,37 @@ const CustomFilter = props => {
         return null;
     }
 
-    const customField = () => {
-        return Object(custom).map(function(_field) {
+    const [chosen, setChosen] = useState({});
+
+    useEffect(() => {
+        Object(custom).map(function (_field) {
             if (_field.field === field) {
-                return _field.options;
+                setChosen(_field);
             }
-        })
+        });
+    }, [field]);
+
+    const customField = () => {
+        let options = [];
+        Object(custom).map(function (_field) {
+            if (_field.field === field) {
+                options = _field.options;
+            }
+        });
+        return options;
     }
 
     return (
-        <div className="flex flex-auto px-4 lg:px-10 py-4">
-            <div className="w-full lg:w-3/12">
-                <label className="block py-2">Select the {custom.label} you wish to display</label>
-            </div>
-            <div className="w-full lg:w-9/12">
-                <CustomSelect options={customField()} onChange={onChange} value={value} />
-            </div>
+        <div className="w-full flex flex-col xl:flex-row py-4 px-4">
+            <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="custom_select">
+                Select the {chosen.label} you wish to display
+            </label>
+            <CustomSelect
+                name="custom_select"
+                id="custom_select"
+                options={customField()}
+                onChange={onChange}
+                value={value} />
         </div>
     )
 }

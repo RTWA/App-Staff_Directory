@@ -188,7 +188,7 @@ const Views = ({ UI }) => {
         <div className="flex flex-col 2xl:flex-row">
             <div className="w-full 2xl:w-10/12 2xl:pr-2 py-6">
                 <div className="w-full flex flex-row mb-5">
-                    <h6 className="text-gray-600 dark:text-gray-400 text-2xl font-bold ml-6">Manage Views</h6>
+                    <h6 className="text-gray-600 dark:text-gray-400 text-2xl font-bold 2xl:ml-6">Manage Views</h6>
                     <Button style="outline" className="ml-auto" onClick={(e) => {
                         e.preventDefault();
                         toggleModals('preview');
@@ -279,8 +279,8 @@ const Views = ({ UI }) => {
                         onChange={customChange} />
                 </div>
 
-                <div className="flex flex-row mt-6">
-                    <Button className="mr-4" style="outline" color="gray"
+                <div className="flex flex-col 2xl:flex-row mt-6">
+                    <Button className="mb-2 2xl:mb-0 2xl:mr-4" style="outline" color="gray"
                         onClick={(e) => {
                             e.preventDefault();
                             toggleModals('permissions');
@@ -289,29 +289,29 @@ const Views = ({ UI }) => {
                     </Button>
                     {
                         (view.display_type === "table")
-                            ? <Button className="mr-auto" style="outline" color="gray"
+                            ? <Button className="mb-2 2xl:mb-0 2xl:mr-auto" style="outline" color="gray"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     toggleModals('tableFields');
                                 }}>
                                 Choose table fields
                             </Button>
-                            : <span className="mr-auto">&nbsp;</span>
+                            : <span className="hidden 2xl:block 2xl:mr-auto">&nbsp;</span>
                     }
                     {
                         (view.publicId !== "new")
-                            ? <Button className="ml-auto" style="outline" color="green"
+                            ? <Button className="mb-2 2xl:mb-0 2xl:ml-auto" style="outline" color="green"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     toggleModals('useView');
                                 }}>
                                 Use This View
                             </Button>
-                            : <span className="ml-auto">&nbsp;</span>
+                            : <span className="hidden 2xl:block 2xl:ml-auto">&nbsp;</span>
                     }
                     {
                         (view.publicId !== "all")
-                            ? <Button className="ml-4" color="green" onClick={saveView}>Save View</Button>
+                            ? <Button className="mb-2 2xl:mb-0 2xl:ml-4" color="green" onClick={saveView}>Save View</Button>
                             : null
                     }
                 </div>
