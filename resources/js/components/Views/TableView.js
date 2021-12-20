@@ -15,11 +15,8 @@ const TableView = props => {
 
     const [custom, setCustom] = useState([]);
 
-    useEffect(() => {
-        axios.get('/api/apps/StaffDirectory/customFields')
-            .then(response => {
-                return response;
-            })
+    useEffect(async () => {
+        await axios.get('/api/apps/StaffDirectory/customFields')
             .then(json => {
                 setCustom(json.data.list);
             })
@@ -81,16 +78,9 @@ const TableView = props => {
             if (fields.table_photo || fields.table_photo === "true") {
                 _row.push(
                     <td key={`photo-${person.id}`} className="photo">
-                        {
-                            ((person.azure_id !== undefined && person.azure_id !== null) ||
-                                (person.local_photo !== undefined && person.local_photo !== null))
-                                ? (
-                                    <img src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
-                                        id={`photo-${person.id}`}
-                                        alt={`${person.forename} ${person.surname} - Photo`} />
-                                )
-                                : <ReactUserAvatar key={i} size="10" name={`${person.forename} ${person.surname}`} />
-                        }
+                        <img src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
+                            id={`photo-${person.id}`} className="object-cover my-1 h-10 w-full"
+                            alt={`${person.forename} ${person.surname} - Photo`} />
                     </td>);
             }
 
@@ -101,10 +91,10 @@ const TableView = props => {
                 _row.push(<td key={`employee_id-${person.id}`} className="employee_id">{person.employee_id}</td>);
             }
             if (fields.table_email || fields.table_email === "true") {
-                _row.push(<td key={`email-${person.id}`} className="email">{person.email}</td>);
+                _row.push(<td key={`email-${person.id}`} className="email"><a href={`mailto:${person.email}`} className="hover:underline">{person.email}</a></td>);
             }
             if (fields.table_phone || fields.table_phone === "true") {
-                _row.push(<td key={`phone-${person.id}`} className="phone">{person.phone}</td>);
+                _row.push(<td key={`phone-${person.id}`} className="phone"><a href={`mailto:${person.phone}`} className="hover:underline">{person.phone}</a></td>);
             }
             if (fields.table_department || fields.table_department === "true") {
                 _row.push(<td key={`department-${person.id}`} className="department">{person.departmentString}</td>);
@@ -186,10 +176,12 @@ const TableView = props => {
     }
 
     return (
-        <table className="table w-full StaffDirectory">
-            {headings()}
-            {rows()}
-        </table>
+        <div className="w-screen max-w-full overflow-x-auto">
+            <table className="table w-full StaffDirectory">
+                {headings()}
+                {rows()}
+            </table>
+        </div>
     );
 }
 
