@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { UserSuggest, Switch } from 'webapps-react';
-// import UserSuggest from './UserSuggest';
+import { Switch, UserSuggest } from 'webapps-react';
 
 axios.defaults.withCredentials = true;
 
