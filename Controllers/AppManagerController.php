@@ -144,10 +144,10 @@ class AppManagerController extends Controller
         }
         copy($js, $path.$this->slug.'.js');
 
-        if (file_exists($path.$this->slug.'_view.js')) {
-            unlink($path.$this->slug.'_view.js');
+        if (file_exists($path.$this->slug.'_View.js')) {
+            unlink($path.$this->slug.'_View.js');
         }
-        copy($js2, $path.$this->slug.'_view.js');
+        copy($js2, $path.$this->slug.'_View.js');
     }
 
     private function dropAppJS()
@@ -156,8 +156,8 @@ class AppManagerController extends Controller
         if (file_exists($path.$this->slug.'.js')) {
             unlink($path.$this->slug.'.js');
         }
-        if (file_exists($path.$this->slug.'_view.js')) {
-            unlink($path.$this->slug.'_view.js');
+        if (file_exists($path.$this->slug.'_View.js')) {
+            unlink($path.$this->slug.'_View.js');
         }
     }
 
@@ -201,15 +201,15 @@ class AppManagerController extends Controller
             abort(500, 'Apps scheduler table does not exist');
         }
 
-        if (!DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:azure-sync')->first()) {
+        if (DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:azure-sync')->first()) {
             DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:azure-sync')->delete();
         }
         
-        if (!DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:check-last-sync-time')->first()) {
+        if (DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:check-last-sync-time')->first()) {
             DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:check-last-sync-time')->delete();
         }
 
-        if (!DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:delete-trash')->first()) {
+        if (DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:delete-trash')->first()) {
             DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:delete-trash')->delete();
         }
     }

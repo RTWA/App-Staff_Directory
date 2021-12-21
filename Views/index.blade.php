@@ -12,6 +12,6 @@
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div id="StaffDirectory"></div>
 
-        <script src="{{ asset('js/apps/StaffDirectory_view.js') }}"></script>
+        <script src="{{ asset('js/apps/StaffDirectory_View.js') }}"></script>
     </body>
 </html>
