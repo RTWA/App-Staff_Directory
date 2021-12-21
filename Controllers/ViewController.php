@@ -58,7 +58,7 @@ class ViewController extends Controller
         return response()->json([
             'people' => $people,
             'departments' => Department::with('children')->whereNull('department_id')->get(),
-            'me' => Person::with('departments')->where('username', Auth::user()->username)->first()
+            'me' => (Auth::check()) ? Person::with('departments')->where('username', Auth::user()->username)->first() : null
         ], 200);
     }
 

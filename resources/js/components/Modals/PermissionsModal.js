@@ -87,12 +87,24 @@ const PermissionsModal = ({UI, ...props}) => {
                             <table className="table-fixed w-full">
                                 <tbody>
                                     <tr>
-                                        <td className="py-2 pl-4 w-32 font-semibold">Everyone</td>
+                                        <td className="py-2 pl-4 w-60 font-semibold">Everyone <em>(Includes Guests)</em></td>
+                                        <td className="px-6">
+                                            <div className="relative inline-block w-10 mr-2 align-middle select-none">
+                                                <Switch data-permission="guest"
+                                                    checked={permissions.guest || false}
+                                                    onChange={onChange}
+                                                    name="viewPerm_Guest" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr className="bg-gray-200 dark:bg-gray-800 border-t border-b border-gray-200 dark:border-gray-600">
+                                        <td className="py-2 pl-4 font-semibold">All <strong>Authenticated</strong> Users</td>
                                         <td className="px-6">
                                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
                                                 <Switch data-permission="all"
                                                     checked={permissions.all || false}
-                                                    onChange={onChange} />
+                                                    onChange={onChange}
+                                                    name="viewPerm_All" />
                                             </div>
                                         </td>
                                     </tr>
@@ -100,14 +112,15 @@ const PermissionsModal = ({UI, ...props}) => {
                                         groups.map(function (group, i) {
                                             if (group.name !== "Administrators") {
                                                 return (
-                                                    <tr key={i} className={(i % 2) ? 'bg-gray-200 dark:bg-gray-800 border-t border-b border-gray-200 dark:border-gray-600' : ''}>
+                                                    <tr key={i} className={(i % 2) ? '' : 'bg-gray-200 dark:bg-gray-800 border-t border-b border-gray-200 dark:border-gray-600'}>
                                                         <td className="py-2 pl-4">{group.name}</td>
 
                                                         <td className="px-6">
                                                             <div className="relative inline-block w-10 mr-2 align-middle select-none">
                                                                 <Switch data-permission={group.name}
                                                                     checked={permissions[group.name] || false}
-                                                                    onChange={onChange} />
+                                                                    onChange={onChange}
+                                                                    name={`viewPerm_${group.name}`} />
                                                             </div>
                                                         </td>
                                                     </tr>

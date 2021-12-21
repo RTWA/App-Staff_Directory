@@ -19,12 +19,13 @@ use WebApps\Apps\StaffDirectory\Controllers\CustomFieldController;
 use WebApps\Apps\StaffDirectory\Controllers\MasterController;
 use WebApps\Apps\StaffDirectory\Controllers\PhotoController;
 
+Route::get('/view/{publicId}', [ViewController::class, 'get']);
+Route::post('/view', [ViewController::class, 'data']);
+
 // These routes require authentication to access
 Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('/views', [ViewController::class, 'mine']);
-    Route::post('/view', [ViewController::class, 'data']);
-    Route::get('/view/{publicId}', [ViewController::class, 'get']);
     Route::post('/view/{publicId}', [ViewController::class, 'save']);
 
     Route::get('/departments', [DepartmentsController::class, 'all']);
@@ -47,7 +48,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::delete('/person/{person}/department/{department}', [PersonController::class, 'removeFromDepartment']);
     Route::put('/department/{department}/head/{head_id}', [DepartmentsController::class, 'setHead']);
-    
+
     Route::get('/customFields', [CustomFieldController::class, 'all']);
     Route::put('/customFields', [CustomFieldController::class, 'save']);
 
