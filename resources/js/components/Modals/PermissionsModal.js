@@ -17,11 +17,8 @@ const PermissionsModal = ({UI, ...props}) => {
 
     const [groups, setGroups] = useState([]);
 
-    useEffect(() => {
-        axios.get('/api/groups')
-            .then(response => {
-                return response;
-            })
+    useEffect(async () => {
+        await axios.get('/api/groups')
             .then(json => {
                 setGroups(json.data.groups);
             })

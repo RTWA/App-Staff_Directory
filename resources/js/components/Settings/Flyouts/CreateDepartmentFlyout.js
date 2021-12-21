@@ -1,8 +1,7 @@
 import React, { useContext, useState } from 'react';
 import classNames from 'classnames';
 import axios from 'axios';
-import { useToasts } from 'react-toast-notifications';
-import { Button, Input, withWebApps } from 'webapps-react';
+import { Button, Input, useToasts, withWebApps } from 'webapps-react';
 
 import { FlyoutsContext } from '../AppSettings';
 
@@ -68,19 +67,16 @@ const CreateDepartmentFlyout = ({ UI, ...props }) => {
         setParent(e.target.value);
     }
 
-    const createDepartment = () => {
+    const createDepartment = async () => {
         setState('saving');
         let formData = new FormData();
         formData.append('name', name);
         formData.append('department_id', parent);
 
-        axios.post('/api/apps/StaffDirectory/department', formData)
-            .then(response => {
-                return response;
-            })
+        await axios.post('/api/apps/StaffDirectory/department', formData)
             .then(json => {
                 pushDepartment(json.data.department);
-                addToast("Department Created Successfully", { appearance: 'success' });
+                addToast("Department Created Successfully", '', { appearance: 'success' });
                 toggleNew();
                 setState('');
             })

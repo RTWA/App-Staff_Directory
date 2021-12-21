@@ -1,7 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { useToasts } from 'react-toast-notifications';
-import { Button, Input, Loader, Switch, withWebApps } from 'webapps-react';
+import { Button, Input, Loader, Switch, useToasts, withWebApps } from 'webapps-react';
 
 import { CustomFilter, DepartmentFilter, PersonFilter } from './Filters';
 import { PermissionsModal, PreviewModal, TableFieldsModal, UseModal } from './Modals';
@@ -116,13 +115,13 @@ const Views = ({ UI }) => {
         e.preventDefault();
 
         let save = null;
-        addToast('Saving changes, please wait...', { appearance: 'info', autoDismiss: false }, (id) => save = id);
+        addToast('Saving changes, please wait...', '', { appearance: 'info', autoDismiss: false }, (id) => save = id);
 
         let formData = new FormData();
         formData.append('view', JSON.stringify(view));
         await axios.post(`/api/apps/StaffDirectory/view/${view.publicId}`, formData)
             .then(json => {
-                updateToast(save, { appearance: 'success', autoDismiss: true, content: json.data.message });
+                updateToast(save, { appearance: 'success', autoDismiss: true, title: json.data.message });
 
                 setChanged(false);
                 getData();

@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactUserAvatar from 'react-user-avatar';
-import { useToasts } from 'react-toast-notifications';
-import { Input, withWebApps } from 'webapps-react';
+import { Input, useToasts, withWebApps } from 'webapps-react';
 
 import { DatePicker } from '../DatePicker'
 
@@ -16,9 +15,9 @@ const PersonalDetails = ({ UI, ...props }) => {
     const { addToast, updateToast } = useToasts();
     let toastId = '';
 
-    const imageUpload = e => {
+    const imageUpload = async e => {
         if (person.id === 0) {
-            addToast('Please save the record first', { appearence: 'warning', autoDismiss: 5000 });
+            addToast('Please save the record first', '', { appearence: 'warning', autoDismiss: 5000 });
             return;
         }
 
@@ -26,12 +25,12 @@ const PersonalDetails = ({ UI, ...props }) => {
 
         // Check if a file has actually been selected
         if (file !== null) {
-            addToast('Uploading photo...', { appearence: 'info', autoDismiss: false }, id => toastId = id);
+            addToast('Uploading photo...', '', { appearence: 'info', autoDismiss: false }, id => toastId = id);
 
             // Upload the Image 
             let formData = new FormData();
             formData.append('file', file);
-            axios.post(`/api/apps/StaffDirectory/person/${person.id}/photo`, formData)
+            await axios.post(`/api/apps/StaffDirectory/person/${person.id}/photo`, formData)
                 .then(json => {
                     person.local_photo = json.data.local_photo;
                     setPerson({ ...person });
@@ -45,7 +44,7 @@ const PersonalDetails = ({ UI, ...props }) => {
                             appearance: 'success',
                             autoDismiss: true,
                             autoDismissTimeout: 3000,
-                            content: "Photo uploaded!"
+                            title: "Photo uploaded!"
                         }
                     );
                 })
@@ -57,7 +56,7 @@ const PersonalDetails = ({ UI, ...props }) => {
                             appearance: 'error',
                             autoDismiss: true,
                             autoDismissTimeout: 5000,
-                            content: 'Failed to upload photo.'
+                            title: 'Failed to upload photo.'
                         }
                     );
                 })

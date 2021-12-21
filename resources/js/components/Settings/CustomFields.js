@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import classNames from 'classnames';
-import { useToasts } from 'react-toast-notifications';
-import { Button, Input } from 'webapps-react';
+import { Button, Input, useToasts } from 'webapps-react';
 
 const CustomFields = props => {
     const [tab, setTab] = useState(-1);
@@ -11,11 +10,8 @@ const CustomFields = props => {
 
     const { addToast } = useToasts();
 
-    useEffect(() => {
-        axios.get('/api/apps/StaffDirectory/customFields')
-            .then(response => {
-                return response;
-            })
+    useEffect(async () => {
+        await axios.get('/api/apps/StaffDirectory/customFields')
             .then(json => {
                 setCustom(json.data.list);
             })
@@ -25,22 +21,19 @@ const CustomFields = props => {
             });
     }, []);
 
-    const saveData = () => {
+    const saveData = async () => {
         let formData = new FormData();
         formData.append('_method', 'PUT');
         formData.append('fields', JSON.stringify(custom));
-        axios.post('/api/apps/StaffDirectory/customFields', formData)
-            .then(response => {
-                return response;
-            })
+        await axios.post('/api/apps/StaffDirectory/customFields', formData)
             .then(json => {
-                addToast('Custom Fields Saved', { appearance: 'success' });
+                addToast('Custom Fields Saved', '', { appearance: 'success' });
                 setCustom(json.data.list);
             })
             .catch(error => {
                 // TODO: Handle errors
                 console.log(error)
-                addToast('Unable to save Custom Fields!', { appearance: 'error' });
+                addToast('Unable to save Custom Fields!', '', { appearance: 'error' });
             });
     }
 

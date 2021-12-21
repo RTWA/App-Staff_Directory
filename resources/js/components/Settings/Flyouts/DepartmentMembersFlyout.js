@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactUserAvatar from 'react-user-avatar';
 import classNames from 'classnames';
 import axios from 'axios';
 import { withWebApps } from 'webapps-react';
@@ -26,16 +25,13 @@ const DepartmentMembersFlyout = ({ UI, ...props }) => {
         (show) ? 'translate-x-0' : 'translate-x-full'
     )
 
-    const setAsHead = (e, id) => {
+    const setAsHead = async (e, id) => {
         e.preventDefault();
 
         let formData = new FormData()
         formData.append('_method', 'PUT');
 
-        axios.post(`/api/apps/StaffDirectory/department/${department.id}/head/${id}`, formData)
-            .then(response => {
-                return response;
-            })
+        await axios.post(`/api/apps/StaffDirectory/department/${department.id}/head/${id}`, formData)
             .then(json => {
                 department.head_id = id;
                 setDepartment({ ...department });
@@ -47,16 +43,13 @@ const DepartmentMembersFlyout = ({ UI, ...props }) => {
             });
     }
 
-    const remove = (e, _person) => {
+    const remove = async (e, _person) => {
         e.preventDefault();
 
         let formData = new FormData()
         formData.append('_method', 'DELETE');
 
-        axios.post(`/api/apps/StaffDirectory/person/${_person}/department/${department.id}`, formData)
-            .then(response => {
-                return response;
-            })
+        await axios.post(`/api/apps/StaffDirectory/person/${_person}/department/${department.id}`, formData)
             .then(json => {
                 department.people.map(function (p, i) {
                     if (p.id === _person) {
@@ -100,18 +93,11 @@ const DepartmentMembersFlyout = ({ UI, ...props }) => {
                                     : Object(department.people).map(function (person, i) {
                                         return (
                                             <div className="flex flex-row items-center py-2" key={i}>
-                                                {
-                                                    ((person.azure_id !== undefined && person.azure_id !== null) ||
-                                                        (person.local_photo !== undefined && person.local_photo !== null))
-                                                        ? <img key={i}
-                                                            className="inline-block h-10 w-10 rounded-full border-2 border-gray-500 white dark:border-gray-50 mr-4"
-                                                            src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
-                                                            id={`photo-${person.id}`}
-                                                            alt={`${person.forename} ${person.surname} - Photo`} />
-                                                        : <ReactUserAvatar key={i} size="38"
-                                                            className="inline-block rounded-full border-2 border-gray-500 white dark:border-gray-50 mr-4"
-                                                            name={`${person.forename} ${person.surname}`} />
-                                                }
+                                                <img key={i}
+                                                    className="inline-block h-10 w-10 rounded-full border-2 border-gray-500 white dark:border-gray-50 mr-4"
+                                                    src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
+                                                    id={`photo-${person.id}`}
+                                                    alt={`${person.forename} ${person.surname} - Photo`} />
                                                 <div className="flex flex-col justify-evenly">
                                                     <p className="font-semibold">{person.forename} {person.surname}</p>
                                                     {

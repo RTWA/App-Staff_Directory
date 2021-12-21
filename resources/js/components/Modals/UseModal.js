@@ -1,8 +1,7 @@
 import React, { useContext } from 'react';
 import classNames from 'classnames';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { useToasts } from 'react-toast-notifications';
-import { withWebApps } from 'webapps-react';
+import { useToasts, withWebApps } from 'webapps-react';
 
 import { ModalsContext } from '../Views';
 
@@ -77,7 +76,7 @@ const UseModal = ({ UI, ...props }) => {
                                 <li>Go the page you wish to display it on and enter edit mode.</li>
                                 <li>Insert an HTML/Embed option and paste (<kbd>Ctrl</kbd>+<kbd>V</kbd>) the text below.</li>
                             </ol>
-                            <CopyToClipboard text={textarea} onCopy={() => { addToast("Copied to clipboard!", { appearance: 'success' }) }}>
+                            <CopyToClipboard text={textarea} onCopy={() => { addToast("Copied to clipboard!", '', { appearance: 'success' }) }}>
                                 <textarea className="mt-2 w-full bg-gray-200 dark:bg-gray-700" value={textarea} readOnly rows="4" />
                             </CopyToClipboard>
                         </div>

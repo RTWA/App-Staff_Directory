@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactUserAvatar from 'react-user-avatar';
 
 const AvatarStack = props => {
     const { people, fade, fadeTo, darkFadeTo } = props;

@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactUserAvatar from 'react-user-avatar';
 import { withWebApps } from 'webapps-react';
 
 const CardTile = ({ UI, ...props }) => {

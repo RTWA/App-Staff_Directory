@@ -1,7 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { useToasts } from 'react-toast-notifications';
-import { Button, Input, Loader, Switch, withWebApps } from 'webapps-react';
+import { Button, Input, Loader, Switch, useToasts, withWebApps } from 'webapps-react';
 
 import { CreateDepartmentFlyout, DepartmentFlyout } from './Flyouts';
 
@@ -23,12 +22,12 @@ const AppSettings = UI => {
 
     const { addToast } = useToasts();
 
-    useEffect(() => {
-        loadData();
+    useEffect(async () => {
+        await loadData();
     }, []);
 
     const loadData = () => {
-        axios.get('/api/apps/StaffDirectory/departments')
+        await axios.get('/api/apps/StaffDirectory/departments')
             .then(json => {
                 setDepartments(json.data.departments);
             })
@@ -44,7 +43,7 @@ const AppSettings = UI => {
             "app.StaffDirectory.deleteRecord.sendNotification",
             "app.StaffDirectory.deleteRecord.notifyTo"
         ]));
-        axios.post('/api/setting', formData)
+        await axios.post('/api/setting', formData)
             .then(json => {
                 notifications.newRecord = json.data["app.StaffDirectory.newRecord.sendNotification"];
                 notifications.newNotifyTo = json.data["app.StaffDirectory.newRecord.notifyTo"];
@@ -112,7 +111,7 @@ const AppSettings = UI => {
         setNotifications({ ...notifications });
     }
 
-    const onChange = e => {
+    const onChange = async e => {
         states[key] = 'saving';
         setStates({ ...states });
 
@@ -133,10 +132,7 @@ const AppSettings = UI => {
         let formData = new FormData();
         formData.append('_method', 'PUT');
         formData.append('value', value);
-        axios.post(`/api/setting/${key}`, formData)
-            .then(response => {
-                return response;
-            })
+        await axios.post(`/api/setting/${key}`, formData)
             .then(json => {
                 states[key] = 'saved';
                 setStates({ ...states });
@@ -158,7 +154,7 @@ const AppSettings = UI => {
             });
     }
 
-    const saveDepartment = () => {
+    const saveDepartment = async () => {
         department.state = 'saving';
         setDepartment({ ...department });
 
@@ -168,12 +164,9 @@ const AppSettings = UI => {
         formData.append('department_id', department.department_id);
         formData.append('head_id', department.head_id);
 
-        axios.post(`/api/apps/StaffDirectory/department/${department.id}`, formData)
-            .then(response => {
-                return response;
-            })
+        await axios.post(`/api/apps/StaffDirectory/department/${department.id}`, formData)
             .then(json => {
-                addToast('Department Updated Successfully', { appearance: 'success' });
+                addToast('Department Updated Successfully', '', { appearance: 'success' });
                 setDepartments(json.data.departments);
                 setDepartment('');
                 toggleManage();
@@ -184,15 +177,12 @@ const AppSettings = UI => {
             });
     }
 
-    const deleteDepartment = () => {
+    const deleteDepartment = async () => {
         let formData = new FormData();
         formData.append('_method', 'DELETE');
-        axios.post(`/api/apps/StaffDirectory/department/${department.id}`, formData)
-            .then(response => {
-                return response;
-            })
+        await axios.post(`/api/apps/StaffDirectory/department/${department.id}`, formData)
             .then(json => {
-                addToast('Department Deleted Successfully', { appearance: 'success' });
+                addToast('Department Deleted Successfully', '', { appearance: 'success' });
                 setDepartments(json.data.departments);
                 setDepartment('');
                 toggleManage();
@@ -203,10 +193,12 @@ const AppSettings = UI => {
             });
     }
 
-    const installSampleData = () => {
-        axios.get('/api/apps/StaffDirectory/departments/sample');
-        axios.get('/api/apps/StaffDirectory/people/sample');
-        loadData();
+    const installSampleData = async () => {
+        await axios.get('/api/apps/StaffDirectory/departments/sample');
+        await axios.get('/api/apps/StaffDirectory/people/sample')
+        .then(r => {
+            await loadData();
+        });
     }
 
     if (departments === null) {

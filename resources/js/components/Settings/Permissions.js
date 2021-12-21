@@ -10,11 +10,8 @@ const Permissions = () => {
     const [permitted, setPermitted] = useState([]);
     const [users, setUsers] = useState([]);
 
-    useEffect(() => {
-        axios.get('/api/groups')
-            .then(response => {
-                return response;
-            })
+    useEffect(async () => {
+        await axios.get('/api/groups')
             .then(json => {
                 setGroups(json.data.groups);
             })
@@ -22,10 +19,7 @@ const Permissions = () => {
                 // TODO: Handle errors
                 console.log(error);
             });
-        axios.get('/api/users')
-            .then(response => {
-                return response;
-            })
+        await axios.get('/api/users')
             .then(json => {
                 setUsers(json.data.users);
             })
@@ -38,10 +32,7 @@ const Permissions = () => {
         let formData1 = new FormData();
         formData1.append('permission', 'app.StaffDirectory.%');
 
-        axios.post('/api/permissions/search', formData1)
-            .then(response => {
-                return response;
-            })
+        await axios.post('/api/permissions/search', formData1)
             .then(json => {
                 setPermissions(json.data.permissions);
             })
@@ -54,10 +45,7 @@ const Permissions = () => {
         formData.append('isLike', true);
         formData.append('permission', 'app.StaffDirectory.%');
 
-        axios.post('/api/permitted', formData)
-            .then(response => {
-                return response;
-            })
+        await axios.post('/api/permitted', formData)
             .then(json => {
                 setPermitted(json.data.users);
             })
@@ -67,7 +55,7 @@ const Permissions = () => {
             });
     }, []);
 
-    const handleChange = e => {
+    const handleChange = async e => {
         let group = e.target.dataset.group;
         let perm = e.target.dataset.perm;
         let user = e.target.dataset.user;
@@ -77,7 +65,7 @@ const Permissions = () => {
             formData.append('user', user);
             formData.append('permission', perm);
 
-            axios.post('/api/permissions/user', formData)
+            await axios.post('/api/permissions/user', formData)
                 .then(json => {
                     let _permitted = [];
                     permitted.map(function (u,) { _permitted.push(u); });
@@ -93,7 +81,7 @@ const Permissions = () => {
             formData.append('group', group);
             formData.append('permission', perm);
 
-            axios.post('/api/permissions/group', formData)
+            await axios.post('/api/permissions/group', formData)
                 .then(json => {
                     let _groups = [];
                     groups.map(function (g) { _groups.push(g); });

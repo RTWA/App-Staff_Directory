@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useToasts } from 'react-toast-notifications';
 import Moment from 'moment';
 import { Prompt } from 'react-router';
-import { Button, ConfirmDeleteButton, Loader } from 'webapps-react';
+import { Button, ConfirmDeleteButton, Loader, useToasts } from 'webapps-react';
 
 import { CustomFieldDetails, DepartmentDetails, EmploymentDetails, PersonalDetails } from './Staff/index';
 
@@ -16,20 +15,17 @@ const Manage = () => {
 
     const { addToast, updateToast } = useToasts();
 
-    useEffect(() => {
-        getPeople();
-        getData();
+    useEffect(async () => {
+        await getPeople();
+        await getData();
     }, []);
 
     useEffect(() => {
         window.onbeforeunload = (changed) ? () => true : undefined;
     }, [changed]);
 
-    const getPeople = () => {
-        axios.get('/api/apps/StaffDirectory/peopleList')
-            .then(response => {
-                return response;
-            })
+    const getPeople = async () => {
+        await axios.get('/api/apps/StaffDirectory/peopleList')
             .then(json => {
                 setPeople(json.data.list);
             })
@@ -39,11 +35,8 @@ const Manage = () => {
             });
     }
 
-    const getData = () => {
-        axios.get('/api/apps/StaffDirectory/departmentList')
-            .then(response => {
-                return response;
-            })
+    const getData = async () => {
+        await axios.get('/api/apps/StaffDirectory/departmentList')
             .then(json => {
                 setDepartments(json.data.list);
             })
@@ -51,10 +44,7 @@ const Manage = () => {
                 // TODO: handle errors
                 console.log(error);
             });
-        axios.get('/api/apps/StaffDirectory/customFields')
-            .then(response => {
-                return response;
-            })
+        await axios.get('/api/apps/StaffDirectory/customFields')
             .then(json => {
                 setCustom(json.data.list);
             })
@@ -64,20 +54,17 @@ const Manage = () => {
             });
     }
 
-    const savePerson = e => {
+    const savePerson = async e => {
         e.preventDefault();
 
         let save = null;
-        addToast('Saving changes, please wait...', { appearance: 'info', autoDismiss: false }, (id) => save = id);
+        addToast('Saving changes, please wait...', '', { appearance: 'info', autoDismiss: false }, (id) => save = id);
 
         let formData = new FormData();
         formData.append('person', JSON.stringify(person));
-        axios.post(`/api/apps/StaffDirectory/person/${person.id}`, formData)
-            .then(response => {
-                return response;
-            })
+        await axios.post(`/api/apps/StaffDirectory/person/${person.id}`, formData)
             .then(json => {
-                updateToast(save, { appearance: 'success', autoDismiss: true, content: json.data.message });
+                updateToast(save, { appearance: 'success', autoDismiss: true, title: json.data.message });
 
                 setChanged(false);
                 getPeople();
@@ -88,17 +75,14 @@ const Manage = () => {
             });
     }
 
-    const deletePerson = e => {
+    const deletePerson = async e => {
         if (!confirm("This action cannot be undone. Are you sure you wish to delete this record?")) {
             return;
         }
 
         let formData = new FormData();
         formData.append('_method', 'DELETE');
-        axios.post(`/api/apps/StaffDirectory/person/${person.id}`, formData)
-            .then(response => {
-                return response;
-            })
+        await axios.post(`/api/apps/StaffDirectory/person/${person.id}`, formData)
             .then(json => {
                 setChanged(false);
                 setPerson({ departments: [{}], id: 0, customFields: [{}] });
@@ -110,7 +94,7 @@ const Manage = () => {
             });
     }
 
-    const select = e => {
+    const select = async e => {
         if (changed) {
             if (!confirm("You have unsaved changes, are you sure you want to change person?")) {
                 return;
@@ -118,10 +102,7 @@ const Manage = () => {
         }
 
         if (e.target.value !== "") {
-            axios.get(`/api/apps/StaffDirectory/person/${e.target.value}`)
-                .then(response => {
-                    return response;
-                })
+            await axios.get(`/api/apps/StaffDirectory/person/${e.target.value}`)
                 .then(json => {
                     setChanged(false);
                     setPerson(json.data.person);

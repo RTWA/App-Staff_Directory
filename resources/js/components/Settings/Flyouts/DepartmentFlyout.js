@@ -22,12 +22,9 @@ const DepartmentFlyout = ({ UI, ...props }) => {
         modals, toggleManage,
     } = useContext(FlyoutsContext);
 
-    useEffect(() => {
+    useEffect(async () => {
         if (department.head_id !== null && department.head_id !== undefined) {
-            axios.get(`/api/apps/StaffDirectory/person/${department.head_id}`)
-                .then(response => {
-                    return response;
-                })
+            await axios.get(`/api/apps/StaffDirectory/person/${department.head_id}`)
                 .then(json => {
                     setHead(json.data.person);
                 })
