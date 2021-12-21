@@ -38,6 +38,6 @@
     "react-select": "^4.3.1",
     "react-toast-notifications": "^2.5.1",
     "react-user-avatar": "^1.10.0",
-    "webapps-react": "^1.7.3"
+    "webapps-react": "^1.7.4"
   }
 }
