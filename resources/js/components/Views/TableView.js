@@ -80,7 +80,7 @@ const TableView = props => {
                     <td key={`photo-${person.id}`} className="photo">
                         <img src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
                             id={`photo-${person.id}`} className="object-cover my-1 h-10 w-full"
-                            alt={`${person.forename} ${person.surname} - Photo`} />
+                            alt={`${person.forename} ${person.surname} - Photo`} loading="lazy" />
                     </td>);
             }
 

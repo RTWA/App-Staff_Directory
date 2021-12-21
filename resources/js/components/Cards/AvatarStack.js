@@ -34,16 +34,11 @@ const AvatarStack = props => {
                 {
                     Object(people).map(function (person, i) {
                         return (
-                            ((person.azure_id !== undefined && person.azure_id !== null) ||
-                                (person.local_photo !== undefined && person.local_photo !== null))
-                                ? (
-                                    <img key={i}
-                                        className="inline-block h-10 w-10 rounded-full border-2 border-gray-500 white dark:border-gray-50"
-                                        src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
-                                        id={`photo-${person.id}`}
-                                        alt={`${person.forename} ${person.surname} - Photo`} />
-                                )
-                                : <ReactUserAvatar key={i} size="10" name={`${person.forename} ${person.surname}`} />
+                            <img key={i}
+                                className="inline-block h-10 w-10 rounded-full border-2 border-gray-500 white dark:border-gray-50"
+                                src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
+                                id={`photo-${person.id}`}
+                                alt={`${person.forename} ${person.surname} - Photo`} loading="lazy" />
                         )
                     })
                 }

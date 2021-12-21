@@ -81,7 +81,7 @@ const CardTile = ({ UI, ...props }) => {
                 <img className="h-44 w-full"
                     src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
                     id={`photo-${person.id}`}
-                    alt={`${person.forename} ${person.surname} - Photo`} />
+                    alt={`${person.forename} ${person.surname} - Photo`} loading="lazy" />
             </div>
             <div className={`-mt-18 sm:mt-0 user-info inline-flex flex-col py-1 sm:py-6 px-2 relative h-44 w-full bg-${UI.theme}-600 text-white text-center border-t-4 sm:border-t-0 sm:border-l-4 border-gray-800`}>
                 {fullName()}

@@ -22,7 +22,7 @@ const GridTile = ({ UI, ...props }) => {
                     <img className={`h-44 ${(person.onLeave === "1") ? 'opacity-40' : ''}`}
                         src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
                         id={`photo-${person.id}`}
-                        alt={`${person.forename} ${person.surname} - Photo`} />
+                        alt={`${person.forename} ${person.surname} - Photo`} loading="lazy" />
                     <p className={`absolute bottom-0 w-full py-1 text-center font-medium text-white bg-${UI.theme}-600 bg-opacity-60 text-sm`}>
                         {person.forename} {person.surname}
                     </p>
