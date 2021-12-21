@@ -132,7 +132,7 @@ class AppManagerController extends Controller
     private function copyAppJS()
     {
         $js = __DIR__.'/../public/StaffDirectory.js';
-        $js2 = __DIR__.'/../public/StaffDirectory_view.js';
+        $js2 = __DIR__.'/../public/StaffDirectory_View.js';
         $path = public_path("js/apps/");
 
         if (!file_exists($path)) {
