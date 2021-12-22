@@ -187,7 +187,7 @@ const Views = ({ UI }) => {
         <div className="flex flex-col 2xl:flex-row">
             <div className="w-full 2xl:w-10/12 2xl:pr-2 py-6">
                 <div className="w-full flex flex-row mb-5">
-                    <h6 className="text-gray-600 dark:text-gray-400 text-2xl font-bold 2xl:ml-6">Manage Views</h6>
+                    <h6 className="text-gray-600 dark:text-gray-400 text-2xl font-bold">Manage Views</h6>
                     <Button style="outline" className="ml-auto" onClick={(e) => {
                         e.preventDefault();
                         toggleModals('preview');
@@ -318,7 +318,7 @@ const Views = ({ UI }) => {
             <div className="w-full 2xl:w-2/12 2xl:pl-2 py-6">
                 <div className="flex flex-col sm:flex-row 2xl:flex-col">
                     <div className="flex flex-col w-full sm:w-6/12 2xl:w-full sm:pr-2 2xl:pr-0 mb-4 sm:mb-0">
-                        <h6 className="text-gray-600 dark:text-gray-400 text-xl font-semibold 2xl:ml-6 mb-4 2xl:mb-8">Default Views</h6>
+                        <h6 className="text-gray-600 dark:text-gray-400 text-xl font-semibold mb-4 2xl:mb-8">Default Views</h6>
                         <ul className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded divide-y overflow-hidden">
                             <li className="relative block p-4 hover:bg-gray-50 hover:text-indigo-600 dark:hover:bg-gray-700 dark:hover:text-text-indigo-500">
                                 <a href="#" id="all" onClick={loadView}>All Staff</a>
@@ -327,7 +327,7 @@ const Views = ({ UI }) => {
                     </div>
 
                     <div className="flex flex-col w-full sm:w-6/12 2xl:w-full sm:pl-2 2xl:pl-0">
-                        <h6 className="text-gray-600 dark:text-gray-400 text-xl font-semibold 2xl:ml-6 mb-4 2xl:my-8">My Custom Views</h6>
+                        <h6 className="text-gray-600 dark:text-gray-400 text-xl font-semibold mb-4 2xl:my-8">My Custom Views</h6>
                         <ul className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded divide-y overflow-hidden">
                             {
                                 (views.length !== 0)
