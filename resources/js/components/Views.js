@@ -237,7 +237,7 @@ const Views = ({ UI }) => {
                     </div>
                     <div className="flex flex-col lg:flex-row items-center my-2">
                         <div className="w-full lg:w-6/12 flex flex-col xl:flex-row py-2 px-4">
-                            <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="display">Records to display</label>
+                            <label className="w-full xl:w-5/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="display">Records to display</label>
                             <select className="input-field" id="display" value={view.display} onChange={fieldChange}>
                                 <option value="all">Everyone</option>
                                 <option value="department">A Department</option>
@@ -252,7 +252,7 @@ const Views = ({ UI }) => {
                             </select>
                         </div>
                         <div className="w-full lg:w-6/12 flex flex-col xl:flex-row py-2 px-4">
-                            <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="display_type">Display Type</label>
+                            <label className="w-full xl:w-5/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="display_type">Display Type</label>
                             <select className="input-field" id="display_type" value={view.display_type} onChange={fieldChange}>
                                 <option value="grid">3D Flip Photo Grid</option>
                                 <option value="table">Table</option>
