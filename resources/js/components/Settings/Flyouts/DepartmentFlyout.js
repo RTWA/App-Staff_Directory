@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { FlyoutsContext } from '../AppSettings';
-import { Button, ConfirmDeleteButton, Input, withWebApps } from 'webapps-react';
+import { Button, ConfirmDeleteButton, Input, Select, withWebApps } from 'webapps-react';
 import { AvatarPill, AvatarStack } from '../../Cards';
 import DepartmentMembersFlyout from './DepartmentMembersFlyout';
 
@@ -119,105 +119,85 @@ const DepartmentFlyout = ({ UI, ...props }) => {
                         <div className="mt-6 relative flex-1 px-4 sm:px-6">
                             <div className="absolute inset-0 px-4 sm:px-6">
                                 <div className="h-full" aria-hidden="true">
-                                    <div className="flex flex-auto">
-                                        <div className="w-full lg:w-3/12">
-                                            <label className="block py-2" htmlFor="departmentName">Department Name</label>
-                                        </div>
-                                        <div className="w-full lg:w-9/12">
-                                            <Input name="departmentName"
-                                                type="text"
-                                                id="name_gf"
-                                                value={department.name || ''}
-                                                onChange={renameDepartment}
-                                                error={department.error || ''}
-                                                state={department.state || ''} />
-                                        </div>
-                                    </div>
-                                    <div className="mt-6 flex flex-auto">
-                                        <div className="w-full lg:w-3/12">
-                                            <label className="block py-2" htmlFor="parentDep">Parent Department</label>
-                                        </div>
-                                        <div className="w-full lg:w-9/12">
-                                            {
-                                                (departments.length === 0) ?
-                                                    (
-                                                        <select id="newDepDepList" value={department.department_id || ''} onChange={onParentChange} className="input-field">
-                                                            <option value="">No departments have been created yet</option>
-                                                        </select>
-                                                    ) :
-                                                    (
-                                                        <select id="newDepDepList" value={department.department_id || ''} onChange={onParentChange} className="input-field">
-                                                            <option value="">No Parent Department</option>
-                                                            {
-                                                                Object(departments).map(function (dep, i) {
-                                                                    let _return = [];
-                                                                    if (dep.id !== department.id) {
-                                                                        _return.push(
-                                                                            <option key={i} value={dep.id}>{dep.name}</option>
-                                                                        );
-                                                                    }
+                                    <Input
+                                        id="name_gf"
+                                        name="departmentName"
+                                        label="Department Name"
+                                        type="text"
+                                        value={department.name || ''}
+                                        onChange={renameDepartment}
+                                        error={department.error || ''}
+                                        state={department.state || ''} />
+                                    <Select
+                                        id="newDepList"
+                                        name="newDepList"
+                                        label="Parent Department"
+                                        value={department.department_id || ''}
+                                        onChange={onParentChange}>
+                                        {
+                                            (departments.length === 0)
+                                                ? <option value="">No departments have been created yet</option>
+                                                : <option value="">No Parent Department</option>
+                                        }
+                                        {
+                                            (departments.length !== 0)
+                                                ? (
+                                                    Object(departments).map(function (dep, i) {
+                                                        let _return = [];
+                                                        if (dep.id !== department.id) {
+                                                            _return.push(
+                                                                <option key={i} value={dep.id}>{dep.name}</option>
+                                                            );
+                                                        }
 
-                                                                    if (dep.childrenCount !== 0) {
-                                                                        dep.children.map(function (sub, si) {
-                                                                            if (department.id !== sub.id) {
-                                                                                _return.push(
-                                                                                    <option key={`${i}-${si}`} value={sub.id}>{dep.name} - {sub.name}</option>
-                                                                                );
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                    return _return;
-                                                                })
-                                                            }
-                                                        </select>
+                                                        if (dep.childrenCount !== 0) {
+                                                            dep.children.map(function (sub, si) {
+                                                                if (department.id !== sub.id) {
+                                                                    _return.push(
+                                                                        <option key={`${i}-${si}`} value={sub.id}>{dep.name} - {sub.name}</option>
+                                                                    );
+                                                                }
+                                                            });
+                                                        }
+                                                        return _return;
+                                                    })
+                                                ) : null
+                                        }
+                                    </Select>
+                                    {
+                                        (department.people !== undefined && department.people.length !== 0) ?
+                                            (
+                                                <div className="mt-6">
+                                                    <div className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Members</div>
+                                                    <div className="w-full">
+                                                        <AvatarStack people={department.people} fade={true} fadeTo="white" darkFadeTo="gray-900" />
+                                                        <a href="#" onClick={(e) => { e.preventDefault(); setShowMembers(true); }} className="text-sm">View all {department.people_count} members</a>
+                                                    </div>
+                                                </div>
+                                            )
+                                            : null
+                                    }
+                                    <div className="mt-6">
+                                        <div className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Department Head</div>
+                                        <div className="w-full">
+                                            {
+                                                (department.head_id !== null && department.head_id !== undefined) ?
+                                                    (
+                                                        <>
+                                                            <AvatarPill person={head} />
+                                                            <div className="flex text-sm">
+                                                                <a href="#" onClick={showSetHead} className="mr-2">Change Department Head</a>
+                                                                <span>|</span>
+                                                                <a href="#" className="ml-2 text-red-500" onClick={removeHead}>Remove Department Head</a>
+                                                            </div>
+                                                        </>
+                                                    )
+                                                    : (
+                                                        <div className="flex text-sm">
+                                                            <a href="#" onClick={showSetHead} className="mt-3 text-orange-500">Set Department Head</a>
+                                                        </div>
                                                     )
                                             }
-                                        </div>
-                                    </div>
-                                    <div className="mt-6 flex flex-auto">
-                                        {
-                                            (department.people !== undefined && department.people.length !== 0) ?
-                                                (
-                                                    <div className="flex flex-auto">
-                                                        <div className="w-full lg:w-3/12">
-                                                            <span className="block py-2">Members</span>
-                                                        </div>
-                                                        <div className="w-full lg:w-9/12">
-                                                            <AvatarStack people={department.people} fade={true} fadeTo="white" darkFadeTo="gray-900" />
-                                                            <a href="#" onClick={(e) => { e.preventDefault(); setShowMembers(true); }} className="text-sm">View all {department.people_count} members</a>
-                                                        </div>
-                                                    </div>
-                                                )
-                                                : null
-                                        }
-                                    </div>
-                                    <div className="mt-6 flex flex-auto">
-
-                                        <div className="flex flex-auto">
-                                            <div className="w-full lg:w-3/12">
-                                                <span className="block py-2">Department Head</span>
-                                            </div>
-                                            <div className="w-full lg:w-9/12">
-                                                {
-                                                    (department.head_id !== null && department.head_id !== undefined) ?
-                                                        (
-                                                            <>
-                                                                <AvatarPill person={head} />
-                                                                <div className="flex text-sm">
-                                                                    <a href="#" onClick={showSetHead} className="mr-2">Change Department Head</a>
-                                                                    <span>|</span>
-                                                                    <a href="#" className="ml-2 text-red-500" onClick={removeHead}>Remove Department Head</a>
-                                                                </div>
-                                                            </>
-                                                        )
-                                                        : (
-                                                            <div className="flex text-sm">
-                                                                <a href="#" onClick={showSetHead} className="mt-3 text-orange-500">Set Department Head</a>
-                                                            </div>
-                                                        )
-                                                }
-
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import classNames from 'classnames';
 import { CustomSelect } from '../Selects';
 
 const CustomFilter = props => {
@@ -6,7 +7,8 @@ const CustomFilter = props => {
         custom,
         field,
         onChange,
-        value
+        value,
+        labelClassName,
     } = props;
 
     if (!props.display) {
@@ -33,11 +35,19 @@ const CustomFilter = props => {
         return options;
     }
 
+    const labelClasses = classNames(
+        'block',
+        'mb-2',
+        'text-sm',
+        'font-medium',
+        'text-gray-700',
+        'dark:text-gray-300',
+        labelClassName,
+    )
+
     return (
-        <div className="w-full flex flex-col xl:flex-row py-4 px-4">
-            <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="custom_select">
-                Select the {chosen.label} you wish to display
-            </label>
+        <div className="mb-6">
+            <label className={labelClasses}  htmlFor="custom_select">Select the {chosen.label} you wish to display</label>
             <CustomSelect
                 name="custom_select"
                 id="custom_select"

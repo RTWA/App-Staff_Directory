@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import classNames from 'classnames';
 import axios from 'axios';
-import { Button, Input, useToasts, withWebApps } from 'webapps-react';
+import { Button, Input, Select, useToasts, withWebApps } from 'webapps-react';
 
 import { FlyoutsContext } from '../AppSettings';
 
@@ -99,45 +99,47 @@ const CreateDepartmentFlyout = ({ UI, ...props }) => {
                         <div className="mt-6 relative flex-1 px-4 sm:px-6">
                             <div className="absolute inset-0 px-4 sm:px-6">
                                 <div className="h-full" aria-hidden="true">
-                                    <p className="text-gray-500">Department Name</p>
-                                    <Input name="name"
-                                        type="text"
+                                    <Input
                                         id="name_cgf"
+                                        name="name"
+                                        label="Department Name"
+                                        type="text"
                                         value={name}
                                         onChange={typeValue}
                                         error={error}
                                         state={state} />
-                                    <p className="mt-6 text-gray-500">Parent Department</p>
-                                    {
-                                        (departments.length === 0) ?
-                                            (
-                                                <select id="newDepDepList" value={parent} onChange={onParentChange} className="input-field">
-                                                    <option value="">No departments have been created yet</option>
-                                                </select>
-                                            ) :
-                                            (
-                                                <select id="newDepDepList" value={parent} onChange={onParentChange} className="input-field">
-                                                    <option value="">No Parent Department</option>
-                                                    {
-                                                        Object(departments).map(function (department, i) {
-                                                            let _return = [];
-                                                            _return.push(
-                                                                <option key={i} value={department.id}>{department.name}</option>
-                                                            );
+                                    <Select
+                                        id="newDepList"
+                                        name="newDepList"
+                                        label="Parent Department"
+                                        value={parent}
+                                        onChange={onParentChange}>
+                                        {
+                                            (departments.length === 0)
+                                                ? <option value="">No departments have been created yet</option>
+                                                : <option value="">No Parent Department</option>
+                                        }
+                                        {
+                                            (departments.length !== 0)
+                                                ? (
+                                                    Object(departments).map(function (department, i) {
+                                                        let _return = [];
+                                                        _return.push(
+                                                            <option key={i} value={department.id}>{department.name}</option>
+                                                        );
 
-                                                            if (department.childrenCount !== 0) {
-                                                                department.children.map(function (sub, si) {
-                                                                    _return.push(
-                                                                        <option key={`${i}-${si}`} value={sub.id}>{department.name} - {sub.name}</option>
-                                                                    );
-                                                                });
-                                                            }
-                                                            return _return;
-                                                        })
-                                                    }
-                                                </select>
-                                            )
-                                    }
+                                                        if (department.childrenCount !== 0) {
+                                                            department.children.map(function (sub, si) {
+                                                                _return.push(
+                                                                    <option key={`${i}-${si}`} value={sub.id}>{department.name} - {sub.name}</option>
+                                                                );
+                                                            });
+                                                        }
+                                                        return _return;
+                                                    })
+                                                ) : null
+                                        }
+                                    </Select>
                                 </div>
                             </div>
                         </div>

@@ -87,56 +87,49 @@ const PersonalDetails = ({ UI, ...props }) => {
                 }
             </div>
             <section>
-                <p className="text-xl font-semibold my-2 ml-0 text-center sm:text-left mt-4 sm:ml-24 sm:-mt-0">{person.forename || 'Creating'} {person.surname || 'New Record'}</p>
-                <div className="flex flex-col sm:flex-row mt-2 sm:mt-6">
-                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-1 px-2">
-                        <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="forename">Forename</label>
-                        <Input name="forename"
-                            type="text"
-                            id="forename"
-                            value={person.forename || ''}
-                            onChange={change} />
-                    </div>
-                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-1 px-2">
-                        <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="surname">Surname</label>
-                        <Input name="surname"
-                            type="text"
-                            id="surname"
-                            value={person.surname || ''}
-                            onChange={change} />
-                    </div>
-                </div>
-                <div className="flex flex-col sm:flex-row">
-                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-1 px-2">
-                        <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="username">Username</label>
-                        <Input name="username"
-                            type="text"
-                            id="username"
-                            value={person.username || ''}
-                            onChange={change} />
-                    </div>
-                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-1 px-2">
-                        <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="employee_id">Employee ID</label>
-                        <Input name="employee_id"
-                            type="text"
-                            id="employee_id"
-                            value={person.employee_id || ''}
-                            onChange={change} />
-                    </div>
-                </div>
-                <div className="flex flex-col sm:flex-row">
-                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-1 px-2">
-                        <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="email">Email Address</label>
-                        <Input name="email"
-                            type="text"
-                            id="email"
-                            value={person.email || ''}
-                            onChange={change} />
-                    </div>
-                    <div className="w-full sm:w-6/12 flex flex-col xl:flex-row py-1 px-2">
-                        <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="employee_id">Start Date</label>
-                        <DatePicker value={person.startDate || ''} onDateChange={dateChange} />
-                    </div>
+                <p className="text-xl font-semibold my-2 ml-0 text-center sm:text-left mt-4 sm:ml-24 sm:-mt-0 sm:mb-8">{person.forename || 'Creating'} {person.surname || 'New Record'}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+                    <Input
+                        id="forename"
+                        name="forename"
+                        label="Forename"
+                        type="text"
+                        value={person.forename || ''}
+                        onChange={change} />
+                    <Input
+                        id="surname"
+                        name="surname"
+                        label="Surname"
+                        type="text"
+                        value={person.surname || ''}
+                        onChange={change} />
+                    <Input
+                        id="username"
+                        name="username"
+                        label="Username"
+                        type="text"
+                        value={person.username || ''}
+                        onChange={change} />
+                    <Input
+                        id="employee_id"
+                        name="employee_id"
+                        label="Employee ID"
+                        type="text"
+                        value={person.employee_id || ''}
+                        onChange={change} />
+                    <Input
+                        id="email"
+                        name="email"
+                        label="Email Address"
+                        type="text"
+                        value={person.email || ''}
+                        onChange={change} />
+                    <DatePicker
+                        id="employee_id"
+                        name="employee_id"
+                        label="Start Date"
+                        value={person.startDate || ''}
+                        onDateChange={dateChange} />
                 </div>
             </section>
         </div>

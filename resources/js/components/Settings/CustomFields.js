@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import classNames from 'classnames';
-import { Button, Input, useToasts } from 'webapps-react';
+import { Button, Input, Select, useToasts } from 'webapps-react';
 
 const CustomFields = props => {
     const [tab, setTab] = useState(-1);
@@ -79,7 +79,7 @@ const CustomFields = props => {
     }
 
     const paneClass = id => classNames(
-        'px-4',
+        'p-4',
         'bg-white',
         'dark:bg-gray-800',
         (tab === id) ? 'block' : 'hidden'
@@ -100,22 +100,29 @@ const CustomFields = props => {
                                 <p className="flex-1 p-4" onClick={() => toggle(i)}>Custom Field {i + 1}: {field.label}</p>
                             </div>
                             <div className={paneClass(i)}>
-                                <div className="flex flex-col xl:flex-row py-4">
-                                    <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base">Field Type</label>
-                                    <select name="type" value={field.type} data-for={i} onChange={onChange} className="input-field">
+                                <Select 
+                                    id="type"
+                                    name="type"
+                                    label="Field Type"
+                                    value={field.type}
+                                    data-for={i}
+                                    onChange={onChange}>
                                         <option value="">Unused</option>
                                         <option value="text">Text Box</option>
                                         <option value="select">Select List</option>
-                                    </select>
-                                </div>
-                                <div className={`flex flex-col xl:flex-row py-4 ${(field.type === "select" || field.type === "text") ? '' : 'hidden'}`}>
-                                    <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base">Field Name</label>
-                                    <Input type="text" name="label" value={field.label} data-for={i} onChange={onChange} />
-                                </div>
-                                <div className={`flex flex-col xl:flex-row py-4 ${(field.type === "select") ? '' : 'hidden'}`}>
-                                    <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base">Select Options</label>
+                                    </Select>
+                                <Input 
+                                    id="label"
+                                    name="label"
+                                    label="Field Name"
+                                    type="text" 
+                                    value={field.label}
+                                    data-for={i}
+                                    onChange={onChange} />
+                                <div className={`mb-6 ${(field.type === "select") ? '' : 'hidden'}`}>
+                                    <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Select Options</label>
                                     <div className="w-full">
-                                        <textarea name="options" className="input-field" onChange={optChange} data-for={i} rows={field.options.length} value={field.options.join("\n")} />
+                                        <textarea name="options" className="w-full bg-gray-50 border-2 border-gray-300 text-gray-900 outline-none text-sm rounded-lg block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" onChange={optChange} data-for={i} rows={field.options.length} value={field.options.join("\n")} />
                                         <small id={`${i}Help`} className="text-gray-500 text-sm">
                                             Type each option on a new line. Do not re-order existing options.
                                         </small>

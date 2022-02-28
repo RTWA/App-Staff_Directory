@@ -1,22 +1,32 @@
 import React from 'react';
+import classNames from 'classnames';
 import { PersonSelect } from '../Selects';
 
 const PersonFilter = props => {
     const {
         people,
         onChange,
-        value
+        value,
+        labelClassName,
     } = props;
+
+    const labelClasses = classNames(
+        'block',
+        'mb-2',
+        'text-sm',
+        'font-medium',
+        'text-gray-700',
+        'dark:text-gray-300',
+        labelClassName,
+    )
 
     if (!props.display) {
         return null;
     }
 
     return (
-        <div className="w-full flex flex-col xl:flex-row py-4 px-4">
-            <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="person_select">
-                Select the person you wish to display
-            </label>
+        <div className="mb-6">
+            <label className={labelClasses} htmlFor="person_select">Select the person you wish to display</label>
             <PersonSelect
                 name="person_select"
                 id="person_select"

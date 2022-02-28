@@ -13,7 +13,7 @@ const DepartmentDetails = props => {
                     Object.keys(person.departments).map(function (d, i) {
                         let department = person.departments[d];
                         return (
-                            <div className="w-full flex flex-col items-center xl:flex-row my-2 p-2 sm:py-0 border sm:border-0 border-gray-200 dark:border-gray-700 rounded">
+                            <div className="w-full flex flex-col items-center xl:flex-row my-2 p-2.5 sm:py-0 bg-gray-50 dark:bg-gray-700 border-2 sm:border-0 border-gray-200 dark:border-gray-600 rounded-lg dark:text-white" key={i}>
                                 <div className="flex flex-col sm:flex-row w-full xl:w-10/12">
                                     <div className="flex flex-row items-center w-full w-full sm:w-auto">
                                         <span className="font-medium xl:font-normal text-sm xl:text-base">Department</span>
@@ -26,19 +26,17 @@ const DepartmentDetails = props => {
                                         </div>
                                     </div>
                                     <div className="flex-1 xl:px-4">
-                                        <DepartmentSelect departments={departments.list} selected={department} index={i} onChange={departments.change} />
+                                        <DepartmentSelect departments={departments.list} selected={department} index={i} onChange={departments.change} boxed={false} />
                                     </div>
                                 </div>
-                                <div className="flex flex-row items-center pt-2 xl:pt-0 xl:w-2/12">
-                                    <label className="w-full font-medium xl:font-normal text-sm xl:text-base text-right xl:text-left mr-4 xl:mr-0">
-                                        Head of Department
-                                    </label>
-                                    <Switch checked={(department['head_id'] == person.id)}
-                                        id={`hod-${i}`}
-                                        onChange={() => {
-                                            departments.toggleHod(department, i)
-                                        }} />
-                                </div>
+                                <Switch checked={(department['head_id'] == person.id)}
+                                    id={`hod-${i}`}
+                                    name={`hod-${i}`}
+                                    label="Head of Department"
+                                    className="flex flex-row items-center pt-2 xl:pt-0 xl:w-2/12"
+                                    onChange={() => {
+                                        departments.toggleHod(department, i)
+                                    }} />
                             </div>
                         )
                     })

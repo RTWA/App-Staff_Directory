@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import Select from 'react-select';
+import { WebAppsContext } from 'webapps-react';
 
 import './Select.css';
 
@@ -7,8 +10,12 @@ const PersonSelect = props => {
     const {
         value,
         options,
-        onChange
+        onChange,
+        inputClassName,
+        boxed,
     } = props;
+
+    const { UI } = useContext(WebAppsContext);
 
     const getValue = () => {
         let _value = {};
@@ -20,7 +27,40 @@ const PersonSelect = props => {
         return _value;
     }
 
-    return <Select {...props} options={options} onChange={onChange} value={getValue()} className="input-field" classNamePrefix="input-select" />
+    const boxedInputClasses = classNames(
+        (boxed) ? 'border-2' : null,
+        (boxed) ? 'border-gray-300' : null,
+        (boxed) ? 'dark:border-gray-600' : null,
+        (boxed) ? `focus:ring-${UI.theme}-600` : null,
+        (boxed) ? `dark:focus:ring-${UI.theme}-500` : null,
+        (boxed) ? `focus:border-${UI.theme}-600` : null,
+        (boxed) ? `dark:focus:border-${UI.theme}-500` : null,
+    )
+
+    const inputClasses = classNames(
+        'bg-gray-50',
+        'text-gray-900',
+        'outline-none',
+        'text-sm',
+        'rounded-lg',
+        'block',
+        'w-full',
+        'dark:bg-gray-700',
+        'dark:placeholder-gray-400',
+        'dark:text-white',
+        boxedInputClasses,
+        inputClassName,
+    )
+
+    return <Select {...props} options={options} onChange={onChange} value={getValue()} className={inputClasses} classNamePrefix="input-select" />
+}
+
+PersonSelect.propTypes = {
+    boxed: PropTypes.bool
+}
+
+PersonSelect.defaultProps = {
+    boxed: true,
 }
 
 export default PersonSelect;

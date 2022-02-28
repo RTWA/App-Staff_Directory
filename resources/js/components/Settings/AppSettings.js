@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, Input, Loader, Switch, useToasts, withWebApps } from 'webapps-react';
+import { Button, Input, Loader, Select, Switch, useToasts, withWebApps } from 'webapps-react';
 
 import { CreateDepartmentFlyout, DepartmentFlyout } from './Flyouts';
 
@@ -26,7 +26,7 @@ const AppSettings = UI => {
         await loadData();
     }, []);
 
-    const loadData = () => {
+    const loadData = async () => {
         await axios.get('/api/apps/StaffDirectory/departments')
             .then(json => {
                 setDepartments(json.data.departments);
@@ -196,10 +196,18 @@ const AppSettings = UI => {
     const installSampleData = async () => {
         await axios.get('/api/apps/StaffDirectory/departments/sample');
         await axios.get('/api/apps/StaffDirectory/people/sample')
-        .then(r => {
-            await loadData();
-        });
+            .then(async r => {
+                await loadData();
+            });
     }
+
+    const newDepButton = (
+        <Button style="ghost" color="gray" size="small" square
+            className="uppercase mr-1 w-full sm:w-auto sm:rounded-md"
+            onClick={toggleNew}>
+            Create a new Department
+        </Button>
+    )
 
     if (departments === null) {
         return <Loader className="flex items-center h-48" />
@@ -207,105 +215,76 @@ const AppSettings = UI => {
 
     return (
         <>
-            <div className="flex flex-col xl:flex-row py-4">
-                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="depList">Manage Departments</label>
-                <div className="relative w-full">
-                    {
-                        (departments.length === 0) ?
-                            (
-                                <select id="depList" value={department.id} onChange={onDepChange} className={`input-field focus:border-${UI.theme}-600 dark:focus:border-${UI.theme}-500`}>
-                                    <option value="">No departments have been created yet</option>
-                                </select>
-                            ) :
-                            (
-                                <select id="depList" value={department.id} onChange={onDepChange} className={`input-field focus:border-${UI.theme}-600 dark:focus:border-${UI.theme}-500`}>
-                                    <option value="">Select...</option>
-                                    {
-                                        Object(departments).map(function (department, i) {
-                                            let _return = [];
-                                            _return.push(
-                                                <option key={i} value={department.id}>{department.name}</option>
-                                            );
+            <Select
+                id="depList"
+                value={department.id}
+                onChange={onDepChange}
+                label="Manage Departments"
+                action={newDepButton}
+            >
+                {
+                    (department.length === 0)
+                        ? <option value="">No departments have been created yet</option>
+                        : <option value="">Select...</option>
+                }
+                {
+                    (department.length !== 0)
+                        ? (
+                            Object(departments).map(function (department, i) {
+                                let _return = [];
+                                _return.push(
+                                    <option key={i} value={department.id}>{department.name}</option>
+                                );
 
-                                            if (department.childrenCount !== 0) {
-                                                department.children.map(function (sub, si) {
-                                                    _return.push(
-                                                        <option key={`${i}-${si}`} value={sub.id}>{department.name} - {sub.name}</option>
-                                                    );
-                                                });
-                                            }
-                                            return _return;
-                                        })
-                                    }
-                                </select>
-                            )
-                    }
-                    <div className="w-full sm:w-auto sm:absolute inset-y-0 right-8 sm:flex items-center">
-                        <Button style="ghost" color="gray" size="small" square
-                            className="uppercase mr-1 w-full sm:w-auto sm:rounded-md"
-                            onClick={toggleNew}>
-                            Create a new Department
-                        </Button>
-                    </div>
-                </div>
-            </div>
+                                if (department.childrenCount !== 0) {
+                                    department.children.map(function (sub, si) {
+                                        _return.push(
+                                            <option key={`${i}-${si}`} value={sub.id}>{department.name} - {sub.name}</option>
+                                        );
+                                    });
+                                }
+                                return _return;
+                            })
+                        ) : null
+                }
+            </Select>
             <div className="h-px bg-gray-300 dark:bg-gray-700 my-4" />
-            <div className="flex flex-col xl:flex-row py-4">
-                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base"
-                    htmlFor="app.StaffDirectory.newRecord.sendNotification">
-                    Send Email when record is created
-                </label>
-                <div className="mt-1 xl:mt-0 w-full">
-                    <Switch name="app.StaffDirectory.newRecord.sendNotification"
-                        checked={(notifications.newRecord === 'true')}
-                        onChange={onChange}
-                        state={states['app.StaffDirectory.newRecord.sendNotification']} />
-                    <p className="text-xs text-gray-400 dark:text-gray-200">
-                        This will not trigger for records created by Microsoft Azure Integration
-                    </p>
-                </div>
-            </div>
-            <div className="flex flex-col xl:flex-row py-4">
-                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base"
-                    htmlFor="app.StaffDirectory.newRecord.notifyTo">
-                    Send new record notification to
-                </label>
-                <Input name="app.StaffDirectory.newRecord.notifyTo"
-                    type="text"
-                    id="app.StaffDirectory.newRecord.notifyTo"
-                    value={notifications.newNotifyTo || ''}
-                    onChange={onType}
-                    onBlur={onChange}
-                    state={states['app.StaffDirectory.newRecord.notifyTo']} />
-            </div>
-            <div className="flex flex-col xl:flex-row py-4">
-                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base"
-                    htmlFor="app.StaffDirectory.deleteRecord.sendNotification">
-                    Send Email when record is deleted
-                </label>
-                <div className="mt-1 xl:mt-0 w-full">
-                    <Switch name="app.StaffDirectory.deleteRecord.sendNotification"
-                        checked={(notifications.deleteRecord === 'true')}
-                        onChange={onChange}
-                        state={states['app.StaffDirectory.deleteRecord.sendNotification']} />
-                    <p className="text-xs text-gray-400 dark:text-gray-200">
-                        This will not trigger for records deleted by Microsoft Azure Integration
-                    </p>
-                </div>
-            </div>
-            <div className="flex flex-col xl:flex-row py-4">
-                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base"
-                    htmlFor="app.StaffDirectory.deleteRecord.notifyTo">
-                    Send deleted record notification to
-                </label>
-                <Input name="app.StaffDirectory.deleteRecord.notifyTo"
-                    type="text"
-                    id="app.StaffDirectory.deleteRecord.notifyTo"
-                    value={notifications.deleteNotifyTo || ''}
-                    onChange={onType}
-                    onBlur={onChange}
-                    state={states['app.StaffDirectory.deleteRecord.notifyTo']} />
-            </div>
+            <Switch
+                id="app.StaffDirectory.newRecord.sendNotification"
+                name="app.StaffDirectory.newRecord.sendNotification"
+                label="Send Email when record is created"
+                helpText="This will not trigger for records created by Microsoft Azure Integration"
+                className="mb-6"
+                checked={(notifications.newRecord === 'true')}
+                onChange={onChange}
+                state={states['app.StaffDirectory.newRecord.sendNotification']} />
+            <Input
+                id="app.StaffDirectory.newRecord.notifyTo"
+                name="app.StaffDirectory.newRecord.notifyTo"
+                label="Send new record notification to"
+                type="text"
+                value={notifications.newNotifyTo || ''}
+                onChange={onType}
+                onBlur={onChange}
+                state={states['app.StaffDirectory.newRecord.notifyTo']} />
+            <Switch
+                id="app.StaffDirectory.deleteRecord.sendNotification"
+                name="app.StaffDirectory.deleteRecord.sendNotification"
+                label="Send Email when record is deleted"
+                helpText="This will not trigger for records deleted by Microsoft Azure Integration"
+                className="mb-6"
+                checked={(notifications.deleteRecord === 'true')}
+                onChange={onChange}
+                state={states['app.StaffDirectory.deleteRecord.sendNotification']} />
+            <Input
+                id="app.StaffDirectory.deleteRecord.notifyTo"
+                name="app.StaffDirectory.deleteRecord.notifyTo"
+                label="Send deleted record notification to"
+                type="text"
+                value={notifications.deleteNotifyTo || ''}
+                onChange={onType}
+                onBlur={onChange}
+                state={states['app.StaffDirectory.deleteRecord.notifyTo']} />
             {
                 (departments.length === 0)
                     ? (

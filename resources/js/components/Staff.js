@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Moment from 'moment';
 import { Prompt } from 'react-router';
-import { Button, ConfirmDeleteButton, Loader, useToasts } from 'webapps-react';
+import { Button, ConfirmDeleteButton, Loader, Select, useToasts } from 'webapps-react';
 
 import { CustomFieldDetails, DepartmentDetails, EmploymentDetails, PersonalDetails } from './Staff/index';
 
@@ -185,11 +185,15 @@ const Manage = () => {
 
     return (
         <>
-            <Prompt when={changed} message="You have unsaved changes, are you sure you want to leave?" />
+            {/* <Prompt when={changed} message="You have unsaved changes, are you sure you want to leave?" /> */}
 
             <div className="w-full py-4">
-                <label htmlFor="staffSelect">Select person to update from the list below, or complete the form to create a new record.</label>
-                <select className="input-field mb-16 mt-2" onChange={select} value={person.id} >
+                <Select
+                    id="staffSelect"
+                    label="Select person to update from the list below, or complete the form to create a new record."
+                    wrapperClassName="mb-16 mt-2"
+                    onChange={select}
+                    value={person.id} >
                     {
                         people.map(function (list, i) {
                             return (
@@ -197,7 +201,7 @@ const Manage = () => {
                             )
                         })
                     }
-                </select>
+                </Select>
 
                 <PersonalDetails person={person} setPerson={setPerson} change={fieldChange} dateChange={dateChange} />
                 <DepartmentDetails person={person} departments={department} />

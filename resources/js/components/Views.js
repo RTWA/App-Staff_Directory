@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, Input, Loader, Switch, useToasts, withWebApps } from 'webapps-react';
+import { Button, Input, Loader, Select, Switch, useToasts, withWebApps } from 'webapps-react';
 
 import { CustomFilter, DepartmentFilter, PersonFilter } from './Filters';
 import { PermissionsModal, PreviewModal, TableFieldsModal, UseModal } from './Modals';
@@ -200,65 +200,68 @@ const Views = ({ UI }) => {
                         ? <div className="w-full bg-blue-300 dark:bg-blue-800 text-blue-800 dark:text-blue-300 border border-blue-800 dark:border-blue-300 px-4 py-2 mb-2 rounded">You cannot save changes to the default views!</div>
                         : null
                 }
-                <div className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded">
-                    <div className="w-full flex flex-col xl:flex-row py-4 px-4">
-                        <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="name">Name your view</label>
-                        <Input name="name"
-                            type="text"
-                            id="name"
-                            value={view.name || ''}
-                            onChange={fieldChange} />
+                <div className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded p-4">
+                    <Input
+                        id="name"
+                        name="name"
+                        label="Name your view"
+                        type="text"
+                        value={view.name || ''}
+                        onChange={fieldChange} />
+                    <div className="flex flex-col lg:flex-row items-center mt-2 mb-6">
+                        <Switch
+                            id="leading"
+                            name="leading"
+                            label="Display primary help text?"
+                            checked={(view.settings.leading === 'true')}
+                            onChange={checkChange}
+                            disabled={(view.display !== "all" && view.display.includes("custom"))}
+                            className="w-full lg:w-4/12 flex flex-row items-center px-4 py-2 xl:py-0" />
+                        <Switch
+                            id="selectors"
+                            name="selectors"
+                            label="Display department selectors and name search?"
+                            checked={(view.settings.selectors === 'true')}
+                            onChange={checkChange}
+                            disabled={(view.display !== "all")}
+                            className="w-full lg:w-4/12 flex flex-row items-center px-4 py-2 xl:py-0" />
+                        <Switch
+                            id="sorttext"
+                            name="sorttext"
+                            label="Display sort by text?"
+                            checked={(view.settings.sorttext === 'true')}
+                            onChange={checkChange}
+                            disabled={(view.display !== "all" && view.display.includes("custom"))}
+                            className="w-full lg:w-4/12 flex flex-row items-center px-4 py-2 xl:py-0" />
                     </div>
-                    <div className="flex flex-col lg:flex-row items-center mt-2">
-                        <div className="w-full lg:w-4/12 flex flex-row items-center px-4 py-2 xl:py-0">
-                            <label className="w-11/12 font-medium xl:font-normal text-sm xl:text-base" htmlFor="leading">Display primary help text?</label>
-                            <Switch name="leading"
-                                checked={(view.settings.leading === 'true')}
-                                id="leading"
-                                onChange={checkChange}
-                                disabled={(view.display !== "all" && view.display.includes("custom"))} />
-                        </div>
-                        <div className="w-full lg:w-4/12 flex flex-row items-center py-2 px-4 xl:py-0">
-                            <label className="w-11/12 font-medium xl:font-normal text-sm xl:text-base" htmlFor="selectors">Display department selectors and name search?</label>
-                            <Switch name="selectors"
-                                checked={(view.settings.selectors === 'true')}
-                                id="selectors"
-                                onChange={checkChange}
-                                disabled={(view.display !== "all")} />
-                        </div>
-                        <div className="w-full lg:w-4/12 flex flex-row items-center px-4 py-2 xl:py-0">
-                            <label className="w-11/12 font-medium xl:font-normal text-sm xl:text-base" htmlFor="sorttext">Display sort by text?</label>
-                            <Switch name="sorttext"
-                                checked={(view.settings.sorttext === 'true')}
-                                id="sorttext"
-                                onChange={checkChange}
-                                disabled={(view.display !== "all" && view.display.includes("custom"))} />
-                        </div>
-                    </div>
-                    <div className="flex flex-col lg:flex-row items-center my-2">
-                        <div className="w-full lg:w-6/12 flex flex-col xl:flex-row py-2 px-4">
-                            <label className="w-full xl:w-5/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="display">Records to display</label>
-                            <select className="input-field" id="display" value={view.display} onChange={fieldChange}>
-                                <option value="all">Everyone</option>
-                                <option value="department">A Department</option>
-                                <option value="person">A Single Person</option>
-                                {
-                                    Object(custom).map(function (field, i) {
-                                        if (field.type === "select") {
-                                            return <option value={field.field} key={i}>Based on {field.label}</option>
-                                        }
-                                    })
-                                }
-                            </select>
-                        </div>
-                        <div className="w-full lg:w-6/12 flex flex-col xl:flex-row py-2 px-4">
-                            <label className="w-full xl:w-5/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="display_type">Display Type</label>
-                            <select className="input-field" id="display_type" value={view.display_type} onChange={fieldChange}>
-                                <option value="grid">3D Flip Photo Grid</option>
-                                <option value="table">Table</option>
-                                <option value="card">Profile Card</option>
-                            </select>
-                        </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+                        <Select
+                            id="display"
+                            name="display"
+                            label="Records to display"
+                            value={view.display}
+                            onChange={fieldChange}>
+                            <option value="all">Everyone</option>
+                            <option value="department">A Department</option>
+                            <option value="person">A Single Person</option>
+                            {
+                                Object(custom).map(function (field, i) {
+                                    if (field.type === "select") {
+                                        return <option value={field.field} key={i}>Based on {field.label}</option>
+                                    }
+                                })
+                            }
+                        </Select>
+                        <Select
+                            id="display_type"
+                            name="display_type"
+                            label="Display Type"
+                            value={view.display_type}
+                            onChange={fieldChange}>
+                            <option value="grid">3D Flip Photo Grid</option>
+                            <option value="table">Table</option>
+                            <option value="card">Profile Card</option>
+                        </Select>
                     </div>
                     <DepartmentFilter
                         display={(view.display === 'department')}

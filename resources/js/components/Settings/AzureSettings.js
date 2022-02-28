@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import moment from 'moment';
-import { Button, Input, Switch } from 'webapps-react';
-
-import { TypeAhead } from '../TypeAhead';
+import { Button, DataSuggest, Input, Switch } from 'webapps-react';
 
 axios.defaults.withCredentials = true;
 
@@ -223,13 +221,10 @@ const AzureSettings = () => {
 
     return (
         <>
-            <div className="flex flex-col xl:flex-row py-4">
-                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="depList">Add Azure Group to Sync</label>
-                <TypeAhead id="depList" name="depList" select={addSyncGroup} data={azGroups} labelKey="displayName" />
-            </div>
-            <div className="flex flex-col xl:flex-row py-4">
-                <p className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base">Currently Syncing Groups</p>
-                <div className="w-full rounded border px-2 pb-2 pt-1.5 mt-1 xl:mt-0">
+            <DataSuggest id="depList" name="depList" select={addSyncGroup} data={azGroups} labelKey="displayName" label="Add Azure Group to Sync" />
+            <div className="mb-6">
+                <p className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Currently Syncing Groups</p>
+                <div className="w-full bg-gray-50 border-2 border-gray-300 text-gray-900 outline-none text-sm rounded-lg block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                     <span className="inline-flex w-0 py-1 text-xs font-bold leading-none">&nbsp;</span>
                     {
                         Object(syncGroups).map(function (group, i) {
@@ -247,52 +242,38 @@ const AzureSettings = () => {
                     }
                 </div>
             </div>
-            <div className="flex flex-col xl:flex-row py-4">
-                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base"
-                    htmlFor="create_departments">
-                    Create Departments from User properties
-                </label>
-                <div className="mt-1 xl:mt-0 w-full">
-                <Switch name="create_departments"
-                            checked={(app.create_departments === 'true')}
-                            onChange={onChange}
-                            state={states['create_departments']} />
-                    <p className="text-xs text-gray-400 dark:text-gray-200">
-                    The Department string will be split on a '-' character (with a space either side) to create sub-departments.
-                    </p>
-                </div>
-            </div>
-            <div className="flex flex-col xl:flex-row py-4">
-                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base"
-                    htmlFor="technical_contact">
-                    Technical Contact Email Address
-                </label>
-                <Input name="technical_contact"
-                        type="text"
-                        id="technical_contact"
-                        value={app.technical_contact || ''}
-                        onChange={onType}
-                        onBlur={onChange}
-                        state={states['technical_contact']} />
-            </div>            
-            <div className="flex flex-col xl:flex-row py-4">
-                <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base" htmlFor="app">Last Synced</label>
-                <div className="relative w-full">
-                <Input name="app.last_sync"
-                        id="app.last_sync"
-                        type="text"
-                        value={moment(app.last_sync).calendar()}
-                        readOnly disabled />
-
-                    <div className="w-full sm:w-auto sm:absolute inset-y-0 right-0 sm:flex items-center">
-                        <Button style="ghost" color="gray" size="small" square
-                            className="uppercase mr-1 w-full sm:w-auto sm:rounded-md"
-                            onClick={syncNow}>
-                            Sync Now
-                        </Button>
-                    </div>
-                </div>
-            </div>
+            <Switch
+                id="create_departments"
+                name="create_departments"
+                label="Create Departments from User properties"
+                helpText="The Department string will be split on a '-' character (with a space either side) to create sub-departments."
+                checked={(app.create_departments === 'true')}
+                onChange={onChange}
+                className="mb-6"
+                state={states['create_departments']} />
+            <Input
+                id="technical_contact"
+                name="technical_contact"
+                label="Technical Contact Email Address"
+                type="text"
+                value={app.technical_contact || ''}
+                onChange={onType}
+                onBlur={onChange}
+                state={states['technical_contact']} />
+            <Input
+                id="app.last_sync"
+                name="app.last_sync"
+                label="Last Synced"
+                type="text"
+                value={moment(app.last_sync).calendar()}
+                action={
+                    <Button style="ghost" color="gray" size="small" square
+                        className="uppercase mr-1 w-full sm:w-auto sm:rounded-md"
+                        onClick={syncNow}>
+                        Sync Now
+                    </Button>
+                }
+                readOnly disabled />
         </>
     );
 }
