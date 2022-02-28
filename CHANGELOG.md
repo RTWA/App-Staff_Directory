@@ -1,3 +1,9 @@
+# Version 1.0.3
+## Whats's Changed?
+- Speed improvements
+- Security improvements
+- UI improvements
+
 # Version 1.0.2
 ## What's New?
 - Staff Directory is now Mobile Friendly!
