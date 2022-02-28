@@ -43,7 +43,7 @@ const Permissions = () => {
                 }
             });
 
-        await APIClient('/api/permitted', { permission: 'app.StaffDirectory.%' }, { signal: APIController.signal })
+        await APIClient('/api/permitted', { isLike: true, permission: 'app.StaffDirectory.%' }, { signal: APIController.signal })
             .then(json => {
                 setPermitted(json.data.users);
             })
