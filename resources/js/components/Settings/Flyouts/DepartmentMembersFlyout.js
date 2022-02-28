@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import classNames from 'classnames';
-import axios from 'axios';
-import { withWebApps } from 'webapps-react';
+import { APIClient, withWebApps } from 'webapps-react';
 
 const DepartmentMembersFlyout = ({ UI, ...props }) => {
     const {
@@ -11,6 +10,14 @@ const DepartmentMembersFlyout = ({ UI, ...props }) => {
         show,
         setHead
     } = props;
+
+    const APIController = new AbortController();
+
+    useEffect(() => {
+        return () => {
+            APIController.abort();
+        }
+    }, []);
 
     const panelClass = classNames(
         'absolute',
@@ -28,28 +35,24 @@ const DepartmentMembersFlyout = ({ UI, ...props }) => {
     const setAsHead = async (e, id) => {
         e.preventDefault();
 
-        let formData = new FormData()
-        formData.append('_method', 'PUT');
-
-        await axios.post(`/api/apps/StaffDirectory/department/${department.id}/head/${id}`, formData)
+        await APIClient(`/api/apps/StaffDirectory/department/${department.id}/head/${id}`, {}, { signal: APIController.signal, method: 'PUT' })
             .then(json => {
                 department.head_id = id;
                 setDepartment({ ...department });
                 closeMembers();
             })
             .catch(error => {
-                // TODO: Handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: Handle errors
+                    console.log(error);
+                }
             });
     }
 
     const remove = async (e, _person) => {
         e.preventDefault();
 
-        let formData = new FormData()
-        formData.append('_method', 'DELETE');
-
-        await axios.post(`/api/apps/StaffDirectory/person/${_person}/department/${department.id}`, formData)
+        await APIClient(`/api/apps/StaffDirectory/person/${_person}/department/${department.id}`, {}, { signal: APIController.signal, method: 'DELETE' })
             .then(json => {
                 department.people.map(function (p, i) {
                     if (p.id === _person) {
@@ -60,8 +63,10 @@ const DepartmentMembersFlyout = ({ UI, ...props }) => {
                 setDepartment({ ...department });
             })
             .catch(error => {
-                // TODO: Handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: Handle errors
+                    console.log(error);
+                }
             });
     }
 

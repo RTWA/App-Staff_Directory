@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { APIClient } from 'webapps-react';
 
 import './styles/TableView.css';
 
@@ -14,15 +14,23 @@ const TableView = props => {
 
     const [custom, setCustom] = useState([]);
 
+    const APIController = new AbortController();
+
     useEffect(async () => {
-        await axios.get('/api/apps/StaffDirectory/customFields')
+        await APIClient('/api/apps/StaffDirectory/customFields', undefined, { signal: APIController.signal })
             .then(json => {
                 setCustom(json.data.list);
             })
             .catch(error => {
-                // TODO: Handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: Handle errors
+                    console.log(error);
+                }
             });
+
+        return () => {
+            APIController.abort();
+        }
     }, []);
 
     const headings = () => {

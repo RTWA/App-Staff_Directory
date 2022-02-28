@@ -1,46 +1,57 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Banner, Button, useToasts } from 'webapps-react';
+import { APIClient, Banner, Button, useToasts } from 'webapps-react';
 
 const RecycleBin = props => {
     const [people, setPeople] = useState([]);
 
     const { addToast } = useToasts();
 
+    const APIController = new AbortController();
+
     useEffect(async () => {
-        await axios.get('/api/apps/StaffDirectory/people/trashed')
+        await APIClient('/api/apps/StaffDirectory/people/trashed', undefined, { signal: APIController.signal })
             .then(json => {
                 setPeople(json.data.people);
             })
             .catch(error => {
-                // TODO: Handle errors
-                console.log(error)
+                if (!error.status?.isAbort) {
+                    // TODO: Handle errors
+                    console.log(error)
+                }
             });
+
+        return () => {
+            APIController.abort();
+        }
     }, []);
 
     const restore = async (e, id, index) => {
         e.preventDefault();
 
-        await axios.get(`/api/apps/StaffDirectory/person/${id}/restore`)
+        await APIClient(`/api/apps/StaffDirectory/person/${id}/restore`, undefined, { signal: APIController.signal })
             .then(json => {
                 addToast(json.data.message, '', { appearance: 'success' });
                 people.splice(index, 1);
                 setPeople([...people]);
             })
             .catch(error => {
-                // TODO: handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors
+                    console.log(error);
+                }
             })
     }
 
     const empty = async () => {
-        await axios.get('/api/apps/StaffDirectory/people/trashed/delete')
+        await APIClient('/api/apps/StaffDirectory/people/trashed/delete', undefined, { signal: APIController.signal })
             .then(json => {
                 setPeople(json.data.people);
             })
             .catch(error => {
-                // TODO: Handle errors
-                console.log(error)
+                if (!error.status?.isAbort) {
+                    // TODO: Handle errors
+                    console.log(error)
+                }
             });
     }
 

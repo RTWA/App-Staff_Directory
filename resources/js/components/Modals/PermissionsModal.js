@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { Switch, withWebApps } from 'webapps-react';
+import { APIClient, Switch, withWebApps } from 'webapps-react';
 
 import { ModalsContext } from '../Views';
-import axios from 'axios';
 
-const PermissionsModal = ({UI, ...props}) => {
+const PermissionsModal = ({ UI, ...props }) => {
     const {
         permissions,
         closeModal
@@ -17,15 +16,23 @@ const PermissionsModal = ({UI, ...props}) => {
 
     const [groups, setGroups] = useState([]);
 
+    const APIController = new AbortController();
+
     useEffect(async () => {
-        await axios.get('/api/groups')
+        await APIClient('/api/groups', undefined, { signal: APIController.signal })
             .then(json => {
                 setGroups(json.data.groups);
             })
             .catch(error => {
-                // TODO: Handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: Handle errors
+                    console.log(error);
+                }
             });
+
+        return () => {
+            APIController.abort();
+        }
     }, []);
 
     const onChange = e => {

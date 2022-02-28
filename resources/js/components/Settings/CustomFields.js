@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import classNames from 'classnames';
-import { Button, Input, Select, useToasts } from 'webapps-react';
+import { APIClient, Button, Input, Select, useToasts } from 'webapps-react';
 
 const CustomFields = props => {
     const [tab, setTab] = useState(-1);
@@ -10,30 +9,37 @@ const CustomFields = props => {
 
     const { addToast } = useToasts();
 
+    const APIController = new AbortController();
+
     useEffect(async () => {
-        await axios.get('/api/apps/StaffDirectory/customFields')
+        await APIClient('/api/apps/StaffDirectory/customFields', undefined, { signal: APIController.signal })
             .then(json => {
                 setCustom(json.data.list);
             })
             .catch(error => {
-                // TODO: Handle errors
-                console.log(error)
+                if (!error.status?.isAbort) {
+                    // TODO: Handle errors
+                    console.log(error)
+                }
             });
+
+        return () => {
+            APIController.abort();
+        }
     }, []);
 
     const saveData = async () => {
-        let formData = new FormData();
-        formData.append('_method', 'PUT');
-        formData.append('fields', JSON.stringify(custom));
-        await axios.post('/api/apps/StaffDirectory/customFields', formData)
+        await APIClient('/api/apps/StaffDirectory/customFields', { fields: JSON.stringify(custom) }, { signal: APIController.signal, method: 'PUT' })
             .then(json => {
                 addToast('Custom Fields Saved', '', { appearance: 'success' });
                 setCustom(json.data.list);
             })
             .catch(error => {
-                // TODO: Handle errors
-                console.log(error)
-                addToast('Unable to save Custom Fields!', '', { appearance: 'error' });
+                if (!error.status?.isAbort) {
+                    // TODO: Handle errors
+                    console.log(error)
+                    addToast('Unable to save Custom Fields!', '', { appearance: 'error' });
+                }
             });
     }
 
@@ -100,22 +106,22 @@ const CustomFields = props => {
                                 <p className="flex-1 p-4" onClick={() => toggle(i)}>Custom Field {i + 1}: {field.label}</p>
                             </div>
                             <div className={paneClass(i)}>
-                                <Select 
+                                <Select
                                     id="type"
                                     name="type"
                                     label="Field Type"
                                     value={field.type}
                                     data-for={i}
                                     onChange={onChange}>
-                                        <option value="">Unused</option>
-                                        <option value="text">Text Box</option>
-                                        <option value="select">Select List</option>
-                                    </Select>
-                                <Input 
+                                    <option value="">Unused</option>
+                                    <option value="text">Text Box</option>
+                                    <option value="select">Select List</option>
+                                </Select>
+                                <Input
                                     id="label"
                                     name="label"
                                     label="Field Name"
-                                    type="text" 
+                                    type="text"
                                     value={field.label}
                                     data-for={i}
                                     onChange={onChange} />

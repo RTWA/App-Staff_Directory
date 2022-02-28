@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import axios from 'axios';
-import { AuthContext, Loader } from 'webapps-react';
+import { APIClient, AuthContext, Loader } from 'webapps-react';
 
 import CustomView from './CustomView';
 
@@ -9,6 +8,14 @@ const ViewLayout = props => {
     const [allowed, setAllowed] = useState(false);
 
     const { authenticated, checkGroup } = useContext(AuthContext);
+
+    const APIController = new AbortController();
+
+    useEffect(() => {
+        return () => {
+            APIController.abort();
+        }
+    }, []);
 
     const Authenticate = () => {
         if (!authenticated) {
@@ -50,7 +57,7 @@ const ViewLayout = props => {
 
     useEffect(async () => {
         let publicId = props.match.params.publicId;
-        await axios.get(`/api/apps/StaffDirectory/view/${publicId}`)
+        await APIClient(`/api/apps/StaffDirectory/view/${publicId}`, undefined, { signal: APIController.signal })
             .then(async json => {
                 let _view = json.data.view;
                 _view.settings = JSON.parse(_view.settings);
@@ -81,8 +88,10 @@ const ViewLayout = props => {
                 setView(_view);
             })
             .catch(error => {
-                // TODO: Handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: Handle errors
+                    console.log(error);
+                }
             })
     }, []);
 

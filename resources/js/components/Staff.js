@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import Moment from 'moment';
 import { Prompt } from 'react-router';
-import { Button, ConfirmDeleteButton, Loader, Select, useToasts } from 'webapps-react';
+import { APIClient, Button, ConfirmDeleteButton, Loader, Select, useToasts } from 'webapps-react';
 
 import { CustomFieldDetails, DepartmentDetails, EmploymentDetails, PersonalDetails } from './Staff/index';
 
@@ -15,9 +14,15 @@ const Manage = () => {
 
     const { addToast, updateToast } = useToasts();
 
+    const APIControler = new AbortController();
+
     useEffect(async () => {
         await getPeople();
         await getData();
+        
+        return () => {
+            APIController.abort();
+        }
     }, []);
 
     useEffect(() => {
@@ -25,32 +30,38 @@ const Manage = () => {
     }, [changed]);
 
     const getPeople = async () => {
-        await axios.get('/api/apps/StaffDirectory/peopleList')
+        await APIClient('/api/apps/StaffDirectory/peopleList', undefined, { signal: APIControler.signal })
             .then(json => {
                 setPeople(json.data.list);
             })
             .catch(error => {
-                // TODO: handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors
+                    console.log(error);
+                }
             });
     }
 
     const getData = async () => {
-        await axios.get('/api/apps/StaffDirectory/departmentList')
+        await APIClient('/api/apps/StaffDirectory/departmentList', undefined, { signal: APIControler.signal })
             .then(json => {
                 setDepartments(json.data.list);
             })
             .catch(error => {
-                // TODO: handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors
+                    console.log(error);
+                }
             });
-        await axios.get('/api/apps/StaffDirectory/customFields')
+        await APIClient('/api/apps/StaffDirectory/customFields', undefined, { signal: APIControler.signal })
             .then(json => {
                 setCustom(json.data.list);
             })
             .catch(error => {
-                // TODO: handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors
+                    console.log(error);
+                }
             });
     }
 
@@ -60,9 +71,7 @@ const Manage = () => {
         let save = null;
         addToast('Saving changes, please wait...', '', { appearance: 'info', autoDismiss: false }, (id) => save = id);
 
-        let formData = new FormData();
-        formData.append('person', JSON.stringify(person));
-        await axios.post(`/api/apps/StaffDirectory/person/${person.id}`, formData)
+        await APIClient(`/api/apps/StaffDirectory/person/${person.id}`, { person: JSON.stringify(person) }, { signal: APIControler.signal })
             .then(json => {
                 updateToast(save, { appearance: 'success', autoDismiss: true, title: json.data.message });
 
@@ -70,8 +79,10 @@ const Manage = () => {
                 getPeople();
             })
             .catch(error => {
-                // TODO: handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors
+                    console.log(error);
+                }
             });
     }
 
@@ -80,17 +91,17 @@ const Manage = () => {
             return;
         }
 
-        let formData = new FormData();
-        formData.append('_method', 'DELETE');
-        await axios.post(`/api/apps/StaffDirectory/person/${person.id}`, formData)
+        await APIClient(`/api/apps/StaffDirectory/person/${person.id}`, {}, { signal: APIControler.signal, method: 'DELETE' })
             .then(json => {
                 setChanged(false);
                 setPerson({ departments: [{}], id: 0, customFields: [{}] });
                 getPeople();
             })
             .catch(error => {
-                // TODO: handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors
+                    console.log(error);
+                }
             });
     }
 
@@ -102,14 +113,16 @@ const Manage = () => {
         }
 
         if (e.target.value !== "") {
-            await axios.get(`/api/apps/StaffDirectory/person/${e.target.value}`)
+            await APIClient(`/api/apps/StaffDirectory/person/${e.target.value}`, undefined, { signal: APIControler.signal })
                 .then(json => {
                     setChanged(false);
                     setPerson(json.data.person);
                 })
                 .catch(error => {
-                    // TODO: handle errors
-                    console.log(error);
+                    if (!error.status?.isAbort) {
+                        // TODO: handle errors
+                        console.log(error);
+                    }
                 });
         } else {
             setPerson({ departments: [{}], id: 0 });

@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import moment from 'moment';
-import { Button, DataSuggest, Input, Switch } from 'webapps-react';
-
-axios.defaults.withCredentials = true;
+import { APIClient, Button, DataSuggest, Input, Switch } from 'webapps-react';
 
 let _mounted = false;
 
@@ -16,12 +13,17 @@ const AzureSettings = () => {
     const [accessToken, setAccessToken] = useState(null);
     const [azGroups, setAzGroups] = useState([]);
 
+    const APIController = new AbortController();
+
     useEffect(async () => {
         _mounted = true;
         await getAzureDetails();
         await getAppSettings();
-
-        return () => _mounted = false;
+        
+        return () => {
+            APIController.abort();
+            _mounted = false;
+        }
     }, []);
 
     useEffect(async () => {
@@ -38,10 +40,9 @@ const AzureSettings = () => {
 
     useEffect(async () => {
         if (_mounted) {
-            let formData = new FormData();
-            formData.append('_method', 'PUT');
-            formData.append('value', JSON.stringify(syncGroups));
-            await axios.post('/api/setting/app.StaffDirectory.azure.sync_groups', formData);
+            await APIClient('/api/setting/app.StaffDirectory.azure.sync_groups',
+                { value: JSON.stringify(syncGroups) },
+                { signal: APIController.signal, method: 'PUT' });
         }
     }, [syncGroups]);
 
@@ -49,10 +50,9 @@ const AzureSettings = () => {
         if (_mounted) {
             if (changed.create_departments) {
                 // Update create_departments
-                let formData = new FormData();
-                formData.append('_method', 'PUT');
-                formData.append('value', app.create_departments);
-                await axios.post('/api/setting/app.StaffDirectory.azure.create_departments', formData)
+                await APIClient('/api/setting/app.StaffDirectory.azure.create_departments',
+                    { value: app.create_departments },
+                    { signal: APIController.signal, method: 'PUT' })
                     .then(json => {
                         states['create_departments'] = 'saved';
                         setStates({ ...states });
@@ -65,23 +65,24 @@ const AzureSettings = () => {
                         setChanged({ ...changed });
                     })
                     .catch(error => {
-                        // TODO: handle errors
-                        console.log(error);
+                        if (!error.status?.isAbort) {
+                            // TODO: handle errors
+                            console.log(error);
 
-                        states['create_departments'] = 'error';
-                        setStates({ ...states });
-                        setTimeout(function () {
-                            states['create_departments'] = '';
+                            states['create_departments'] = 'error';
                             setStates({ ...states });
-                        }, 2500);
+                            setTimeout(function () {
+                                states['create_departments'] = '';
+                                setStates({ ...states });
+                            }, 2500);
+                        }
                     });
             }
             if (changed.technical_contact) {
                 // Update technical_contact
-                let formData = new FormData();
-                formData.append('_method', 'PUT');
-                formData.append('value', app.technical_contact);
-                await axios.post('/api/setting/app.StaffDirectory.azure.technical_contact', formData)
+                await APIClient('/api/setting/app.StaffDirectory.azure.technical_contact',
+                    { value: app.technical_contact },
+                    { signal: APIController.signal, method: 'PUT' })
                     .then(json => {
                         states['technical_contact'] = 'saved';
                         setStates({ ...states });
@@ -94,29 +95,32 @@ const AzureSettings = () => {
                         setChanged({ ...changed });
                     })
                     .catch(error => {
-                        // TODO: handle errors
-                        console.log(error);
+                        if (!error.status?.isAbort) {
+                            // TODO: handle errors
+                            console.log(error);
 
-                        states['technical_contact'] = 'error';
-                        setStates({ ...states });
-                        setTimeout(function () {
-                            states['technical_contact'] = '';
+                            states['technical_contact'] = 'error';
                             setStates({ ...states });
-                        }, 2500);
+                            setTimeout(function () {
+                                states['technical_contact'] = '';
+                                setStates({ ...states });
+                            }, 2500);
+                        }
                     });
             }
         }
     }, [app]);
 
     const getAzureDetails = async () => {
-        let formData = new FormData();
-        formData.append("key", JSON.stringify([
-            "azure.graph.tenant",
-            "azure.graph.client_id",
-            "azure.graph.client_secret",
-        ]));
-
-        await axios.post('/api/setting', formData)
+        await APIClient('/api/setting',
+            {
+                key: JSON.stringify([
+                    "azure.graph.tenant",
+                    "azure.graph.client_id",
+                    "azure.graph.client_secret",
+                ])
+            },
+            { signal: APIController.signal })
             .then(json => {
                 if (_mounted) {
                     graph.tenantId = json.data['azure.graph.tenant'];
@@ -128,15 +132,16 @@ const AzureSettings = () => {
     }
 
     const getAppSettings = async () => {
-        let formData = new FormData();
-        formData.append("key", JSON.stringify([
-            "app.StaffDirectory.azure.sync_groups",
-            "app.StaffDirectory.azure.create_departments",
-            "app.StaffDirectory.azure.technical_contact",
-            "app.StaffDirectory.azure.last_sync",
-        ]));
-
-        await axios.post('/api/setting', formData)
+        await APIClient('/api/setting',
+            {
+                key: JSON.stringify([
+                    "app.StaffDirectory.azure.sync_groups",
+                    "app.StaffDirectory.azure.create_departments",
+                    "app.StaffDirectory.azure.technical_contact",
+                    "app.StaffDirectory.azure.last_sync",
+                ])
+            },
+            { signal: APIController.signal })
             .then(json => {
                 if (_mounted) {
                     app.create_departments = json.data['app.StaffDirectory.azure.create_departments'];
@@ -151,7 +156,7 @@ const AzureSettings = () => {
     }
 
     const RequestAccessToken = async () => {
-        await axios.get('/api/graph/token')
+        await APIClient('/api/graph/token', undefined, { signal: APIController.signal })
             .then(json => {
                 setAccessToken(json.data.token.access_token);
             });
@@ -164,6 +169,7 @@ const AzureSettings = () => {
         let options = {
             method: "GET",
             headers: headers,
+            signal: APIController.signal
         };
         let graphEndpoint = 'https://graph.microsoft.com/v1.0/groups?$select=id,displayName';
 
@@ -206,7 +212,7 @@ const AzureSettings = () => {
 
     const syncNow = async e => {
         e.target.innerText = 'Syncing';
-        await axios.get('/api/apps/StaffDirectory/azure/sync');
+        await APIClient('/api/apps/StaffDirectory/azure/sync', undefined, { signal: APIController.signal });
     }
 
     if (graph.tenantId === '' || graph.client_id === "" || graph.client_secret === "" ||

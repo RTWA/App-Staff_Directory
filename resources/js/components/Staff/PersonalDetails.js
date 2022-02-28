@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactUserAvatar from 'react-user-avatar';
-import { Input, useToasts, withWebApps } from 'webapps-react';
+import { APIClient, Input, useToasts, withWebApps } from 'webapps-react';
 
 import { DatePicker } from '../DatePicker'
 
@@ -15,6 +15,14 @@ const PersonalDetails = ({ UI, ...props }) => {
     const { addToast, updateToast } = useToasts();
     let toastId = '';
 
+    const APIController = new AbortController();
+
+    useEffect(() => {
+        return () => {
+            APIController.abort();
+        }
+    }, []);
+
     const imageUpload = async e => {
         if (person.id === 0) {
             addToast('Please save the record first', '', { appearence: 'warning', autoDismiss: 5000 });
@@ -27,10 +35,8 @@ const PersonalDetails = ({ UI, ...props }) => {
         if (file !== null) {
             addToast('Uploading photo...', '', { appearence: 'info', autoDismiss: false }, id => toastId = id);
 
-            // Upload the Image 
-            let formData = new FormData();
-            formData.append('file', file);
-            await axios.post(`/api/apps/StaffDirectory/person/${person.id}/photo`, formData)
+            // Upload the Image
+            await APIClient(`/api/apps/StaffDirectory/person/${person.id}/photo`, { file: file }, { signal: APIController.signal })
                 .then(json => {
                     person.local_photo = json.data.local_photo;
                     setPerson({ ...person });
@@ -49,16 +55,18 @@ const PersonalDetails = ({ UI, ...props }) => {
                     );
                 })
                 .catch(error => {
-                    console.log(error);
-                    updateToast(
-                        toastId,
-                        {
-                            appearance: 'error',
-                            autoDismiss: true,
-                            autoDismissTimeout: 5000,
-                            title: 'Failed to upload photo.'
-                        }
-                    );
+                    if (!error.status?.isAbort) {
+                        console.log(error);
+                        updateToast(
+                            toastId,
+                            {
+                                appearance: 'error',
+                                autoDismiss: true,
+                                autoDismissTimeout: 5000,
+                                title: 'Failed to upload photo.'
+                            }
+                        );
+                    }
                 })
         }
     }

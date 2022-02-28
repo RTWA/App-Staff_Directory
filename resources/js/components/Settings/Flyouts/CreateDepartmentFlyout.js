@@ -1,7 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import classNames from 'classnames';
-import axios from 'axios';
-import { Button, Input, Select, useToasts, withWebApps } from 'webapps-react';
+import { APIClient, Button, Input, Select, useToasts, withWebApps } from 'webapps-react';
 
 import { FlyoutsContext } from '../AppSettings';
 
@@ -21,6 +20,14 @@ const CreateDepartmentFlyout = ({ UI, ...props }) => {
     const [parent, setParent] = useState('');
     const [state, setState] = useState('');
     const [error, setError] = useState('');
+
+    const APIController = new AbortController();
+
+    useEffect(() => {        
+        return () => {
+            APIController.abort();
+        }
+    }, []);
 
     const flyoutClass = classNames(
         'absolute',
@@ -69,11 +76,8 @@ const CreateDepartmentFlyout = ({ UI, ...props }) => {
 
     const createDepartment = async () => {
         setState('saving');
-        let formData = new FormData();
-        formData.append('name', name);
-        formData.append('department_id', parent);
 
-        await axios.post('/api/apps/StaffDirectory/department', formData)
+        await APIClient('/api/apps/StaffDirectory/department', { name: name, department_id: parent }, { signal: APIController.signal })
             .then(json => {
                 pushDepartment(json.data.department);
                 addToast("Department Created Successfully", '', { appearance: 'success' });
@@ -81,9 +85,11 @@ const CreateDepartmentFlyout = ({ UI, ...props }) => {
                 setState('');
             })
             .catch(error => {
-                setState('error');
-                setError(error.response.data.errors.name[0]);
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    setState('error');
+                    setError(error.response.data.errors.name[0]);
+                    console.log(error);
+                }
             });
     }
 

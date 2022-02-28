@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Switch, UserSuggest } from 'webapps-react';
-
-axios.defaults.withCredentials = true;
+import { APIClient, Switch, UserSuggest } from 'webapps-react';
 
 const Permissions = () => {
     const [groups, setGroups] = useState([]);
@@ -10,49 +7,56 @@ const Permissions = () => {
     const [permitted, setPermitted] = useState([]);
     const [users, setUsers] = useState([]);
 
+    const APIController = new AbortController();
+
     useEffect(async () => {
-        await axios.get('/api/groups')
+        await APIClient('/api/groups', undefined, { signal: APIController.signal })
             .then(json => {
                 setGroups(json.data.groups);
             })
             .catch(error => {
-                // TODO: Handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: Handle errors
+                    console.log(error);
+                }
             });
-        await axios.get('/api/users')
+        await APIClient('/api/users', undefined, { signal: APIController.signal })
             .then(json => {
                 setUsers(json.data.users);
             })
             .catch(error => {
-                // TODO: Handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: Handle errors
+                    console.log(error);
+                }
             });
 
 
-        let formData1 = new FormData();
-        formData1.append('permission', 'app.StaffDirectory.%');
-
-        await axios.post('/api/permissions/search', formData1)
+        await APIClient('/api/permissions/search', { permission: 'app.StaffDirectory.%' }, { signal: APIController.signal })
             .then(json => {
                 setPermissions(json.data.permissions);
             })
             .catch(error => {
-                // TODO: Handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: Handle errors
+                    console.log(error);
+                }
             });
 
-        let formData = new FormData();
-        formData.append('isLike', true);
-        formData.append('permission', 'app.StaffDirectory.%');
-
-        await axios.post('/api/permitted', formData)
+        await APIClient('/api/permitted', { permission: 'app.StaffDirectory.%' }, { signal: APIController.signal })
             .then(json => {
                 setPermitted(json.data.users);
             })
             .catch(error => {
-                // TODO: Handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: Handle errors
+                    console.log(error);
+                }
             });
+
+        return () => {
+            APIController.abort();
+        }
     }, []);
 
     const handleChange = async e => {
@@ -61,11 +65,7 @@ const Permissions = () => {
         let user = e.target.dataset.user;
 
         if (group === undefined && user !== undefined) {
-            let formData = new FormData();
-            formData.append('user', user);
-            formData.append('permission', perm);
-
-            await axios.post('/api/permissions/user', formData)
+            await APIClient('/api/permissions/user', { user: user, permission: perm }, { signal: APIController.signal })
                 .then(json => {
                     let _permitted = [];
                     permitted.map(function (u,) { _permitted.push(u); });
@@ -73,15 +73,13 @@ const Permissions = () => {
                     setPermitted(_permitted);
                 })
                 .catch(error => {
-                    // TODO: Handle errors
-                    console.log(error);
+                    if (!error.status?.isAbort) {
+                        // TODO: Handle errors
+                        console.log(error);
+                    }
                 });
         } else if (group !== undefined && user === undefined) {
-            let formData = new FormData();
-            formData.append('group', group);
-            formData.append('permission', perm);
-
-            await axios.post('/api/permissions/group', formData)
+            await APIClient('/api/permissions/group', { group: group, permission: perm }, { signal: APIController.signal })
                 .then(json => {
                     let _groups = [];
                     groups.map(function (g) { _groups.push(g); });
@@ -89,8 +87,10 @@ const Permissions = () => {
                     setGroups(_groups);
                 })
                 .catch(error => {
-                    // TODO: Handle errors
-                    console.log(error);
+                    if (!error.status?.isAbort) {
+                        // TODO: Handle errors
+                        console.log(error);
+                    }
                 });
         }
     }

@@ -1,10 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react';
-import axios from 'axios';
-import { Button, Input, Loader, Select, Switch, useToasts, withWebApps } from 'webapps-react';
+import { APIClient, Button, Input, Loader, Select, Switch, useToasts, withWebApps } from 'webapps-react';
 
 import { CreateDepartmentFlyout, DepartmentFlyout } from './Flyouts';
-
-axios.defaults.withCredentials = true;
 
 export const FlyoutsContext = createContext({});
 
@@ -22,28 +19,36 @@ const AppSettings = UI => {
 
     const { addToast } = useToasts();
 
+    const APIController = new AbortController();
+
     useEffect(async () => {
         await loadData();
+        
+        return () => {
+            APIController.abort();
+        }
     }, []);
 
     const loadData = async () => {
-        await axios.get('/api/apps/StaffDirectory/departments')
+        await APIClient('/api/apps/StaffDirectory/departments', undefined, { signal: APIController.signal })
             .then(json => {
                 setDepartments(json.data.departments);
             })
             .catch(error => {
-                // TODO: handle errors!
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors!
+                    console.log(error);
+                }
             });
 
-        let formData = new FormData();
-        formData.append("key", JSON.stringify([
-            "app.StaffDirectory.newRecord.sendNotification",
-            "app.StaffDirectory.newRecord.notifyTo",
-            "app.StaffDirectory.deleteRecord.sendNotification",
-            "app.StaffDirectory.deleteRecord.notifyTo"
-        ]));
-        await axios.post('/api/setting', formData)
+        await APIClient('/api/setting', {
+            key: JSON.stringify([
+                "app.StaffDirectory.newRecord.sendNotification",
+                "app.StaffDirectory.newRecord.notifyTo",
+                "app.StaffDirectory.deleteRecord.sendNotification",
+                "app.StaffDirectory.deleteRecord.notifyTo"
+            ])
+        }, { signal: APIController.signal })
             .then(json => {
                 notifications.newRecord = json.data["app.StaffDirectory.newRecord.sendNotification"];
                 notifications.newNotifyTo = json.data["app.StaffDirectory.newRecord.notifyTo"];
@@ -52,7 +57,9 @@ const AppSettings = UI => {
                 setNotifications({ ...notifications });
             })
             .catch(error => {
-                console.log(error)
+                if (!error.status?.isAbort) {
+                    console.log(error)
+                }
             });
     }
 
@@ -129,10 +136,7 @@ const AppSettings = UI => {
 
         setNotifications({ ...notifications });
 
-        let formData = new FormData();
-        formData.append('_method', 'PUT');
-        formData.append('value', value);
-        await axios.post(`/api/setting/${key}`, formData)
+        await APIClient(`/api/setting/${key}`, { value: value }, { signal: APIController.signal, method: 'PUT' })
             .then(json => {
                 states[key] = 'saved';
                 setStates({ ...states });
@@ -142,15 +146,17 @@ const AppSettings = UI => {
                 }, 2500);
             })
             .catch(error => {
-                // TODO: handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors
+                    console.log(error);
 
-                states[key] = 'error';
-                setStates({ ...states });
-                setTimeout(function () {
-                    states[key] = '';
+                    states[key] = 'error';
                     setStates({ ...states });
-                }, 2500);
+                    setTimeout(function () {
+                        states[key] = '';
+                        setStates({ ...states });
+                    }, 2500);
+                }
             });
     }
 
@@ -158,13 +164,11 @@ const AppSettings = UI => {
         department.state = 'saving';
         setDepartment({ ...department });
 
-        let formData = new FormData();
-        formData.append('_method', 'PUT');
-        formData.append('name', department.name);
-        formData.append('department_id', department.department_id);
-        formData.append('head_id', department.head_id);
-
-        await axios.post(`/api/apps/StaffDirectory/department/${department.id}`, formData)
+        await APIClient(`/api/apps/StaffDirectory/department/${department.id}`, {
+            name: department.name,
+            department_id: department.department_id,
+            head_id: department.head_id
+        }, { signal: APIController.signal, method: 'PUT' })
             .then(json => {
                 addToast('Department Updated Successfully', '', { appearance: 'success' });
                 setDepartments(json.data.departments);
@@ -172,15 +176,15 @@ const AppSettings = UI => {
                 toggleManage();
             })
             .catch(error => {
-                // TODO: handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors
+                    console.log(error);
+                }
             });
     }
 
     const deleteDepartment = async () => {
-        let formData = new FormData();
-        formData.append('_method', 'DELETE');
-        await axios.post(`/api/apps/StaffDirectory/department/${department.id}`, formData)
+        await APIClient(`/api/apps/StaffDirectory/department/${department.id}`, {}, { signal: APIController.signal, method: 'DELETE' })
             .then(json => {
                 addToast('Department Deleted Successfully', '', { appearance: 'success' });
                 setDepartments(json.data.departments);
@@ -188,14 +192,16 @@ const AppSettings = UI => {
                 toggleManage();
             })
             .catch(error => {
-                // TODO: handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors
+                    console.log(error);
+                }
             });
     }
 
     const installSampleData = async () => {
-        await axios.get('/api/apps/StaffDirectory/departments/sample');
-        await axios.get('/api/apps/StaffDirectory/people/sample')
+        await APIClient('/api/apps/StaffDirectory/departments/sample', undefined, { signal: APIController.signal });
+        await APIClient('/api/apps/StaffDirectory/people/sample', undefined, { signal: APIController.signal })
             .then(async r => {
                 await loadData();
             });

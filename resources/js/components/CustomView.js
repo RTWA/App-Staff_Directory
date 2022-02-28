@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import Select from 'react-select';
-import { Button, Input } from 'webapps-react';
+import { APIClient, Button, Input } from 'webapps-react';
 
 import { CardView, GridView, TableView } from './Views/index';
 
@@ -27,11 +26,10 @@ const CustomView = props => {
     const [search, setSearch] = useState('');
     const [sortOrder, setSortOrder] = useState('(Sorted by Employment Start Date)');
 
-    useEffect(async () => {
-        let formData = new FormData();
-        formData.append('view', JSON.stringify(props.view));
+    const APIController = new AbortController();
 
-        await axios.post('/api/apps/StaffDirectory/view', formData)
+    useEffect(async () => {
+        await APIClient('/api/apps/StaffDirectory/view', { view: JSON.stringify(props.view) }, { signal: APIController.signal })
             .then(json => {
                 setTmpPeople(json.data.people);
                 setPeople(json.data.people);
@@ -39,9 +37,15 @@ const CustomView = props => {
                 setMe(json.data.me);
             })
             .catch(error => {
-                // TODO: Handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: Handle errors
+                    console.log(error);
+                }
             });
+        
+        return () => {
+            APIController.abort();
+        }
     }, []);
 
     useEffect(() => {

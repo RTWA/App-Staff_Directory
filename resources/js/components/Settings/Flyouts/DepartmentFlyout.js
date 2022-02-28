@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { FlyoutsContext } from '../AppSettings';
-import { Button, ConfirmDeleteButton, Input, Select, withWebApps } from 'webapps-react';
+import { APIClient, Button, ConfirmDeleteButton, Input, Select, withWebApps } from 'webapps-react';
 import { AvatarPill, AvatarStack } from '../../Cards';
 import DepartmentMembersFlyout from './DepartmentMembersFlyout';
 
@@ -22,15 +22,25 @@ const DepartmentFlyout = ({ UI, ...props }) => {
         modals, toggleManage,
     } = useContext(FlyoutsContext);
 
+    const APIController = new AbortController();
+
+    useEffect(() => {
+        return () => {
+            APIController.abort();
+        }
+    }, []);
+
     useEffect(async () => {
         if (department.head_id !== null && department.head_id !== undefined) {
-            await axios.get(`/api/apps/StaffDirectory/person/${department.head_id}`)
+            await APIClient(`/api/apps/StaffDirectory/person/${department.head_id}`, undefined, { signal: APIController.signal })
                 .then(json => {
                     setHead(json.data.person);
                 })
                 .catch(error => {
-                    // TODO: handle errors
-                    console.log(error);
+                    if (!error.status?.isAbort) {
+                        // TODO: handle errors
+                        console.log(error);
+                    }
                 });
         }
     }, [department])

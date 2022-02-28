@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react';
-import axios from 'axios';
-import { Button, Input, Loader, Select, Switch, useToasts, withWebApps } from 'webapps-react';
+import { APIClient, Button, Input, Loader, Select, Switch, useToasts, withWebApps } from 'webapps-react';
 
 import { CustomFilter, DepartmentFilter, PersonFilter } from './Filters';
 import { PermissionsModal, PreviewModal, TableFieldsModal, UseModal } from './Modals';
@@ -36,8 +35,14 @@ const Views = ({ UI }) => {
 
     const { addToast, updateToast } = useToasts();
 
+    const APIController = new AbortController();
+
     useEffect(async () => {
         await getData();
+        
+        return () => {
+            APIController.abort();
+        }
     }, []);
 
     useEffect(() => {
@@ -45,38 +50,46 @@ const Views = ({ UI }) => {
     }, [changed]);
 
     const getData = async () => {
-        await axios.get('/api/apps/StaffDirectory/peopleList')
+        await APIClient('/api/apps/StaffDirectory/peopleList', undefined, { signal: APIController.signal })
             .then(json => {
                 json.data.list.shift();
                 setPeople(json.data.list);
             })
             .catch(error => {
-                // TODO: handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors
+                    console.log(error);
+                }
             });
-        await axios.get('/api/apps/StaffDirectory/departmentList')
+        await APIClient('/api/apps/StaffDirectory/departmentList', undefined, { signal: APIController.signal })
             .then(json => {
                 setDepartments(json.data.list);
             })
             .catch(error => {
-                // TODO: handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors
+                    console.log(error);
+                }
             });
-        await axios.get('/api/apps/StaffDirectory/customFields')
+        await APIClient('/api/apps/StaffDirectory/customFields', undefined, { signal: APIController.signal })
             .then(json => {
                 setCustom(json.data.list);
             })
             .catch(error => {
-                // TODO: handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors
+                    console.log(error);
+                }
             });
-        await axios.get('/api/apps/StaffDirectory/views')
+        await APIClient('/api/apps/StaffDirectory/views', undefined, { signal: APIController.signal })
             .then(json => {
                 setViews(json.data.views);
             })
             .catch(error => {
-                // TODO: handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors
+                    console.log(error);
+                }
             });
     }
 
@@ -90,7 +103,7 @@ const Views = ({ UI }) => {
             }
         }
 
-        await axios.get(`/api/apps/StaffDirectory/view/${publicId}`)
+        await APIClient(`/api/apps/StaffDirectory/view/${publicId}`, undefined, { signal: APIController.signal })
             .then(json => {
                 let _view = json.data.view;
                 _view.settings = JSON.parse(_view.settings);
@@ -106,8 +119,10 @@ const Views = ({ UI }) => {
                 setChanged(false);
             })
             .catch(error => {
-                // TODO: handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors
+                    console.log(error);
+                }
             });
     }
 
@@ -119,7 +134,7 @@ const Views = ({ UI }) => {
 
         let formData = new FormData();
         formData.append('view', JSON.stringify(view));
-        await axios.post(`/api/apps/StaffDirectory/view/${view.publicId}`, formData)
+        await APIClient(`/api/apps/StaffDirectory/view/${view.publicId}`, { view: JSON.stringify(view) }, { signal: APIController.signal })
             .then(json => {
                 updateToast(save, { appearance: 'success', autoDismiss: true, title: json.data.message });
 
@@ -127,8 +142,10 @@ const Views = ({ UI }) => {
                 getData();
             })
             .catch(error => {
-                // TODO: handle errors
-                console.log(error);
+                if (!error.status?.isAbort) {
+                    // TODO: handle errors
+                    console.log(error);
+                }
             });
     }
 
