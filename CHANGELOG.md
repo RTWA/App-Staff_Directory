@@ -1,5 +1,10 @@
+# Version 1.0.4
+## What's Fixed?
+- Issue where you are unable to search for Azure Groups, where there are more than 100 groups
+- Issue causing only the first 100 members of an Azure Group to be synced
+
 # Version 1.0.3
-## Whats's Changed?
+## What's Changed?
 - Speed improvements
 - Security improvements
 - UI improvements
