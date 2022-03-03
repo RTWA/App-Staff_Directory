@@ -12,6 +12,8 @@ class MasterController extends AppsController
 {
     private $graphController;
 
+    private $managedPersons = [];
+
     public function __construct()
     {
         $this->graphController = new MSGraphController();
@@ -28,54 +30,17 @@ class MasterController extends AppsController
         $token = json_decode($this->graphController->getAccessToken()->content(), true)['token']['access_token'];
         $syncGroups = json_decode(ApplicationSettings::get('app.StaffDirectory.azure.sync_groups'), true);
         $createDepartments = ApplicationSettings::get('app.StaffDirectory.azure.create_departments');
-        $managedPersons = [];
 
         foreach ($syncGroups as $group) {
-            $groupMembers = $this->graphController->getGraphAPI("groups/".$group['id']."/members", $token)['value'];
-
-            foreach ($groupMembers as $member) {
-                $person = Person::withTrashed()
-                                ->where('azure_id', $member['id'])
-                                ->orWhere(function ($query) use ($member) {
-                                    $query->where('username', $member['userPrincipalName'])
-                                          ->whereNull('azure_id');
-                                })
-                                ->first();
-                
-                if (!$person) {
-                    // Create Person Record
-                    $person = Person::create([
-                        'forename' => $member['givenName'],
-                        'surname' => $member['surname'],
-                        'username' => $member['userPrincipalName'],
-                        'email' => $member['mail'],
-                        'title' => $member['jobTitle'],
-                        'onLeave' => false,
-                        'isCover' => false,
-                        'isSenior' => false,
-                        'azure_id' => $member['id'],
-                    ]);
-                }
-
-                if ($person->azure_id !== $member['id']) {
-                    $person->azure_id = $member['id'];
-                    $person->save();
-                }
-
-                if ($person->trashed()) {
-                    $person->restore();
-                }
-
-                $managedPersons[] = $person->toArray();
-            }
+            $this->syncGroupMembers($token, $group['id']);
         }
-        
+
         $persons = Person::withTrashed()->with('departments')->whereNotNull('azure_id')->get();
 
         foreach ($persons as $person) {
             $skip = false;
 
-            if (!in_array($person->toArray(), $managedPersons)) {
+            if (!in_array($person->toArray(), $this->managedPersons)) {
                 // No longer exists in a Synced Azure Group - Delete
                 $person->delete();
                 $skip = true;
@@ -90,12 +55,12 @@ class MasterController extends AppsController
                     'mail',
                     'jobTitle',
                     'businessPhones',
-                    'department',                   
+                    'department',
                     'accountEnabled',
                 ];
 
                 $azUser = $this->graphController->getGraphAPI(
-                    'users/'.$person['azure_id'].'?$select='.implode(',', $fields),
+                    'users/' . $person['azure_id'] . '?$select=' . implode(',', $fields),
                     $token
                 );
 
@@ -137,19 +102,19 @@ class MasterController extends AppsController
                     $userDep = trim($userDep);
 
                     $dep = Department::where('name', $userDep)->first();
-                    
+
                     if (!$dep && $createDepartments) {
                         // Create a department
                         $department = Department::create([
                             'name' => $userDep,
-                            'department_id' => ($i !== 0) ? $createStore[$i-1] : null,
+                            'department_id' => ($i !== 0) ? $createStore[$i - 1] : null,
                         ]);
                         $createStore[$i] = $department->id;
                     } else {
                         $createStore[$i] = $dep->id;
                     }
 
-                    if (count($userDeps) === $i+1) {
+                    if (count($userDeps) === $i + 1) {
                         $person->departments()->syncWithoutDetaching($createStore[$i]);
                     }
                 }
@@ -157,5 +122,73 @@ class MasterController extends AppsController
         }
 
         ApplicationSettings::set('app.StaffDirectory.azure.last_sync', new \DateTime());
+    }
+
+    private function syncGroupMembers($token, $id)
+    {
+        $data = $this->graphController->getGraphAPI("groups/" . $id . "/members", $token);
+        $this->processGroupMembers($token, $data['value']);
+
+        if (isset($data['@odata.nextLink'])) {
+            $this->syncMoreGroupMembers($token, $data['@odata.nextLink']);
+        }
+    }
+
+    private function syncMoreGroupMembers($token, $nextLink)
+    {
+        $data = $this->graphController->getGraphAPI(str_replace('https://graph.microsoft.com/v1.0/', '', $nextLink), $token);
+        $this->processGroupMembers($token, $data['value']);
+
+        if (isset($data['@odata.nextLink'])) {
+            $this->syncMoreGroupMembers($token, $data['@odata.nextLink']);
+        }
+    }
+
+    private function processGroupMembers($token, $groupMembers)
+    {
+        foreach ($groupMembers as $member) {
+            if ($member['@odata.type'] === "#microsoft.graph.group") {
+                $this->syncGroupMembers($token, $member['id']);
+            } else {
+                $this->createOrUpdateMember($member);
+            }
+        }
+    }
+
+    private function createOrUpdateMember($member)
+    {
+        $person = Person::withTrashed()
+                    ->where('azure_id', $member['id'])
+                    ->orWhere(function ($query) use ($member) {
+                        $query->where('username', $member['userPrincipalName'])
+                            ->whereNull('azure_id');
+                    })
+                    ->first();
+
+                if (!$person) {
+                    // Create Person Record
+                    $person = Person::create([
+                        'forename' => $member['givenName'],
+                        'surname' => $member['surname'],
+                        'username' => $member['userPrincipalName'],
+                        'email' => $member['mail'],
+                        'title' => $member['jobTitle'],
+                        'onLeave' => false,
+                        'isCover' => false,
+                        'isSenior' => false,
+                        'azure_id' => $member['id'],
+                    ]);
+                }
+
+                if ($person->azure_id !== $member['id']) {
+                    $person->azure_id = $member['id'];
+                    $person->save();
+                }
+
+                if ($person->trashed()) {
+                    $person->restore();
+                }
+
+                $this->managedPersons[] = $person->toArray();
     }
 }

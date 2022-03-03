@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { APIClient, Button, DataSuggest, Input, Switch } from 'webapps-react';
+import GroupSearch from '../GroupSearch/GroupSearch';
 
 let _mounted = false;
 
@@ -10,8 +11,8 @@ const AzureSettings = () => {
     const [app, setApp] = useState({});
     const [changed, setChanged] = useState({});
     const [syncGroups, setSyncGroups] = useState([]);
+    const [depList, setDepList] = useState({});
     const [accessToken, setAccessToken] = useState(null);
-    const [azGroups, setAzGroups] = useState([]);
 
     const APIController = new AbortController();
 
@@ -19,7 +20,7 @@ const AzureSettings = () => {
         _mounted = true;
         await getAzureDetails();
         await getAppSettings();
-        
+
         return () => {
             APIController.abort();
             _mounted = false;
@@ -31,20 +32,6 @@ const AzureSettings = () => {
             await RequestAccessToken();
         }
     }, [graph]);
-
-    useEffect(async () => {
-        if (accessToken) {
-            await getAzGroups();
-        }
-    }, [accessToken]);
-
-    useEffect(async () => {
-        if (_mounted) {
-            await APIClient('/api/setting/app.StaffDirectory.azure.sync_groups',
-                { value: JSON.stringify(syncGroups) },
-                { signal: APIController.signal, method: 'PUT' });
-        }
-    }, [syncGroups]);
 
     useEffect(async () => {
         if (_mounted) {
@@ -162,34 +149,31 @@ const AzureSettings = () => {
             });
     }
 
-    const getAzGroups = () => {
-        let headers = new Headers();
-        let bearer = `Bearer ${accessToken}`;
-        headers.append('Authorization', bearer);
-        let options = {
-            method: "GET",
-            headers: headers,
-            signal: APIController.signal
-        };
-        let graphEndpoint = 'https://graph.microsoft.com/v1.0/groups?$select=id,displayName';
-
-        fetch(graphEndpoint, options)
-            .then(response => response.json())
-            .then(data => setAzGroups(data.value));
-    }
-
-    const addSyncGroup = selected => {
-        if (syncGroups.findIndex(elem => elem.id === selected.id) < 0) {
+    const addSyncGroup = async selected => {
+        if (syncGroups.indexOf(selected) < 0) {
             setSyncGroups([
                 ...syncGroups,
                 selected
             ]);
+            setDepList({});
+
+            if (_mounted) {
+                await APIClient('/api/setting/app.StaffDirectory.azure.sync_groups',
+                    { value: JSON.stringify(syncGroups) },
+                    { signal: APIController.signal, method: 'PUT' });
+            }
         }
     }
 
-    const removeSyncGroup = index => {
+    const removeSyncGroup = async index => {
         syncGroups.splice(index, 1);
         setSyncGroups([...syncGroups]);
+
+        if (_mounted) {
+            await APIClient('/api/setting/app.StaffDirectory.azure.sync_groups',
+                { value: JSON.stringify(syncGroups) },
+                { signal: APIController.signal, method: 'PUT' });
+        }
     }
 
     const onType = e => {
@@ -227,7 +211,11 @@ const AzureSettings = () => {
 
     return (
         <>
-            <DataSuggest id="depList" name="depList" select={addSyncGroup} data={azGroups} labelKey="displayName" label="Add Azure Group to Sync" />
+            <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300" htmlFor="depList">Add Azure Group to Sync</label>
+                <GroupSearch id="depList" name="depList" groupData={depList} setData={setDepList} saveChange={addSyncGroup} accessToken={accessToken} />
+            </div>
+            {/* <DataSuggest id="depList" name="depList" select={addSyncGroup} data={azGroups} labelKey="displayName" label="Add Azure Group to Sync" /> */}
             <div className="mb-6">
                 <p className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Currently Syncing Groups</p>
                 <div className="w-full bg-gray-50 border-2 border-gray-300 text-gray-900 outline-none text-sm rounded-lg block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
