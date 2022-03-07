@@ -28,7 +28,6 @@ const ViewLayout = props => {
         return new Promise(async (resolve, reject) => {
             await checkGroup('Administrators')
                 .then(access => {
-                    console.log(`Administrators: ${access}`)
                     if (access) {
                         return resolve(true);
                     } else {
@@ -36,7 +35,6 @@ const ViewLayout = props => {
                             if (perm !== 'all' && perm !== 'guest' && allowed === false) {
                                 await checkGroup(perm)
                                     .then(access => {
-                                        console.log(`${perm}: ${access}`)
                                         if (access) {
                                             return resolve(true);
                                         }

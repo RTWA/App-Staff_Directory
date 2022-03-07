@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
-import { APIClient, Button, Input } from 'webapps-react';
+import { APIClient, Button, Input, withWebApps } from 'webapps-react';
 
 import { CardView, GridView, TableView } from './Views/index';
 
@@ -11,6 +11,7 @@ let emptySubDepartment = { id: 'all', name: 'All Sub-Departments' };
 
 const CustomView = props => {
     const {
+        UI,
         view
     } = props;
 
@@ -42,7 +43,7 @@ const CustomView = props => {
                     console.log(error);
                 }
             });
-        
+
         return () => {
             APIController.abort();
         }
@@ -231,20 +232,34 @@ const CustomView = props => {
                             </Button>
                         </div>
                         <div className="w-full sm:w-4/12 lg:w-5/12">
-                            <Select options={options(false)} onChange={depChange} value={selectedDep(false)} className="input-field" classNamePrefix="input-select" />
+                            <Select
+                                options={options(false)}
+                                onChange={depChange}
+                                value={selectedDep(false)}
+                                className={`bg-gray-50 text-gray-900 outline-none text-sm rounded-lg block w-full dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white border-2 border-gray-300 dark:border-gray-600 focus:ring-${UI.theme}-600 dark:focus:ring-${UI.theme}-500 focus:border-${UI.theme}-600 dark:focus:border-${UI.theme}-500`}
+                                classNamePrefix="input-select" />
                         </div>
                         <div className="w-full sm:w-4/12 lg:w-5/12">
                             {
                                 (options(true).length === 1)
                                     ? null
-                                    : <Select options={options(true)} onChange={depChange} value={selectedDep(true)} className="input-field" classNamePrefix="input-select" />
+                                    : <Select
+                                        options={options(true)}
+                                        onChange={depChange}
+                                        value={selectedDep(true)}
+                                        className={`bg-gray-50 text-gray-900 outline-none text-sm rounded-lg block w-full dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white border-2 border-gray-300 dark:border-gray-600 focus:ring-${UI.theme}-600 dark:focus:ring-${UI.theme}-500 focus:border-${UI.theme}-600 dark:focus:border-${UI.theme}-500`}
+                                        classNamePrefix="input-select" />
                             }
                         </div>
                     </div>
-                    <div className="flex flex-col sm:flex-row items-center py-4">
-                        <label className="w-full sm:w-3/12 lg:w-2/12 font-medium sm:font-normal text-sm sm:text-base" htmlFor="name">Search by name:</label>
-                        <Input type="text" id="name" name="name" className="w-full lg:w-10/12" value={search} onChange={filter} />
-                    </div>
+                    <Input
+                        type="text"
+                        id="name"
+                        name="name"
+                        label="Search by name:"
+                        wrapperClassName="my-4 w-full sm:w-7/12"
+                        value={search}
+                        onChange={filter} />
                 </div>
             );
         }
@@ -277,4 +292,4 @@ const CustomView = props => {
     )
 }
 
-export default CustomView;
+export default withWebApps(CustomView);
