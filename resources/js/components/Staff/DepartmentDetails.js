@@ -5,8 +5,6 @@ import { DepartmentSelect } from '../Selects';
 const DepartmentDetails = props => {
     const { person, departments, hide } = props;
 
-    console.log(hide);
-
     return (
         <div className="bg-white dark:bg-gray-800 p-4 rounded shadow-xl mt-8">
             <section>
