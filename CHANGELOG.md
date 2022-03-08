@@ -1,3 +1,13 @@
+# Version 1.0.5
+## What's New?
+- Added option to select which fields appear in edit staff view
+- New "Simple Card" view
+
+## What's Fixed?
+- Improved UI on embedded pages (#10)
+- Fixed issue preventing Administrators from viewing Views
+- Fixed issue with selecting Azure Groups to sync not always saving
+
 # Version 1.0.4
 ## What's Fixed?
 - Issue where you are unable to search for Azure Groups, where there are more than 100 groups
