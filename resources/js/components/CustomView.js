@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import { APIClient, Button, Input, withWebApps } from 'webapps-react';
 
-import { CardView, GridView, TableView } from './Views/index';
+import { CardView, GridView, SimpleCard, TableView } from './Views/index';
 
 import './Selects/Select.css';
 
@@ -275,6 +275,9 @@ const CustomView = props => {
         }
         if (view.display_type === "card") {
             return <CardView view={view} people={people} selected={selected} onlyMe={onlyMe} me={me} />
+        }
+        if (view.display_type === "simple") {
+            return <SimpleCard view={view} people={people} selected={selected} onlyMe={onlyMe} me={me} />
         }
 
         return null;

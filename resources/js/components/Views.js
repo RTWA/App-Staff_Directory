@@ -278,6 +278,7 @@ const Views = ({ UI }) => {
                             <option value="grid">3D Flip Photo Grid</option>
                             <option value="table">Table</option>
                             <option value="card">Profile Card</option>
+                            <option value="simple">Simple Card</option>
                         </Select>
                     </div>
                     <DepartmentFilter
