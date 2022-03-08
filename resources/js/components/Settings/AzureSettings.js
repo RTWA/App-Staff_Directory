@@ -34,6 +34,14 @@ const AzureSettings = () => {
     }, [graph]);
 
     useEffect(async () => {
+        if (_mounted && syncGroups.length !== 0) {
+            await APIClient('/api/setting/app.StaffDirectory.azure.sync_groups',
+                { value: JSON.stringify(syncGroups) },
+                { signal: APIController.signal, method: 'PUT' });
+        }
+    }, [syncGroups]);
+
+    useEffect(async () => {
         if (_mounted) {
             if (changed.create_departments) {
                 // Update create_departments
@@ -156,12 +164,6 @@ const AzureSettings = () => {
                 selected
             ]);
             setDepList({});
-
-            if (_mounted) {
-                await APIClient('/api/setting/app.StaffDirectory.azure.sync_groups',
-                    { value: JSON.stringify(syncGroups) },
-                    { signal: APIController.signal, method: 'PUT' });
-            }
         }
     }
 
