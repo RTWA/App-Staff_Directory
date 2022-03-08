@@ -12,14 +12,45 @@ const Manage = () => {
     const [custom, setCustom] = useState([]);
     const [changed, setChanged] = useState(false);
 
+    const [sections, setSections] = useState({
+        personal: {},
+        departments: {},
+        employment: {},
+    });
+
     const { addToast, updateToast } = useToasts();
 
-    const APIControler = new AbortController();
+    const APIController = new AbortController();
 
     useEffect(async () => {
-        await getPeople();
-        await getData();
-        
+        await APIClient('/api/setting', {
+            key: JSON.stringify([
+                "app.StaffDirectory.section.personal.show",
+                "app.StaffDirectory.section.departments.show",
+                "app.StaffDirectory.section.employment.show",
+                "app.StaffDirectory.fields.personal.hide",
+                "app.StaffDirectory.fields.departments.hide",
+                "app.StaffDirectory.fields.employment.hide",
+            ])
+        }, { signal: APIController.signal })
+            .then(async json => {
+                sections.personal.show = json.data["app.StaffDirectory.section.personal.show"];
+                sections.departments.show = json.data["app.StaffDirectory.section.departments.show"];
+                sections.employment.show = json.data["app.StaffDirectory.section.employment.show"];
+                sections.personal.hide = JSON.parse(json.data["app.StaffDirectory.fields.personal.hide"]);
+                sections.departments.hide = JSON.parse(json.data["app.StaffDirectory.fields.departments.hide"]);
+                sections.employment.hide = JSON.parse(json.data["app.StaffDirectory.fields.employment.hide"]);
+                setSections({ ...sections });
+
+                await getPeople();
+                await getData();
+            })
+            .catch(error => {
+                if (!error.status?.isAbort) {
+                    console.log(error)
+                }
+            });
+
         return () => {
             APIController.abort();
         }
@@ -30,7 +61,7 @@ const Manage = () => {
     }, [changed]);
 
     const getPeople = async () => {
-        await APIClient('/api/apps/StaffDirectory/peopleList', undefined, { signal: APIControler.signal })
+        await APIClient('/api/apps/StaffDirectory/peopleList', undefined, { signal: APIController.signal })
             .then(json => {
                 setPeople(json.data.list);
             })
@@ -43,17 +74,19 @@ const Manage = () => {
     }
 
     const getData = async () => {
-        await APIClient('/api/apps/StaffDirectory/departmentList', undefined, { signal: APIControler.signal })
-            .then(json => {
-                setDepartments(json.data.list);
-            })
-            .catch(error => {
-                if (!error.status?.isAbort) {
-                    // TODO: handle errors
-                    console.log(error);
-                }
-            });
-        await APIClient('/api/apps/StaffDirectory/customFields', undefined, { signal: APIControler.signal })
+        if (sections.departments.show === 'true') {
+            await APIClient('/api/apps/StaffDirectory/departmentList', undefined, { signal: APIController.signal })
+                .then(json => {
+                    setDepartments(json.data.list);
+                })
+                .catch(error => {
+                    if (!error.status?.isAbort) {
+                        // TODO: handle errors
+                        console.log(error);
+                    }
+                });
+        }
+        await APIClient('/api/apps/StaffDirectory/customFields', undefined, { signal: APIController.signal })
             .then(json => {
                 setCustom(json.data.list);
             })
@@ -71,7 +104,7 @@ const Manage = () => {
         let save = null;
         addToast('Saving changes, please wait...', '', { appearance: 'info', autoDismiss: false }, (id) => save = id);
 
-        await APIClient(`/api/apps/StaffDirectory/person/${person.id}`, { person: JSON.stringify(person) }, { signal: APIControler.signal })
+        await APIClient(`/api/apps/StaffDirectory/person/${person.id}`, { person: JSON.stringify(person) }, { signal: APIController.signal })
             .then(json => {
                 updateToast(save, { appearance: 'success', autoDismiss: true, title: json.data.message });
 
@@ -91,7 +124,7 @@ const Manage = () => {
             return;
         }
 
-        await APIClient(`/api/apps/StaffDirectory/person/${person.id}`, {}, { signal: APIControler.signal, method: 'DELETE' })
+        await APIClient(`/api/apps/StaffDirectory/person/${person.id}`, {}, { signal: APIController.signal, method: 'DELETE' })
             .then(json => {
                 setChanged(false);
                 setPerson({ departments: [{}], id: 0, customFields: [{}] });
@@ -113,7 +146,7 @@ const Manage = () => {
         }
 
         if (e.target.value !== "") {
-            await APIClient(`/api/apps/StaffDirectory/person/${e.target.value}`, undefined, { signal: APIControler.signal })
+            await APIClient(`/api/apps/StaffDirectory/person/${e.target.value}`, undefined, { signal: APIController.signal })
                 .then(json => {
                     setChanged(false);
                     setPerson(json.data.person);
@@ -216,9 +249,15 @@ const Manage = () => {
                     }
                 </Select>
 
-                <PersonalDetails person={person} setPerson={setPerson} change={fieldChange} dateChange={dateChange} />
-                <DepartmentDetails person={person} departments={department} />
-                <EmploymentDetails person={person} change={fieldChange} check={checkChange} />
+                <PersonalDetails person={person} setPerson={setPerson} change={fieldChange} dateChange={dateChange} hide={sections.personal.hide} />
+                {
+                    (sections.departments.show === 'true')
+                        ? <DepartmentDetails person={person} departments={department} hide={sections.departments.hide} /> : null
+                }
+                {
+                    (sections.employment.show === 'true')
+                        ? <EmploymentDetails person={person} change={fieldChange} check={checkChange} hide={sections.employment.hide} /> : null
+                }
                 <CustomFieldDetails person={person} fields={custom} change={customChange} />
 
                 <div className="flex flex-row mt-6">

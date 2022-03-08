@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import classNames from 'classnames';
 import { Loader, WebAppsContext } from 'webapps-react';
 
-import { AppSettings, AzureSettings, CustomFields, Permissions, RecycleBin } from './Settings/index';
+import { AppSettings, AzureSettings, Permissions, RecycleBin, SelectFields } from './Settings/index';
 
 const Settings = () => {
     const [tab, setTab] = useState(0);
@@ -51,7 +51,7 @@ const Settings = () => {
                         App Permissions
                     </button>
                     <button className={tabClass(3)} onClick={() => toggle(3)}>
-                        Custom Fields
+                        Select Fields
                     </button>
                     <button className={classNames(tabClass(4), 'md:ml-auto text-red-600 dark:text-red-500')} onClick={() => toggle(4)}>
                         Recycle Bin
@@ -67,7 +67,7 @@ const Settings = () => {
                     <Permissions />
                 </div>
                 <div className={paneClass(3)}>
-                    <CustomFields />
+                    <SelectFields />
                 </div>
                 <div className={classNames(paneClass(4), 'relative', 'px-4 lg:px-10 py-10 pt-5')}>
                     <RecycleBin />

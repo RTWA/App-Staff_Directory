@@ -3,7 +3,9 @@ import { Switch } from 'webapps-react';
 import { DepartmentSelect } from '../Selects';
 
 const DepartmentDetails = props => {
-    const { person, departments } = props;
+    const { person, departments, hide } = props;
+
+    console.log(hide);
 
     return (
         <div className="bg-white dark:bg-gray-800 p-4 rounded shadow-xl mt-8">
@@ -14,7 +16,7 @@ const DepartmentDetails = props => {
                         let department = person.departments[d];
                         return (
                             <div className="w-full flex flex-col items-center xl:flex-row my-2 p-2.5 sm:py-0 bg-gray-50 dark:bg-gray-700 border-2 sm:border-0 border-gray-200 dark:border-gray-600 rounded-lg dark:text-white" key={i}>
-                                <div className="flex flex-col sm:flex-row w-full xl:w-10/12">
+                                <div className={`flex flex-col sm:flex-row w-full ${(hide.includes('head')) ? 'xl:w-12/12' : 'xl:w-10/12'}`}>
                                     <div className="flex flex-row items-center w-full w-full sm:w-auto">
                                         <span className="font-medium xl:font-normal text-sm xl:text-base">Department</span>
                                         <div className="flex items-center ml-auto sm:ml-2 mr-1 sm:mr-0">
@@ -29,14 +31,20 @@ const DepartmentDetails = props => {
                                         <DepartmentSelect departments={departments.list} selected={department} index={i} onChange={departments.change} boxed={false} />
                                     </div>
                                 </div>
-                                <Switch checked={(department['head_id'] == person.id)}
-                                    id={`hod-${i}`}
-                                    name={`hod-${i}`}
-                                    label="Head of Department"
-                                    className="flex flex-row items-center pt-2 xl:pt-0 xl:w-2/12"
-                                    onChange={() => {
-                                        departments.toggleHod(department, i)
-                                    }} />
+                                {
+                                    (hide.includes('head'))
+                                        ? null
+                                        : (
+                                            <Switch checked={(department['head_id'] == person.id)}
+                                                id={`hod-${i}`}
+                                                name={`hod-${i}`}
+                                                label="Head of Department"
+                                                className="flex flex-row items-center pt-2 xl:pt-0 xl:w-2/12"
+                                                onChange={() => {
+                                                    departments.toggleHod(department, i)
+                                                }} />
+                                        )
+                                }
                             </div>
                         )
                     })

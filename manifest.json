@@ -97,6 +97,30 @@
         {
             "key": "app.StaffDirectory.deleteRecord.notifyTo",
             "value": ""
+        },
+        {
+            "key": "app.StaffDirectory.section.personal.show",
+            "value": "true"
+        },
+        {
+            "key": "app.StaffDirectory.section.departments.show",
+            "value": "true"
+        },
+        {
+            "key": "app.StaffDirectory.section.employment.show",
+            "value": "true"
+        },
+        {
+            "key": "app.StaffDirectory.fields.personal.hide",
+            "value": "[]"
+        },
+        {
+            "key": "app.StaffDirectory.fields.departments.hide",
+            "value": "[]"
+        },
+        {
+            "key": "app.StaffDirectory.fields.employment.hide",
+            "value": "[]"
         }
     ]
 }

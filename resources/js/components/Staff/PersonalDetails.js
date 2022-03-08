@@ -9,7 +9,8 @@ const PersonalDetails = ({ UI, ...props }) => {
         person,
         setPerson,
         change,
-        dateChange
+        dateChange,
+        hide,
     } = props;
 
     const { addToast, updateToast } = useToasts();
@@ -111,33 +112,56 @@ const PersonalDetails = ({ UI, ...props }) => {
                         type="text"
                         value={person.surname || ''}
                         onChange={change} />
-                    <Input
-                        id="username"
-                        name="username"
-                        label="Username"
-                        type="text"
-                        value={person.username || ''}
-                        onChange={change} />
-                    <Input
-                        id="employee_id"
-                        name="employee_id"
-                        label="Employee ID"
-                        type="text"
-                        value={person.employee_id || ''}
-                        onChange={change} />
-                    <Input
-                        id="email"
-                        name="email"
-                        label="Email Address"
-                        type="text"
-                        value={person.email || ''}
-                        onChange={change} />
-                    <DatePicker
-                        id="employee_id"
-                        name="employee_id"
-                        label="Start Date"
-                        value={person.startDate || ''}
-                        onDateChange={dateChange} />
+                    {
+                        (hide.includes('username'))
+                            ? null
+                            : (
+                                <Input
+                                    id="username"
+                                    name="username"
+                                    label="Username"
+                                    type="text"
+                                    value={person.username || ''}
+                                    onChange={change} />
+                            )
+                    }
+                    {
+                        (hide.includes('employee_id'))
+                            ? null
+                            : (
+                                <Input
+                                    id="employee_id"
+                                    name="employee_id"
+                                    label="Employee ID"
+                                    type="text"
+                                    value={person.employee_id || ''}
+                                    onChange={change} />
+                            )
+                    }
+                    {
+                        (hide.includes('email'))
+                            ? null
+                            : (<Input
+                                id="email"
+                                name="email"
+                                label="Email Address"
+                                type="text"
+                                value={person.email || ''}
+                                onChange={change} />
+                            )
+                    }
+                    {
+                        (hide.includes('startDate'))
+                            ? null
+                            : (
+                                <DatePicker
+                                    id="startDate"
+                                    name="startDate"
+                                    label="Start Date"
+                                    value={person.startDate || ''}
+                                    onDateChange={dateChange} />
+                            )
+                    }
                 </div>
             </section>
         </div>

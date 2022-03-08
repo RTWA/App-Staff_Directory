@@ -95,7 +95,7 @@ const CustomFields = props => {
         <>
             {
                 (changed)
-                    ? <Button color="green" className="block ml-auto mb-1 text-white hover:text-white" onClick={saveData}>Save Changes</Button>
+                    ? <Button color="green" className="block ml-auto mb-1 text-white hover:text-white" onClick={saveData}>Save Custom Fields</Button>
                     : null
             }
             {
