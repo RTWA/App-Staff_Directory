@@ -96,26 +96,30 @@ class MasterController extends AppsController
                 }
                 $person->save();
 
-                $userDeps = explode(' - ', $azUser['department']);
-                $createStore = [];
-                foreach ($userDeps as $i => $userDep) {
-                    $userDep = trim($userDep);
+                $splitDeps = explode(' & ', $azUser['department']);
 
-                    $dep = Department::where('name', $userDep)->first();
+                foreach ($splitDeps as $department) {
+                    $userDeps = explode(' - ', $department);
+                    $createStore = [];
+                    foreach ($userDeps as $i => $userDep) {
+                        $userDep = trim($userDep);
 
-                    if (!$dep && $createDepartments) {
-                        // Create a department
-                        $department = Department::create([
-                            'name' => $userDep,
-                            'department_id' => ($i !== 0) ? $createStore[$i - 1] : null,
-                        ]);
-                        $createStore[$i] = $department->id;
-                    } else {
-                        $createStore[$i] = $dep->id;
-                    }
+                        $dep = Department::where('name', $userDep)->first();
 
-                    if (count($userDeps) === $i + 1) {
-                        $person->departments()->syncWithoutDetaching($createStore[$i]);
+                        if (!$dep && $createDepartments === 'true') {
+                            // Create a department
+                            $department = Department::create([
+                                'name' => $userDep,
+                                'department_id' => ($i !== 0) ? $createStore[$i - 1] : null,
+                            ]);
+                            $createStore[$i] = $department->id;
+                        } else {
+                            $createStore[$i] = $dep->id;
+                        }
+
+                        if (count($userDeps) === $i + 1) {
+                            $person->departments()->syncWithoutDetaching($createStore[$i]);
+                        }
                     }
                 }
             }
@@ -158,37 +162,37 @@ class MasterController extends AppsController
     private function createOrUpdateMember($member)
     {
         $person = Person::withTrashed()
-                    ->where('azure_id', $member['id'])
-                    ->orWhere(function ($query) use ($member) {
-                        $query->where('username', $member['userPrincipalName'])
-                            ->whereNull('azure_id');
-                    })
-                    ->first();
+            ->where('azure_id', $member['id'])
+            ->orWhere(function ($query) use ($member) {
+                $query->where('username', $member['userPrincipalName'])
+                    ->whereNull('azure_id');
+            })
+            ->first();
 
-                if (!$person) {
-                    // Create Person Record
-                    $person = Person::create([
-                        'forename' => $member['givenName'],
-                        'surname' => $member['surname'],
-                        'username' => $member['userPrincipalName'],
-                        'email' => $member['mail'],
-                        'title' => $member['jobTitle'],
-                        'onLeave' => false,
-                        'isCover' => false,
-                        'isSenior' => false,
-                        'azure_id' => $member['id'],
-                    ]);
-                }
+        if (!$person) {
+            // Create Person Record
+            $person = Person::create([
+                'forename' => $member['givenName'],
+                'surname' => $member['surname'],
+                'username' => $member['userPrincipalName'],
+                'email' => $member['mail'],
+                'title' => $member['jobTitle'],
+                'onLeave' => false,
+                'isCover' => false,
+                'isSenior' => false,
+                'azure_id' => $member['id'],
+            ]);
+        }
 
-                if ($person->azure_id !== $member['id']) {
-                    $person->azure_id = $member['id'];
-                    $person->save();
-                }
+        if ($person->azure_id !== $member['id']) {
+            $person->azure_id = $member['id'];
+            $person->save();
+        }
 
-                if ($person->trashed()) {
-                    $person->restore();
-                }
+        if ($person->trashed()) {
+            $person->restore();
+        }
 
-                $this->managedPersons[] = $person->toArray();
+        $this->managedPersons[] = $person->toArray();
     }
 }
