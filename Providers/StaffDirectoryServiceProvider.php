@@ -38,7 +38,7 @@ class StaffDirectoryServiceProvider extends ServiceProvider
         foreach ($folders as $folder) {
             foreach (GLOB(__DIR__.'/../'.$folder.'/*.php') as $file) {
                 $className = str_replace(__DIR__.'/../'.$folder.'/', '', str_replace('.php', '', $file));
-                if ($folder === 'Controllers' && class_exists($this->namespace.'\\'.$className)) {
+                if (class_exists($this->namespace.'\\'.$className)) {
                     continue;
                 }
                 include $file;
