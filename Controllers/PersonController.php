@@ -109,7 +109,7 @@ class PersonController extends Controller
             }
         }
         
-        if ((int)$id === 0 && (bool)ApplicationSettings::get('app.StaffDirectory.newRecord.sendNotification')) {
+        if ((int)$id === 0 && ApplicationSettings::get('app.StaffDirectory.newRecord.sendNotification') === 'true') {
             Mail::to(ApplicationSettings::get('app.StaffDirectory.newRecord.notifyTo'))
                 ->send(new RecordCreatedMail($current));
         }
