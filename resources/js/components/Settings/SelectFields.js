@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { APIClient, Button, Switch, useToasts, withWebApps } from 'webapps-react';
+import { APIClient, Switch, withWebApps } from 'webapps-react';
 import { CustomFields } from './index';
 
 let timers = [null, null];
@@ -16,8 +16,6 @@ const SelectFields = props => {
         departments: { fields: {} },
         employment: { fields: {} },
     });
-
-    const { addToast } = useToasts();
 
     const APIController = new AbortController();
 
@@ -57,21 +55,6 @@ const SelectFields = props => {
             }
         }
     }, []);
-
-    const saveData = async () => {
-        // await APIClient('/api/apps/StaffDirectory/customFields', { fields: JSON.stringify(custom) }, { signal: APIController.signal, method: 'PUT' })
-        //     .then(json => {
-        //         addToast('Custom Fields Saved', '', { appearance: 'success' });
-        //         setCustom(json.data.list);
-        //     })
-        //     .catch(error => {
-        //         if (!error.status?.isAbort) {
-        //             // TODO: Handle errors
-        //             console.log(error)
-        //             addToast('Unable to save Custom Fields!', '', { appearance: 'error' });
-        //         }
-        //     });
-    }
 
     const toggleSection = async section => {
         states[section].show = 'saving';

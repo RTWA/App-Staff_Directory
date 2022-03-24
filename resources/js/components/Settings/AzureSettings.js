@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { APIClient, Button, DataSuggest, Input, Switch } from 'webapps-react';
+import { APIClient, Button, Input, Switch } from 'webapps-react';
 import GroupSearch from '../GroupSearch/GroupSearch';
 
 let _mounted = false;
@@ -11,6 +11,7 @@ const AzureSettings = () => {
     const [app, setApp] = useState({});
     const [changed, setChanged] = useState({});
     const [syncGroups, setSyncGroups] = useState([]);
+    const [skipUsers, setSkipUsers] = useState([]);
     const [depList, setDepList] = useState({});
     const [accessToken, setAccessToken] = useState(null);
 
@@ -134,6 +135,7 @@ const AzureSettings = () => {
                     "app.StaffDirectory.azure.create_departments",
                     "app.StaffDirectory.azure.technical_contact",
                     "app.StaffDirectory.azure.last_sync",
+                    "app.StaffDirectory.azure.skip_users",
                 ])
             },
             { signal: APIController.signal })
@@ -145,6 +147,9 @@ const AzureSettings = () => {
                     setApp({ ...app });
                     if (json.data['app.StaffDirectory.azure.sync_groups'] !== null) {
                         setSyncGroups(JSON.parse(json.data['app.StaffDirectory.azure.sync_groups']));
+                    }
+                    if (json.data['app.StaffDirectory.azure.skip_users'] !== null) {
+                        setSkipUsers(JSON.parse(json.data['app.StaffDirectory.azure.skip_users']));
                     }
                 }
             });
@@ -174,6 +179,17 @@ const AzureSettings = () => {
         if (_mounted) {
             await APIClient('/api/setting/app.StaffDirectory.azure.sync_groups',
                 { value: JSON.stringify(syncGroups) },
+                { signal: APIController.signal, method: 'PUT' });
+        }
+    }
+
+    const unskipUser = async index => {
+        skipUsers.splice(index, 1);
+        setSkipUsers([...skipUsers]);
+
+        if (_mounted) {
+            await APIClient('/api/setting/app.StaffDirectory.azure.skip_users',
+                { value: JSON.stringify(skipUsers) },
                 { signal: APIController.signal, method: 'PUT' });
         }
     }
@@ -217,7 +233,6 @@ const AzureSettings = () => {
                 <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300" htmlFor="depList">Add Azure Group to Sync</label>
                 <GroupSearch id="depList" name="depList" groupData={depList} setData={setDepList} saveChange={addSyncGroup} accessToken={accessToken} />
             </div>
-            {/* <DataSuggest id="depList" name="depList" select={addSyncGroup} data={azGroups} labelKey="displayName" label="Add Azure Group to Sync" /> */}
             <div className="mb-6">
                 <p className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Currently Syncing Groups</p>
                 <div className="w-full bg-gray-50 border-2 border-gray-300 text-gray-900 outline-none text-sm rounded-lg block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
@@ -270,6 +285,28 @@ const AzureSettings = () => {
                     </Button>
                 }
                 readOnly disabled />
+            <hr className="mb-6" />
+            <div className="mb-6">
+                <p className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Don't sync these users</p>
+                <div className="w-full bg-gray-50 border-2 border-gray-300 text-gray-900 outline-none text-sm rounded-lg block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                    <span className="inline-flex w-0 py-1 text-xs font-bold leading-none">&nbsp;</span>
+                    {
+                        Object.keys(skipUsers).map(function (i) {
+                            let user = skipUsers[i];
+                            return (
+                                <span key={i} className="inline-flex flex-row items-center justify-center text-xs font-bold leading-none mr-2">
+                                    <div className="flex-grow px-2 py-1.5 bg-blue-200 dark:bg-blue-800">{user}</div>
+                                    <div className="flex flex-grow-0 bg-blue-400 dark:bg-blue-900 px-1 py-1.5 cursor-pointer" onClick={() => unskipUser(i)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </div>
+                                </span>
+                            )
+                        })
+                    }
+                </div>
+            </div>
         </>
     );
 }

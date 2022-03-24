@@ -98,6 +98,23 @@ const Manage = () => {
             });
     }
 
+    const unlinkAzure = async e => {
+        e.preventDefault();
+
+        await APIClient(`/api/apps/StaffDirectory/person/${person.id}/unlink`, {}, { signal: APIController.signal })
+            .then(json => {
+                person.azure_id = null;
+                setPerson({ ...person });
+
+                addToast(json.data.message, '', { appearance: 'success' });
+            })
+            .catch(error => {
+                if (!error.status?.isAbort) {
+                    addToast('An error occurred!', error.data.message, { appearance: 'error' });
+                }
+            })
+    }
+
     const savePerson = async e => {
         e.preventDefault();
 
@@ -262,13 +279,19 @@ const Manage = () => {
 
                 <div className="flex flex-row mt-6">
                     <Button className="mr-auto" color="green" onClick={savePerson}>Save Record</Button>
-                    {
-                        (person.id !== 0)
-                            ? <ConfirmDeleteButton text="DELETE This Record"
-                                className="ml-auto"
-                                onClick={deletePerson} />
-                            : null
-                    }
+                    <div className="ml-auto flex flex-row gap-4">
+                        {
+                            (person.id !== 0 && person.azure_id !== null)
+                                ? <Button style="link" color="gray" size="small" onClick={unlinkAzure}>Do not sync this person with Azure again</Button>
+                                : null
+                        }
+                        {
+                            (person.id !== 0)
+                                ? <ConfirmDeleteButton text="DELETE This Record"
+                                    onClick={deletePerson} />
+                                : null
+                        }
+                    </div>
                 </div>
             </div>
         </>

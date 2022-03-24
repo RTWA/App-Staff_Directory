@@ -121,6 +121,10 @@
         {
             "key": "app.StaffDirectory.fields.employment.hide",
             "value": "[]"
+        },
+        {
+            "key": "app.StaffDirectory.azure.skip_users",
+            "value": "[]"
         }
     ]
 }

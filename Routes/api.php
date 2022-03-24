@@ -38,6 +38,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/person/me', [PersonController::class, 'me']);
     Route::get('/person/{id}', [PersonController::class, 'get']);
     Route::post('/person/{id}', [PersonController::class, 'save']);
+    Route::post('/person/{id}/unlink', [PersonController::class, 'unlinkFromAzure']);
 
     Route::delete('/person/{id}', [PersonController::class, 'delete']);
     Route::get('/person/{id}/restore', [PersonController::class, 'restore']);

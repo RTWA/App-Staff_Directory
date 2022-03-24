@@ -114,7 +114,7 @@ class MasterController extends AppsController
                             ]);
                             $createStore[$i] = $department->id;
                         } else {
-                            $createStore[$i] = $dep->id;
+                            $createStore[$i] = ($dep) ? $dep->id : null;
                         }
 
                         if (count($userDeps) === $i + 1) {
@@ -161,38 +161,42 @@ class MasterController extends AppsController
 
     private function createOrUpdateMember($member)
     {
-        $person = Person::withTrashed()
-            ->where('azure_id', $member['id'])
-            ->orWhere(function ($query) use ($member) {
-                $query->where('username', $member['userPrincipalName'])
-                    ->whereNull('azure_id');
-            })
-            ->first();
+        $skips = json_decode(ApplicationSettings::get('app.StaffDirectory.azure.skip_users', '[]'), true);
 
-        if (!$person) {
-            // Create Person Record
-            $person = Person::create([
-                'forename' => $member['givenName'],
-                'surname' => $member['surname'],
-                'username' => $member['userPrincipalName'],
-                'email' => $member['mail'],
-                'title' => $member['jobTitle'],
-                'onLeave' => false,
-                'isCover' => false,
-                'isSenior' => false,
-                'azure_id' => $member['id'],
-            ]);
+        if (!in_array($member['userPrincipalName'], $skips)) {
+            $person = Person::withTrashed()
+                ->where('azure_id', $member['id'])
+                ->orWhere(function ($query) use ($member) {
+                    $query->where('username', $member['userPrincipalName'])
+                        ->whereNull('azure_id');
+                })
+                ->first();
+
+            if (!$person) {
+                // Create Person Record
+                $person = Person::create([
+                    'forename' => $member['givenName'],
+                    'surname' => $member['surname'],
+                    'username' => $member['userPrincipalName'],
+                    'email' => $member['mail'],
+                    'title' => $member['jobTitle'],
+                    'onLeave' => false,
+                    'isCover' => false,
+                    'isSenior' => false,
+                    'azure_id' => $member['id'],
+                ]);
+            }
+
+            if ($person->azure_id !== $member['id']) {
+                $person->azure_id = $member['id'];
+                $person->save();
+            }
+
+            if ($person->trashed()) {
+                $person->restore();
+            }
+
+            $this->managedPersons[] = $person->toArray();
         }
-
-        if ($person->azure_id !== $member['id']) {
-            $person->azure_id = $member['id'];
-            $person->save();
-        }
-
-        if ($person->trashed()) {
-            $person->restore();
-        }
-
-        $this->managedPersons[] = $person->toArray();
     }
 }

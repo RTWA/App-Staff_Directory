@@ -117,6 +117,30 @@ class PersonController extends Controller
         return response()->json(['message' => 'Record saved successfully'], 201);
     }
 
+    public function unlinkFromAzure($id)
+    {
+        $person = Person::find($id);
+        
+        if (!$person->azure_id) {
+            abort(500, 'This person is not currently linked with Azure!');
+        }
+
+        $skips = json_decode(ApplicationSettings::get('app.StaffDirectory.azure.skip_users'), true);
+
+        if (in_array($person->username, $skips)) {
+            abort(500, 'This person is already in the skip list!');
+        }
+        
+        $skips[] = $person->username;
+
+        ApplicationSettings::set('app.StaffDirectory.azure.skip_users', json_encode($skips));
+
+        $person->azure_id = null;
+        $person->save();
+
+        return response()->json(['message' => 'Successfully unlinked from Azure'], 201);
+    }
+
     public function removeFromDepartment($person, $department)
     {
         Person::find($person)->departments()->detach($department);
