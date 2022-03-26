@@ -57,6 +57,11 @@ class MasterController extends AppsController
 
         $persons = Person::withTrashed()->with('departments')->whereNotNull('azure_id')->get();
 
+        $mappings = [];
+        foreach ($this->azureMapFields as $mapField) {
+            $mappings[$mapField->local_field] = $mapField->azure_field;
+        }
+
         foreach ($persons as $person) {
             $skip = false;
 
@@ -67,49 +72,43 @@ class MasterController extends AppsController
             }
 
             if (!$skip) {
-                $fields = [
-                    'givenName',
-                    'surname',
-                    'userPrincipalName',
-                    'employeeId',
-                    'mail',
-                    'jobTitle',
-                    'businessPhones',
-                    'department',
-                    'accountEnabled',
-                ];
-
                 $azUser = $this->graphController->getGraphAPI(
-                    'users/' . $person['azure_id'] . '?$select=' . implode(',', $fields),
+                    'users/' . $person['azure_id'] . '?$select=' . implode(',', $this->sanatizeMappings()) . ',department,accountEnabled',
                     $token
                 );
 
-                if ($person->forename !== $azUser['givenName']) {
-                    $person->forename = $azUser['givenName'];
+                if ($person->forename !== $this->getAzureMemberField($azUser, $mappings['forename']) && $mappings['forename'] !== 'do_not_sync') {
+                    $person->forename = $this->getAzureMemberField($azUser, $mappings['forename']);
                 }
-                if ($person->surname !== $azUser['surname']) {
-                    $person->surname = $azUser['surname'];
+                if ($person->surname !== $this->getAzureMemberField($azUser, $mappings['surname']) && $mappings['surname'] !== 'do_not_sync') {
+                    $person->surname = $this->getAzureMemberField($azUser, $mappings['surname']);
                 }
-                if ($person->username !== $azUser['userPrincipalName']) {
-                    $person->username = $azUser['userPrincipalName'];
+                if ($person->username !== $this->getAzureMemberField($azUser, $mappings['username']) && $mappings['username'] !== 'do_not_sync') {
+                    $person->username = $this->getAzureMemberField($azUser, $mappings['username']);
                 }
-                if ($person->employee_id !== $azUser['employeeId']) {
-                    $person->employee_id = $azUser['employeeId'];
+                if ($person->employee_id !== $this->getAzureMemberField($azUser, $mappings['employee_id']) && $mappings['employee_id'] !== 'do_not_sync') {
+                    $person->employee_id = $this->getAzureMemberField($azUser, $mappings['employee_id']);
                 }
-                if ($person->email !== $azUser['mail']) {
-                    $person->email = $azUser['mail'];
+                if ($person->email !== $this->getAzureMemberField($azUser, $mappings['email']) && $mappings['email'] !== 'do_not_sync') {
+                    $person->email = $this->getAzureMemberField($azUser, $mappings['email']);
                 }
-                if ($person->title !== $azUser['jobTitle']) {
-                    $person->title = $azUser['jobTitle'];
+                if ($person->startDate !== $this->getAzureMemberField($azUser, $mappings['startDate'], 'date') && $mappings['startDate'] !== 'do_not_sync') {
+                    $person->startDate = $this->getAzureMemberField($azUser, $mappings['startDate'], 'date');
                 }
-                if (count($azUser['businessPhones']) === 1) {
-                    if ($person->phone !== $azUser['businessPhones'][0]) {
-                        $person->phone = $azUser['businessPhones'][0];
-                    }
-                } else {
-                    if ($person->phone !== null) {
-                        $person->phone = null;
-                    }
+                if ($person->title !== $this->getAzureMemberField($azUser, $mappings['title']) && $mappings['title'] !== 'do_not_sync') {
+                    $person->title = $this->getAzureMemberField($azUser, $mappings['title']);
+                }
+                if ($person->phone !== $this->getAzureMemberField($azUser, $mappings['phone']) && $mappings['phone'] !== 'do_not_sync') {
+                    $person->phone = $this->getAzureMemberField($azUser, $mappings['phone']);
+                }
+                if ($person->onLeave !== $this->getAzureMemberField($azUser, $mappings['onLeave'], 'bool') && $mappings['onLeave'] !== 'do_not_sync') {
+                    $person->onLeave = $this->getAzureMemberField($azUser, $mappings['onLeave'], 'bool');
+                }
+                if ($person->isCover !== $this->getAzureMemberField($azUser, $mappings['isCover'], 'bool') && $mappings['isCover'] !== 'do_not_sync') {
+                    $person->isCover = $this->getAzureMemberField($azUser, $mappings['isCover'], 'bool');
+                }
+                if ($person->isSenior !== $this->getAzureMemberField($azUser, $mappings['isSenior'], 'bool') && $mappings['isSenior'] !== 'do_not_sync') {
+                    $person->isSenior = $this->getAzureMemberField($azUser, $mappings['isSenior'], 'bool');
                 }
                 if (!$person->trashed() & !$azUser['accountEnabled']) {
                     $person->delete();
@@ -181,13 +180,18 @@ class MasterController extends AppsController
 
     private function createOrUpdateMember($member)
     {
+        $mappings = [];
+        foreach ($this->azureMapFields as $mapField) {
+            $mappings[$mapField->local_field] = $mapField->azure_field;
+        }
+
         $skips = json_decode(ApplicationSettings::get('app.StaffDirectory.azure.skip_users', '[]'), true);
 
-        if (!in_array($member['userPrincipalName'], $skips)) {
+        if (!in_array($member[$mappings['username']], $skips)) {
             $person = Person::withTrashed()
                 ->where('azure_id', $member['id'])
-                ->orWhere(function ($query) use ($member) {
-                    $query->where('username', $member['userPrincipalName'])
+                ->orWhere(function ($query) use ($member, $mappings) {
+                    $query->where('username', $member[$mappings['username']])
                         ->whereNull('azure_id');
                 })
                 ->first();
@@ -195,14 +199,17 @@ class MasterController extends AppsController
             if (!$person) {
                 // Create Person Record
                 $person = Person::create([
-                    'forename' => $member['givenName'],
-                    'surname' => $member['surname'],
-                    'username' => $member['userPrincipalName'],
-                    'email' => $member['mail'],
-                    'title' => $member['jobTitle'],
-                    'onLeave' => false,
-                    'isCover' => false,
-                    'isSenior' => false,
+                    'forename' => $this->getAzureMemberField($member, $mappings['forename']),
+                    'surname' => $this->getAzureMapFields($member, $mappings['surname']),
+                    'username' => $this->getAzureMapFields($member, $mappings['username']),
+                    'employee_id' => $this->getAzureMemberField($member, $mappings['employee_id']),
+                    'email' => $this->getAzureMemberField($member, $mappings['email']),
+                    'title' => $this->getAzureMemberField($member, $mappings['title']),
+                    'startDate' => $this->getAzureMemberField($member, $mappings['startDate'], 'date'),
+                    'phone' => $this->getAzureMemberField($member, $mappings['phone'], 'bool'),
+                    'onLeave' => $this->getAzureMemberField($member, $mappings['onLeave'], 'bool'),
+                    'isCover' => $this->getAzureMemberField($member, $mappings['isCover'], 'bool'),
+                    'isSenior' => $this->getAzureMemberField($member, $mappings['isSenior'], 'bool'),
                     'azure_id' => $member['id'],
                 ]);
             }
@@ -218,5 +225,61 @@ class MasterController extends AppsController
 
             $this->managedPersons[] = $person->toArray();
         }
+    }
+
+    private function getAzureMemberField($member, $field, $type = '')
+    {
+        if ($field === 'do_not_sync') {
+            if ($type === 'bool') {
+                return 0;
+            }
+            if ($type === 'date') {
+                return '0000-00-00 00:00:00';
+            }
+            return '';
+        }
+
+        if (strpos($field, 'extensionAttribute') === 0) {
+            $value = $member['onPremisesExtensionAttributes'][$field];
+        } else {
+            $value = $member[$field];
+        }
+
+        if (is_array($value)) {
+            if (count($value) > 0) {
+                $value = $value[0];
+            } else {
+                $value = '';
+            }
+        }
+
+        if ($type === 'date') {
+            return date("Y-m-d H:i:s", strtotime($value));
+        }
+        if ($type === 'bool') {
+            if ($value === 'true' || $value === 'yes') {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+
+        return $value;
+    }
+
+    private function sanatizeMappings()
+    {
+        $fields = [];
+        foreach ($this->azureMapFields as $mapField) {
+            if ($mapField->azure_field !== 'do_not_sync') {
+                if (strpos($mapField->azure_field, 'extensionAttribute') !== 0) {
+                    $fields[] = $mapField->azure_field;
+                } elseif (!in_array('onPremisesExtensionAttributes', $fields)) {
+                    $fields[] = 'onPremisesExtensionAttributes';
+                }
+            }
+        }
+
+        return $fields;
     }
 }
