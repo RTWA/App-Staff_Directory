@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { APIClient, Switch, withWebApps } from 'webapps-react';
 import { CustomFields } from './index';
+import MappingModal from './Modals/MappingModal';
 
-let timers = [null, null];
+export const ModalsContext = createContext({});
+
+let timers = [null, null, null];
 
 const SelectFields = props => {
     const [sections, setSections] = useState({
@@ -16,21 +19,45 @@ const SelectFields = props => {
         departments: { fields: {} },
         employment: { fields: {} },
     });
+    const [graph, setGraph] = useState({ tenantId: '' });
+    const [mappingModalOpen, setMappingModalOpen] = useState(false);
+    const [mappingModalField, setMappingModalField] = useState(null);
+    const [azureMapFields, setAzureMapFields] = useState({});
+    const [azureMapFieldStates, setAzureMapFieldStates] = useState({});
 
     const APIController = new AbortController();
 
     useEffect(async () => {
+        await APIClient('/api/apps/StaffDirectory/azure/mappings', undefined, { signal: APIController.signal })
+            .then(json => {
+                json.data.map(function (field) {
+                    azureMapFields[field.local_field] = field.azure_field
+                });
+                setAzureMapFields(azureMapFields);
+            })
+            .catch(error => {
+                if (!error.status?.isAbort) {
+                    // TODO: Handle Errors
+                    console.log(error);
+                }
+            });
+
         await APIClient('/api/setting', {
             key: JSON.stringify([
+                "azure.graph.tenant",
                 "app.StaffDirectory.section.personal.show",
                 "app.StaffDirectory.section.departments.show",
                 "app.StaffDirectory.section.employment.show",
                 "app.StaffDirectory.fields.personal.hide",
                 "app.StaffDirectory.fields.departments.hide",
                 "app.StaffDirectory.fields.employment.hide",
+
             ])
         }, { signal: APIController.signal })
             .then(json => {
+                graph.tenantId = json.data['azure.graph.tenant'];
+                setGraph({ ...graph });
+
                 sections.personal.show = json.data["app.StaffDirectory.section.personal.show"];
                 sections.departments.show = json.data["app.StaffDirectory.section.departments.show"];
                 sections.employment.show = json.data["app.StaffDirectory.section.employment.show"];
@@ -53,49 +80,52 @@ const SelectFields = props => {
             if (timers[1]) {
                 clearTimeout(timers[1]);
             }
+            if (timers[2]) {
+                clearTimeout(timers[2]);
+            }
         }
     }, []);
 
     const toggleSection = async section => {
         states[section].show = 'saving';
-        setStates({...states});
+        setStates({ ...states });
 
         sections[section].show = (sections[section].show === 'true') ? 'false' : 'true';
         setSections({ ...sections });
 
         await APIClient(`/api/setting/app.StaffDirectory.section.${section}.show`,
-        {
-            value: sections[section].show
-        },
-        {
-            signal: APIController.signal,
-            method: 'PUT'
-        })
-        .then(json => {
-            states[section].show = 'saved';
-            setStates({...states});
+            {
+                value: sections[section].show
+            },
+            {
+                signal: APIController.signal,
+                method: 'PUT'
+            })
+            .then(json => {
+                states[section].show = 'saved';
+                setStates({ ...states });
 
-            timers[0] = setTimeout(function() {
-                states[section].show = '';
-                setStates({...states});
-            }, 2500);
-        })
-        .catch(error => {
-            if (!error.status?.isAbort) {
-                console.log(error)
+                timers[0] = setTimeout(function () {
+                    states[section].show = '';
+                    setStates({ ...states });
+                }, 2500);
+            })
+            .catch(error => {
+                if (!error.status?.isAbort) {
+                    console.log(error)
 
-                states[section].show = 'error';
-                setStates({...states});
-            }
-        });
+                    states[section].show = 'error';
+                    setStates({ ...states });
+                }
+            });
     }
 
     const toggleField = async e => {
         let section = e.target.dataset.section;
         let field = e.target.id;
-        
+
         states[section].fields[field] = 'saving';
-        setStates({...states});
+        setStates({ ...states });
 
         let index = sections[section].hide.indexOf(field)
 
@@ -108,30 +138,78 @@ const SelectFields = props => {
         setSections({ ...sections });
 
         await APIClient(`/api/setting/app.StaffDirectory.fields.${section}.hide`,
-        {
-            value: JSON.stringify(sections[section].hide)
-        },
-        {
-            signal: APIController.signal,
-            method: 'PUT'
-        })
-        .then(json => {
-            states[section].fields[field] = 'saved';
-            setStates({...states});
+            {
+                value: JSON.stringify(sections[section].hide)
+            },
+            {
+                signal: APIController.signal,
+                method: 'PUT'
+            })
+            .then(json => {
+                states[section].fields[field] = 'saved';
+                setStates({ ...states });
 
-            timers[0] = setTimeout(function() {
-                states[section].fields[field] = '';
-                setStates({...states});
-            }, 2500);
-        })
-        .catch(error => {
-            if (!error.status?.isAbort) {
-                console.log(error)
+                timers[0] = setTimeout(function () {
+                    states[section].fields[field] = '';
+                    setStates({ ...states });
+                }, 2500);
+            })
+            .catch(error => {
+                if (!error.status?.isAbort) {
+                    console.log(error)
 
-                states[section].fields[field] = 'error';
-                setStates({...states});
-            }
-        });
+                    states[section].fields[field] = 'error';
+                    setStates({ ...states });
+                }
+            });
+    }
+
+    const mapField = (name, label) => {
+        if (timers[2]) {
+            clearTimeout(timers[2]);
+            setAzureMapFieldStates({});
+        }
+        setMappingModalField({ name: name, label: label, value: azureMapFields[name] });
+        setMappingModalOpen(true);
+    }
+
+    const saveAzureMapField = async (field, value) => {
+        await APIClient('/api/apps/StaffDirectory/azure/mapping',
+            {
+                local_field: field.name,
+                azure_field: value,
+            },
+            {
+                signal: APIController.signal,
+            })
+            .then(json => {
+                azureMapFieldStates[field.name] = 'saved';
+                setAzureMapFieldStates({ ...azureMapFieldStates });
+
+                let azureMapFields = {};
+                json.data.mappings.map(function (field) {
+                    azureMapFields[field.local_field] = field.azure_field
+                });
+                setAzureMapFields(azureMapFields);
+
+                timers[2] = setTimeout(function () {
+                    azureMapFieldStates[field.name] = '';
+                    setAzureMapFieldStates({ ...azureMapFieldStates });
+                }, 2500);
+            })
+            .catch(error => {
+                if (!error.status?.isAbort) {
+                    // TODO: Handle Errors
+                    console.log(error);
+
+                    azureMapFieldStates[field.name] = 'error';
+                    setAzureMapFieldStates({ ...azureMapFieldStates });
+                }
+            })
+            .finally(() => {
+                setMappingModalOpen(false);
+                setMappingModalField(null);
+            });
     }
 
     const paneClass = section => classNames(
@@ -143,55 +221,165 @@ const SelectFields = props => {
 
     return (
         <>
-            <div className="border cursor-pointer rounded bg-gray-100 dark:bg-gray-900 dark:border-gray-700 mb-2">
+            <div className="border rounded bg-gray-100 dark:bg-gray-900 dark:border-gray-700 mb-2">
                 <div className="flex flex-row items-center w-full">
                     <p className="flex-1 p-4">Personal Details</p>
                 </div>
                 <div className={paneClass('personal')}>
-                    <Switch
-                        id="username"
-                        name="username"
-                        label="Username"
-                        helpText="Toggle to show or hide this field"
-                        className="mb-2"
-                        checked={!sections.personal.hide?.includes('username')}
-                        state={states.personal.fields.username}
-                        data-section="personal"
-                        onChange={toggleField}
-                    />
-                    <Switch
-                        id="employee_id"
-                        name="employee_id"
-                        label="Employee ID"
-                        helpText="Toggle to show or hide this field"
-                        className="mb-2"
-                        checked={!sections.personal.hide?.includes('employee_id')}
-                        state={states.personal.fields.employee_id}
-                        data-section="personal"
-                        onChange={toggleField}
-                    />
-                    <Switch
-                        id="email"
-                        name="email"
-                        label="Email Address"
-                        helpText="Toggle to show or hide this field"
-                        className="mb-2"
-                        checked={!sections.personal.hide?.includes('email')}
-                        state={states.personal.fields.email}
-                        data-section="personal"
-                        onChange={toggleField}
-                    />
-                    <Switch
-                        id="startDate"
-                        name="startDate"
-                        label="Username"
-                        helpText="Start Date"
-                        className="mb-2"
-                        checked={!sections.personal.hide?.includes('startDate')}
-                        state={states.personal.fields.startDate}
-                        data-section="personal"
-                        onChange={toggleField}
-                    />
+                    {
+                        (graph.tenantId)
+                            ? (
+                                <>
+                                    <div className="flex flex-col sm:flex-row mb-2">
+                                        <div className="w-full sm:w-3/12">
+                                            <div className="sm:hidden text-sm font-medium text-gray-700 dark:text-gray-300">Forename</div>
+                                        </div>
+                                        <div
+                                            className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg px-1 -mx-1 sm:mx-0 mt-2 mb-4 sm:my-0 transition-colors duration-500 ${(azureMapFieldStates?.forename === 'saved') ? 'bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800' : ''}  ${(azureMapFieldStates?.forename === 'error') ? 'bg-red-100 dark:bg-red-900' : ''}`}
+                                            title="Click to change"
+                                            onClick={() => mapField('forename', 'Forename')}>
+                                            <div className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                Map <span className="hidden sm:inline-block">"Forename"</span> with Azure attribute
+                                            </div>
+                                            <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                                {azureMapFields.forename}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row mb-2">
+                                        <div className="w-full sm:w-3/12">
+                                            <div className="sm:hidden text-sm font-medium text-gray-700 dark:text-gray-300">Surname</div>
+                                        </div>
+                                        <div
+                                            className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg px-1 -mx-1 sm:mx-0 mt-2 mb-4 sm:my-0 transition-colors duration-500 ${(azureMapFieldStates?.surname === 'saved') ? 'bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800' : ''}  ${(azureMapFieldStates?.surname === 'error') ? 'bg-red-100 dark:bg-red-900' : ''}`}
+                                            title="Click to change"
+                                            onClick={() => mapField('surname', 'Surname')}>
+                                            <div className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                Map <span className="hidden sm:inline-block">"Surname"</span> with Azure attribute
+                                            </div>
+                                            <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                                {azureMapFields.surname}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : null
+                    }
+                    <div className="flex flex-col sm:flex-row mb-2">
+                        <Switch
+                            id="username"
+                            name="username"
+                            label="Username"
+                            helpText="Toggle to show or hide this field"
+                            className="w-full sm:w-3/12"
+                            checked={!sections.personal.hide?.includes('username')}
+                            state={states.personal.fields.username}
+                            data-section="personal"
+                            onChange={toggleField}
+                        />
+                        {
+                            (graph.tenantId)
+                                ? (
+                                    <div
+                                        className="cursor-not-allowed hover:bg-red-100 dark:hover:bg-red-900 rounded-lg px-1 -mx-1 sm:mx-0 mt-2 mb-4 sm:my-0"
+                                        title="This cannot be changed">
+                                        <div className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Map <span className="hidden sm:inline-block">"Username"</span> with Azure attribute
+                                        </div>
+                                        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                            {azureMapFields.username}
+                                        </div>
+                                    </div>
+                                ) : null
+                        }
+                    </div>
+                    <div className="flex flex-col sm:flex-row mb-2">
+                        <Switch
+                            id="employee_id"
+                            name="employee_id"
+                            label="Employee ID"
+                            helpText="Toggle to show or hide this field"
+                            className="w-full sm:w-3/12"
+                            checked={!sections.personal.hide?.includes('employee_id')}
+                            state={states.personal.fields.employee_id}
+                            data-section="personal"
+                            onChange={toggleField}
+                        />
+                        {
+                            (graph.tenantId)
+                                ? (
+                                    <div
+                                        className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg px-1 -mx-1 sm:mx-0 mt-2 mb-4 sm:my-0 transition-colors duration-500 ${(azureMapFieldStates?.employee_id === 'saved') ? 'bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800' : ''}  ${(azureMapFieldStates?.employee_id === 'error') ? 'bg-red-100 dark:bg-red-900' : ''}`}
+                                        title="Click to change"
+                                        onClick={() => mapField('employee_id', 'Employee ID')}>
+                                        <div className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Map <span className="hidden sm:inline-block">"Employee ID"</span> with Azure attribute
+                                        </div>
+                                        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                            {azureMapFields.employee_id}
+                                        </div>
+                                    </div>
+                                ) : null
+                        }
+                    </div>
+                    <div className="flex flex-col sm:flex-row mb-2">
+                        <Switch
+                            id="email"
+                            name="email"
+                            label="Email Address"
+                            helpText="Toggle to show or hide this field"
+                            className="w-full sm:w-3/12"
+                            checked={!sections.personal.hide?.includes('email')}
+                            state={states.personal.fields.email}
+                            data-section="personal"
+                            onChange={toggleField}
+                        />
+                        {
+                            (graph.tenantId)
+                                ? (
+                                    <div
+                                        className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg px-1 -mx-1 sm:mx-0 mt-2 mb-4 sm:my-0 transition-colors duration-500 ${(azureMapFieldStates?.email === 'saved') ? 'bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800' : ''}  ${(azureMapFieldStates?.email === 'error') ? 'bg-red-100 dark:bg-red-900' : ''}`}
+                                        title="Click to change"
+                                        onClick={() => mapField('email', 'Email Address')}>
+                                        <div className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Map <span className="hidden sm:inline-block">"Email Address"</span> with Azure attribute
+                                        </div>
+                                        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                            {azureMapFields.email}
+                                        </div>
+                                    </div>
+                                ) : null
+                        }
+                    </div>
+                    <div className="flex flex-col sm:flex-row mb-2">
+                        <Switch
+                            id="startDate"
+                            name="startDate"
+                            label="Start Date"
+                            helpText="Toggle to show or hide this field"
+                            className="w-full sm:w-3/12"
+                            checked={!sections.personal.hide?.includes('startDate')}
+                            state={states.personal.fields.startDate}
+                            data-section="personal"
+                            onChange={toggleField}
+                        />
+                        {
+                            (graph.tenantId)
+                                ? (
+                                    <div
+                                        className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg px-1 -mx-1 sm:mx-0 mt-2 mb-4 sm:my-0 transition-colors duration-500 ${(azureMapFieldStates?.startDate === 'saved') ? 'bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800' : ''}  ${(azureMapFieldStates?.startDate === 'error') ? 'bg-red-100 dark:bg-red-900' : ''}`}
+                                        title="Click to change"
+                                        onClick={() => mapField('startDate', 'Start Date')}>
+                                        <div className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Map <span className="hidden sm:inline-block">"Start Date"</span> with Azure attribute
+                                        </div>
+                                        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                            {azureMapFields.startDate}
+                                        </div>
+                                    </div>
+                                ) : null
+                        }
+                    </div>
                 </div>
             </div>
             <div className="border cursor-pointer rounded bg-gray-100 dark:bg-gray-900 dark:border-gray-700 mb-2">
@@ -260,61 +448,151 @@ const SelectFields = props => {
                     </div>
                 </div>
                 <div className={paneClass('employment')}>
-                    <Switch
-                        id="title"
-                        name="title"
-                        label="Job Title"
-                        helpText="Toggle to show or hide this field"
-                        className="mb-2"
-                        checked={!sections.employment.hide?.includes('title')}
-                        state={states.employment.fields.title}
-                        data-section="employment"
-                        onChange={toggleField}
-                    />
-                    <Switch
-                        id="phone"
-                        name="phone"
-                        label="Phone Number"
-                        helpText="Toggle to show or hide this field"
-                        className="mb-2"
-                        checked={!sections.employment.hide?.includes('phone')}
-                        state={states.employment.fields.phone}
-                        data-section="employment"
-                        onChange={toggleField}
-                    />
-                    <Switch
-                        id="onLeave"
-                        name="onLeave"
-                        label="Staff member is on leave"
-                        helpText="Toggle to show or hide this field"
-                        className="mb-2"
-                        checked={!sections.employment.hide?.includes('onLeave')}
-                        state={states.employment.fields.onLeave}
-                        data-section="employment"
-                        onChange={toggleField}
-                    />
-                    <Switch
-                        id="isCover"
-                        name="isCover"
-                        label="Staff member is Maternity Cover"
-                        helpText="Toggle to show or hide this field"
-                        className="mb-2"
-                        checked={!sections.employment.hide?.includes('isCover')}
-                        state={states.employment.fields.isCover}
-                        data-section="employment"
-                        onChange={toggleField}
-                    />
-                    <Switch
-                        id="isSenior"
-                        name="isSenior"
-                        label="Staff member is Senior"
-                        helpText="Toggle to show or hide this field"
-                        className="mb-2"
-                        checked={!sections.employment.hide?.includes('isSenior')}
-                        state={states.employment.fields.isSenior}
-                        data-section="employment"
-                        onChange={toggleField}
-                    />
+                    <div className="flex flex-col sm:flex-row mb-2">
+                        <Switch
+                            id="title"
+                            name="title"
+                            label="Job Title"
+                            helpText="Toggle to show or hide this field"
+                            className="w-full sm:w-3/12"
+                            checked={!sections.employment.hide?.includes('title')}
+                            state={states.employment.fields.title}
+                            data-section="employment"
+                            onChange={toggleField}
+                        />
+                        {
+                            (graph.tenantId)
+                                ? (
+                                    <div
+                                        className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg px-1 -mx-1 sm:mx-0 mt-2 mb-4 sm:my-0 transition-colors duration-500 ${(azureMapFieldStates?.title === 'saved') ? 'bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800' : ''}  ${(azureMapFieldStates?.title === 'error') ? 'bg-red-100 dark:bg-red-900' : ''}`}
+                                        title="Click to change"
+                                        onClick={() => mapField('title', 'Job Title')}>
+                                        <div className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Map <span className="hidden sm:inline-block">"Job Title"</span> with Azure attribute
+                                        </div>
+                                        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                            {azureMapFields.title}
+                                        </div>
+                                    </div>
+                                ) : null
+                        }
+                    </div>
+                    <div className="flex flex-col sm:flex-row mb-2">
+                        <Switch
+                            id="phone"
+                            name="phone"
+                            label="Phone Number"
+                            helpText="Toggle to show or hide this field"
+                            className="w-full sm:w-3/12"
+                            checked={!sections.employment.hide?.includes('phone')}
+                            state={states.employment.fields.phone}
+                            data-section="employment"
+                            onChange={toggleField}
+                        />
+                        {
+                            (graph.tenantId)
+                                ? (
+                                    <div
+                                        className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg px-1 -mx-1 sm:mx-0 mt-2 mb-4 sm:my-0 transition-colors duration-500 ${(azureMapFieldStates?.phone === 'saved') ? 'bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800' : ''}  ${(azureMapFieldStates?.phone === 'error') ? 'bg-red-100 dark:bg-red-900' : ''}`}
+                                        title="Click to change"
+                                        onClick={() => mapField('phone', 'Phone Number')}>
+                                        <div className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Map <span className="hidden sm:inline-block">"Phone Number"</span> with Azure attribute
+                                        </div>
+                                        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                            {azureMapFields.phone}
+                                        </div>
+                                    </div>
+                                ) : null
+                        }
+                    </div>
+                    <div className="flex flex-col sm:flex-row mb-2">
+                        <Switch
+                            id="onLeave"
+                            name="onLeave"
+                            label="Staff member is on leave"
+                            helpText="Toggle to show or hide this field"
+                            className="w-full sm:w-3/12"
+                            checked={!sections.employment.hide?.includes('onLeave')}
+                            state={states.employment.fields.onLeave}
+                            data-section="employment"
+                            onChange={toggleField}
+                        />
+                        {
+                            (graph.tenantId)
+                                ? (
+                                    <div
+                                        className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg px-1 -mx-1 sm:mx-0 mt-2 mb-4 sm:my-0 transition-colors duration-500 ${(azureMapFieldStates?.onLeave === 'saved') ? 'bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800' : ''}  ${(azureMapFieldStates?.onLeave === 'error') ? 'bg-red-100 dark:bg-red-900' : ''}`}
+                                        title="Click to change"
+                                        onClick={() => mapField('onLeave', 'Staff member is on leave')}>
+                                        <div className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Map <span className="hidden sm:inline-block">"Staff member is on leave"</span> with Azure attribute
+                                        </div>
+                                        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                            {azureMapFields.onLeave}
+                                        </div>
+                                    </div>
+                                ) : null
+                        }
+                    </div>
+                    <div className="flex flex-col sm:flex-row mb-2">
+                        <Switch
+                            id="isCover"
+                            name="isCover"
+                            label="Staff member is Maternity Cover"
+                            helpText="Toggle to show or hide this field"
+                            className="w-full sm:w-3/12"
+                            checked={!sections.employment.hide?.includes('isCover')}
+                            state={states.employment.fields.isCover}
+                            data-section="employment"
+                            onChange={toggleField}
+                        />
+                        {
+                            (graph.tenantId)
+                                ? (
+                                    <div
+                                        className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg px-1 -mx-1 sm:mx-0 mt-2 mb-4 sm:my-0 transition-colors duration-500 ${(azureMapFieldStates?.isCover === 'saved') ? 'bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800' : ''}  ${(azureMapFieldStates?.isCover === 'error') ? 'bg-red-100 dark:bg-red-900' : ''}`}
+                                        title="Click to change"
+                                        onClick={() => mapField('isCover', 'Staff member is Maternity Cover')}>
+                                        <div className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Map <span className="hidden sm:inline-block">"Staff member is Maternity Cover"</span> with Azure attribute
+                                        </div>
+                                        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                            {azureMapFields.isCover}
+                                        </div>
+                                    </div>
+                                ) : null
+                        }
+                    </div>
+                    <div className="flex flex-col sm:flex-row mb-2">
+                        <Switch
+                            id="isSenior"
+                            name="isSenior"
+                            label="Staff member is Senior"
+                            helpText="Toggle to show or hide this field"
+                            className="w-full sm:w-3/12"
+                            checked={!sections.employment.hide?.includes('isSenior')}
+                            state={states.employment.fields.isSenior}
+                            data-section="employment"
+                            onChange={toggleField}
+                        />
+                        {
+                            (graph.tenantId)
+                                ? (
+                                    <div
+                                        className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg px-1 -mx-1 sm:mx-0 mt-2 mb-4 sm:my-0 transition-colors duration-500 ${(azureMapFieldStates?.isSenior === 'saved') ? 'bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800' : ''}  ${(azureMapFieldStates?.isSenior === 'error') ? 'bg-red-100 dark:bg-red-900' : ''}`}
+                                        title="Click to change"
+                                        onClick={() => mapField('isSenior', 'Staff member is Senior')}>
+                                        <div className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Map <span className="hidden sm:inline-block">"Staff member is Senior"</span> with Azure attribute
+                                        </div>
+                                        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                            {azureMapFields.isSenior}
+                                        </div>
+                                    </div>
+                                ) : null
+                        }
+                    </div>
                 </div>
             </div>
             <div className="border cursor-pointer rounded bg-gray-100 dark:bg-gray-900 dark:border-gray-700 mb-2">
@@ -325,6 +603,13 @@ const SelectFields = props => {
                     <CustomFields />
                 </div>
             </div>
+
+            <ModalsContext.Provider value={{
+                open: mappingModalOpen,
+                save: saveAzureMapField,
+            }}>
+                <MappingModal closeModal={() => { setMappingModalOpen(false); setMappingModalField(null) }} field={mappingModalField} />
+            </ModalsContext.Provider>
         </>
     );
 }

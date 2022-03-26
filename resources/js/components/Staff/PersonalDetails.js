@@ -104,7 +104,10 @@ const PersonalDetails = ({ UI, ...props }) => {
                         label="Forename"
                         type="text"
                         value={person.forename || ''}
-                        onChange={change} />
+                        onChange={change}
+                        readOnly={(person.azure_id) ? true : null}
+                        helpText={(person.azure_id) ? 'This field is read-only as the person is synced with Azure.' : null}
+                        inputClassName={(person.azure_id) ? 'cursor-not-allowed': null} />
                     <Input
                         id="surname"
                         name="surname"
