@@ -4,19 +4,39 @@ namespace WebApps\Apps\StaffDirectory\Controllers;
 
 use App\Http\Controllers\AppsController;
 use App\Http\Controllers\MSGraphController;
+use Illuminate\Http\Request;
 use RobTrehy\LaravelApplicationSettings\ApplicationSettings;
+use WebApps\Apps\StaffDirectory\Models\AzureMapFields;
 use WebApps\Apps\StaffDirectory\Models\Department;
 use WebApps\Apps\StaffDirectory\Models\Person;
 
 class MasterController extends AppsController
 {
     private $graphController;
+    private $azureMapFields;
 
     private $managedPersons = [];
 
     public function __construct()
     {
         $this->graphController = new MSGraphController();
+        $this->azureMapFields = AzureMapFields::all();
+    }
+
+    public function getAzureMapFields()
+    {
+        return response()->json($this->azureMapFields->toArray(), 200);
+    }
+
+    public function setAzureMapField(Request $request)
+    {
+        $mapping = AzureMapFields::where('local_field', '=', $request->input('local_field'))->firstOrFail();
+        $mapping->azure_field = $request->input('azure_field');
+        $mapping->save();
+
+        $this->azureMapFields = AzureMapFields::all();
+
+        return response()->json(['message' => 'Mapping updated successfully!', 'mappings' => $this->azureMapFields->toArray()], 201);
     }
 
     public function syncAzure()

@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\Schema;
 class AppManagerController extends Controller
 {
     private static $tablePrefix = "app_StaffDirectory_";
-    
+
     public function __construct()
     {
-        parent::__construct(json_decode(file_get_contents(__DIR__.'/../manifest.json'), true));
+        parent::__construct(json_decode(file_get_contents(__DIR__ . '/../manifest.json'), true));
     }
 
     public function install()
@@ -87,9 +87,16 @@ class AppManagerController extends Controller
                 $table->text('value')->nullable();
             });
         }
+        if (!Schema::hasTable($this->azureMapFieldsTable())) {
+            Schema::create($this->azureMapFieldsTable(), function (Blueprint $table) {
+                $table->id();
+                $table->string('local_field');
+                $table->string('azure_field');
+            });
+        }
         if (Schema::hasTable($this->viewsTable())) {
             DB::insert(
-                'insert into '.$this->viewsTable().' 
+                'insert into ' . $this->viewsTable() . ' 
                 (name, owner, publicId, display, display_type, settings) values (?, ?, ?, ?, ?, ?)',
                 [
                     'All Staff', //name
@@ -97,7 +104,7 @@ class AppManagerController extends Controller
                     'all', // publicId
                     'all', // display
                     'all', // display_type
-                     // settings
+                    // settings
                     json_encode([
                         'perms' => [
                             "Standard Users" => true
@@ -106,6 +113,96 @@ class AppManagerController extends Controller
                         "selectors" => "true",
                         "sorttext" => "true"
                     ])
+                ]
+            );
+        }
+        if (!Schema::hasTable($this->azureMapFieldsTable())) {
+            DB::insert(
+                'insert into ' . $this->azureMapFieldsTable() . '
+                (local_field, azure_field) values (?, ?)',
+                [
+                    'forename', // local_field
+                    'givenName', // azure_field
+                ]
+            );
+            DB::insert(
+                'insert into ' . $this->azureMapFieldsTable() . '
+                (local_field, azure_field) values (?, ?)',
+                [
+                    'surname', // local_field
+                    'surname', // azure_field
+                ]
+            );
+            DB::insert(
+                'insert into ' . $this->azureMapFieldsTable() . '
+                (local_field, azure_field) values (?, ?)',
+                [
+                    'username', // local_field
+                    'userPrincipalName', // azure_field
+                ]
+            );
+            DB::insert(
+                'insert into ' . $this->azureMapFieldsTable() . '
+                (local_field, azure_field) values (?, ?)',
+                [
+                    'employee_id', // local_field
+                    'do_not_sync', // azure_field
+                ]
+            );
+            DB::insert(
+                'insert into ' . $this->azureMapFieldsTable() . '
+                (local_field, azure_field) values (?, ?)',
+                [
+                    'email', // local_field
+                    'mail', // azure_field
+                ]
+            );
+            DB::insert(
+                'insert into ' . $this->azureMapFieldsTable() . '
+                (local_field, azure_field) values (?, ?)',
+                [
+                    'startDate', // local_field
+                    'do_not_sync', // azure_field
+                ]
+            );
+            DB::insert(
+                'insert into ' . $this->azureMapFieldsTable() . '
+                (local_field, azure_field) values (?, ?)',
+                [
+                    'title', // local_field
+                    'jobTitle', // azure_field
+                ]
+            );
+            DB::insert(
+                'insert into ' . $this->azureMapFieldsTable() . '
+                (local_field, azure_field) values (?, ?)',
+                [
+                    'phone', // local_field
+                    'do_not_sync', // azure_field
+                ]
+            );
+            DB::insert(
+                'insert into ' . $this->azureMapFieldsTable() . '
+                (local_field, azure_field) values (?, ?)',
+                [
+                    'onLeave', // local_field
+                    'do_not_sync', // azure_field
+                ]
+            );
+            DB::insert(
+                'insert into ' . $this->azureMapFieldsTable() . '
+                (local_field, azure_field) values (?, ?)',
+                [
+                    'isCover', // local_field
+                    'do_not_sync', // azure_field
+                ]
+            );
+            DB::insert(
+                'insert into ' . $this->azureMapFieldsTable() . '
+                (local_field, azure_field) values (?, ?)',
+                [
+                    'isSenior', // local_field
+                    'do_not_sync', // azure_field
                 ]
             );
         }
@@ -123,6 +220,7 @@ class AppManagerController extends Controller
         Schema::dropIfExists($this->peopleDepartmentsTable());
         Schema::dropIfExists($this->customFieldsTable());
         Schema::dropIfExists($this->peopleCustomFieldsTable());
+        Schema::dropIfExists($this->azureMapFieldsTable());
         $this->dropPermissions();
         $this->dropSettings();
         $this->dropAppJS();
@@ -131,33 +229,33 @@ class AppManagerController extends Controller
 
     private function copyAppJS()
     {
-        $js = __DIR__.'/../public/StaffDirectory.js';
-        $js2 = __DIR__.'/../public/StaffDirectory_View.js';
+        $js = __DIR__ . '/../public/StaffDirectory.js';
+        $js2 = __DIR__ . '/../public/StaffDirectory_View.js';
         $path = public_path("js/apps/");
 
         if (!file_exists($path)) {
             mkdir($path, 0777, true);
         }
 
-        if (file_exists($path.$this->slug.'.js')) {
-            unlink($path.$this->slug.'.js');
+        if (file_exists($path . $this->slug . '.js')) {
+            unlink($path . $this->slug . '.js');
         }
-        copy($js, $path.$this->slug.'.js');
+        copy($js, $path . $this->slug . '.js');
 
-        if (file_exists($path.$this->slug.'_View.js')) {
-            unlink($path.$this->slug.'_View.js');
+        if (file_exists($path . $this->slug . '_View.js')) {
+            unlink($path . $this->slug . '_View.js');
         }
-        copy($js2, $path.$this->slug.'_View.js');
+        copy($js2, $path . $this->slug . '_View.js');
     }
 
     private function dropAppJS()
     {
         $path = public_path("js/apps/");
-        if (file_exists($path.$this->slug.'.js')) {
-            unlink($path.$this->slug.'.js');
+        if (file_exists($path . $this->slug . '.js')) {
+            unlink($path . $this->slug . '.js');
         }
-        if (file_exists($path.$this->slug.'_View.js')) {
-            unlink($path.$this->slug.'_View.js');
+        if (file_exists($path . $this->slug . '_View.js')) {
+            unlink($path . $this->slug . '_View.js');
         }
     }
 
@@ -204,7 +302,7 @@ class AppManagerController extends Controller
         if (DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:azure-sync')->first()) {
             DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:azure-sync')->delete();
         }
-        
+
         if (DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:check-last-sync-time')->first()) {
             DB::table('apps_scheduler')->where('command', '=', 'StaffDirectory:check-last-sync-time')->delete();
         }
@@ -216,31 +314,36 @@ class AppManagerController extends Controller
 
     public static function viewsTable()
     {
-        return self::$tablePrefix.'Views';
+        return self::$tablePrefix . 'Views';
     }
 
     public static function peopleTable()
     {
-        return self::$tablePrefix.'People';
+        return self::$tablePrefix . 'People';
     }
 
     public static function departmentsTable()
     {
-        return self::$tablePrefix.'Departments';
+        return self::$tablePrefix . 'Departments';
     }
 
     public static function peopleDepartmentsTable()
     {
-        return self::$tablePrefix.'People_Departments';
+        return self::$tablePrefix . 'People_Departments';
     }
 
     public static function customFieldsTable()
     {
-        return self::$tablePrefix.'CustomFields';
+        return self::$tablePrefix . 'CustomFields';
     }
 
     public static function peopleCustomFieldsTable()
     {
-        return self::$tablePrefix.'People_CustomFields';
+        return self::$tablePrefix . 'People_CustomFields';
+    }
+
+    public static function azureMapFieldsTable()
+    {
+        return self::$tablePrefix . 'Azure_Map_Fields';
     }
 }

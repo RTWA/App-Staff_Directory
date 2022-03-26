@@ -54,6 +54,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::put('/customFields', [CustomFieldController::class, 'save']);
 
     Route::get('/azure/sync', [MasterController::class, 'syncAzure']);
+    Route::get('/azure/mappings', [MasterController::class, 'getAzureMapFields']);
+    Route::post('/azure/mapping', [MasterController::class, 'setAzureMapField']);
 
     Route::get('/departments/sample', [DepartmentsController::class, 'seed']);
     Route::get('/people/sample', [PersonController::class, 'seed']);
