@@ -206,7 +206,7 @@ class MasterController extends AppsController
                     'email' => $this->getAzureMemberField($member, $mappings['email']),
                     'title' => $this->getAzureMemberField($member, $mappings['title']),
                     'startDate' => $this->getAzureMemberField($member, $mappings['startDate'], 'date'),
-                    'phone' => $this->getAzureMemberField($member, $mappings['phone'], 'bool'),
+                    'phone' => $this->getAzureMemberField($member, $mappings['phone']),
                     'onLeave' => $this->getAzureMemberField($member, $mappings['onLeave'], 'bool'),
                     'isCover' => $this->getAzureMemberField($member, $mappings['isCover'], 'bool'),
                     'isSenior' => $this->getAzureMemberField($member, $mappings['isSenior'], 'bool'),
