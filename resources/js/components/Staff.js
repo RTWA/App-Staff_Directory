@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Moment from 'moment';
-import { Prompt } from 'react-router';
+// import { Prompt } from 'react-router';
 import { APIClient, Button, ConfirmDeleteButton, Loader, Select, useToasts } from 'webapps-react';
 
 import { CustomFieldDetails, DepartmentDetails, EmploymentDetails, PersonalDetails } from './Staff/index';
@@ -11,6 +11,7 @@ const Manage = () => {
     const [departments, setDepartments] = useState([]);
     const [custom, setCustom] = useState([]);
     const [changed, setChanged] = useState(false);
+    const [azureMapFields, setAzureMapFields] = useState({});
 
     const [sections, setSections] = useState({
         personal: {},
@@ -23,6 +24,20 @@ const Manage = () => {
     const APIController = new AbortController();
 
     useEffect(async () => {
+        await APIClient('/api/apps/StaffDirectory/azure/mappings', undefined, { signal: APIController.signal })
+            .then(json => {
+                json.data.map(function (field) {
+                    azureMapFields[field.local_field] = field.azure_field
+                });
+                setAzureMapFields(azureMapFields);
+            })
+            .catch(error => {
+                if (!error.status?.isAbort) {
+                    // TODO: Handle Errors
+                    console.log(error);
+                }
+            });
+
         await APIClient('/api/setting', {
             key: JSON.stringify([
                 "app.StaffDirectory.section.personal.show",
@@ -233,6 +248,19 @@ const Manage = () => {
         setChanged(true);
     }
 
+    const isAzureMapped = field => {
+        if (person.azure_id && azureMapFields[field] !== 'do_not_sync') {
+            return true;
+        }
+        return false;
+    }
+
+    const azureIcon = (
+        <svg className="w-5 h-5" viewBox="0 0 161.67 129" xmlns="http://www.w3.org/2000/svg">
+            <path d="m88.33 0-47.66 41.33-40.67 73h36.67zm6.34 9.67-20.34 57.33 39 49-75.66 13h124z" fill="#0072c6" />
+        </svg>
+    );
+
     const department = {
         'add': addDepartment,
         'change': departmentChange,
@@ -266,14 +294,14 @@ const Manage = () => {
                     }
                 </Select>
 
-                <PersonalDetails person={person} setPerson={setPerson} change={fieldChange} dateChange={dateChange} hide={sections.personal.hide} />
+                <PersonalDetails person={person} setPerson={setPerson} change={fieldChange} dateChange={dateChange} hide={sections.personal.hide} isAzureMapped={isAzureMapped} azureIcon={azureIcon} />
                 {
                     (sections.departments.show === 'true')
                         ? <DepartmentDetails person={person} departments={department} hide={sections.departments.hide} /> : null
                 }
                 {
                     (sections.employment.show === 'true')
-                        ? <EmploymentDetails person={person} change={fieldChange} check={checkChange} hide={sections.employment.hide} /> : null
+                        ? <EmploymentDetails person={person} change={fieldChange} check={checkChange} hide={sections.employment.hide} isAzureMapped={isAzureMapped} azureIcon={azureIcon} /> : null
                 }
                 <CustomFieldDetails person={person} fields={custom} change={customChange} />
 

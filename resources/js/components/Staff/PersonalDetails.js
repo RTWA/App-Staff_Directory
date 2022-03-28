@@ -11,6 +11,8 @@ const PersonalDetails = ({ UI, ...props }) => {
         change,
         dateChange,
         hide,
+        isAzureMapped,
+        azureIcon,
     } = props;
 
     const { addToast, updateToast } = useToasts();
@@ -105,16 +107,19 @@ const PersonalDetails = ({ UI, ...props }) => {
                         type="text"
                         value={person.forename || ''}
                         onChange={change}
-                        readOnly={(person.azure_id) ? true : null}
-                        helpText={(person.azure_id) ? 'This field is read-only as the person is synced with Azure.' : null}
-                        inputClassName={(person.azure_id) ? 'cursor-not-allowed': null} />
+                        action={(isAzureMapped('forename')) ? azureIcon : null}
+                        readOnly={(isAzureMapped('forename')) ? true : null}
+                        inputClassName={(isAzureMapped('forename')) ? 'cursor-not-allowed border-blue-300 dark:border-blue-600' : null} />
                     <Input
                         id="surname"
                         name="surname"
                         label="Surname"
                         type="text"
                         value={person.surname || ''}
-                        onChange={change} />
+                        onChange={change}
+                        action={(isAzureMapped('surname')) ? azureIcon : null}
+                        readOnly={(isAzureMapped('surname')) ? true : null}
+                        inputClassName={(isAzureMapped('surname')) ? 'cursor-not-allowed border-blue-300 dark:border-blue-600' : null} />
                     {
                         (hide.includes('username'))
                             ? null
@@ -125,7 +130,10 @@ const PersonalDetails = ({ UI, ...props }) => {
                                     label="Username"
                                     type="text"
                                     value={person.username || ''}
-                                    onChange={change} />
+                                    onChange={change}
+                                    action={(isAzureMapped('username')) ? azureIcon : null}
+                                    readOnly={(isAzureMapped('username')) ? true : null}
+                                    inputClassName={(isAzureMapped('username')) ? 'cursor-not-allowed border-blue-300 dark:border-blue-600' : null} />
                             )
                     }
                     {
@@ -138,7 +146,10 @@ const PersonalDetails = ({ UI, ...props }) => {
                                     label="Employee ID"
                                     type="text"
                                     value={person.employee_id || ''}
-                                    onChange={change} />
+                                    onChange={change}
+                                    action={(isAzureMapped('employee_id')) ? azureIcon : null}
+                                    readOnly={(isAzureMapped('employee_id')) ? true : null}
+                                    inputClassName={(isAzureMapped('employee_id')) ? 'cursor-not-allowed border-blue-300 dark:border-blue-600' : null} />
                             )
                     }
                     {
@@ -150,7 +161,10 @@ const PersonalDetails = ({ UI, ...props }) => {
                                 label="Email Address"
                                 type="text"
                                 value={person.email || ''}
-                                onChange={change} />
+                                onChange={change}
+                                action={(isAzureMapped('email')) ? azureIcon : null}
+                                readOnly={(isAzureMapped('email')) ? true : null}
+                                inputClassName={(isAzureMapped('email')) ? 'cursor-not-allowed border-blue-300 dark:border-blue-600' : null} />
                             )
                     }
                     {
@@ -162,7 +176,10 @@ const PersonalDetails = ({ UI, ...props }) => {
                                     name="startDate"
                                     label="Start Date"
                                     value={person.startDate || ''}
-                                    onDateChange={dateChange} />
+                                    onDateChange={dateChange}
+                                    action={(isAzureMapped('startDate')) ? azureIcon : null}
+                                    readOnly={(isAzureMapped('startDate')) ? true : null}
+                                    inputClassName={(isAzureMapped('startDate')) ? 'cursor-not-allowed border-blue-300 dark:border-blue-600' : null} />
                             )
                     }
                 </div>

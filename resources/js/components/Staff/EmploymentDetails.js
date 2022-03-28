@@ -6,7 +6,9 @@ const EmploymentDetails = props => {
         person,
         change,
         check,
-        hide
+        hide,
+        isAzureMapped,
+        azureIcon,
     } = props;
 
     return (
@@ -24,7 +26,10 @@ const EmploymentDetails = props => {
                                     label="Job Title"
                                     type="text"
                                     value={person.title || ''}
-                                    onChange={change} />
+                                    onChange={change}
+                                    action={(isAzureMapped('title')) ? azureIcon : null}
+                                    readOnly={(isAzureMapped('title')) ? true : null}
+                                    inputClassName={(isAzureMapped('title')) ? 'cursor-not-allowed border-blue-300 dark:border-blue-600' : null} />
                             )
                     }
                     {
@@ -37,7 +42,10 @@ const EmploymentDetails = props => {
                                     label="Phone Number"
                                     type="text"
                                     value={person.phone || ''}
-                                    onChange={change} />
+                                    onChange={change}
+                                    action={(isAzureMapped('phone')) ? azureIcon : null}
+                                    readOnly={(isAzureMapped('phone')) ? true : null}
+                                    inputClassName={(isAzureMapped('phone')) ? 'cursor-not-allowed border-blue-300 dark:border-blue-600' : null} />
                             )
                     }
 
@@ -52,7 +60,9 @@ const EmploymentDetails = props => {
                                         id="onLeave"
                                         name="onLeave"
                                         label="Staff member is on leave"
-                                        onChange={check} />
+                                        onChange={check}
+                                        helpText={(isAzureMapped('onLeave')) ? (<div className="ml-10 flex flex-wrap">{azureIcon} This field is read-only</div>) : null}
+                                        disabled={(isAzureMapped('onLeave')) ? true : null} />
                                 </div>
                             )
                     }
@@ -65,7 +75,9 @@ const EmploymentDetails = props => {
                                         id="isCover"
                                         name="isCover"
                                         label="Staff member is Maternity Cover"
-                                        onChange={check} />
+                                        onChange={check}
+                                        helpText={(isAzureMapped('isCover')) ? (<div className="ml-10 flex flex-wrap">{azureIcon} This field is read-only</div>) : null}
+                                        disabled={(isAzureMapped('isCover')) ? true : null} />
                                 </div>
                             )
                     }
@@ -78,7 +90,9 @@ const EmploymentDetails = props => {
                                         id="isSenior"
                                         name="isSenior"
                                         label="Staff member is Senior"
-                                        onChange={check} />
+                                        onChange={check}
+                                        helpText={(isAzureMapped('isSenior')) ? (<div className="ml-10 flex flex-wrap">{azureIcon} This field is read-only</div>) : null}
+                                        disabled={(isAzureMapped('isSenior')) ? true : null} />
                                 </div>
                             )
                     }

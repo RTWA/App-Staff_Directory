@@ -10,7 +10,11 @@ class DatePicker extends React.Component {
 
     state = { date: null, calendarOpen: false, calendarFocus: false }
 
-    showCalendar = () => this.setState({ calendarOpen: true })
+    showCalendar = () => {
+        if (!this.props.readOnly) {
+            this.setState({ calendarOpen: true })
+        }
+    }
 
     handleChange = evt => evt.preventDefault()
 
@@ -80,6 +84,8 @@ class DatePicker extends React.Component {
             label,
             id,
             name,
+            readOnly,
+            action
         } = this.props;
 
         const { calendarOpen } = this.state;
@@ -91,7 +97,19 @@ class DatePicker extends React.Component {
                     (label !== '') ? <label htmlFor={id} className={this.labelClasses}>{label}</label> : null
                 }
                 <div className="relative">
-                    <Input id={id} name={name} type="text" value={value} onChange={this.handleChange} onFocus={this.showCalendar} onBlur={this.inputBlur} placeholder={placeholder} inputClassName="pl-10" wrapperClassName="" />
+                    <Input
+                        id={id}
+                        name={name}
+                        type="text"
+                        value={value}
+                        onChange={this.handleChange}
+                        onFocus={this.showCalendar}
+                        onBlur={this.inputBlur}
+                        placeholder={placeholder}
+                        inputClassName={classNames('pl-10',this.props.inputClassName)}
+                        wrapperClassName=""
+                        readOnly={readOnly}
+                        action={action} />
                     <span className="absolute inset-y-0 left-0 flex items-center pl-2" onClick={this.showCalendar}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
