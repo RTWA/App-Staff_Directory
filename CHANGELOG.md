@@ -1,3 +1,13 @@
+# Version 1.0.6
+## What's New?
+- You can now select which Azure attributes to use to synchronise your Users with
+- If a User's department contains an ampersand (`&`) character with a space on either side of it, Staff Directory will split the string into two departments (e.g `Black & White` will put the User into both the `Black` and `White` departments). The ` - ` sub-department separator continues to work as before and these two can be combined (e.g `Colours - Black & Triangle` will put the User into both `Colours - Black` and `Triangle` departments)
+- When editing a record that has been synced with Azure, a new option appears labelled `Do not sync this person with Azure again` - clicking this will add the username to the "Do Not Sync" list. All fields will become writeable again and the user will never sync with Azure
+- You can remove users from the "Do Not Sync" list from App Settings > Microsoft Azure Integration
+
+## What's Changed?
+- When editing a record that has been synced with Azure the fields that are managed by Azure are now read-only
+
 # Version 1.0.5
 ## What's New?
 - Added option to select which fields appear in edit staff view
