@@ -116,7 +116,7 @@ class AppManagerController extends Controller
                 ]
             );
         }
-        if (!Schema::hasTable($this->azureMapFieldsTable())) {
+        if (Schema::hasTable($this->azureMapFieldsTable())) {
             DB::insert(
                 'insert into ' . $this->azureMapFieldsTable() . '
                 (local_field, azure_field) values (?, ?)',
