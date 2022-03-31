@@ -83,7 +83,7 @@ class PersonController extends Controller
         $current->departments()->sync($deps);
         
         // Update Custom Fields
-        if (!empty($custom[0])) {
+        if (count($custom) !== 0) {
             foreach ($custom as $field => $value) {
                 $oldValue = DB::table(AppManagerController::PeopleCustomFieldsTable())
                     ->where('field', $field)
