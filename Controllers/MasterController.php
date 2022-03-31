@@ -200,8 +200,8 @@ class MasterController extends AppsController
                 // Create Person Record
                 $person = Person::create([
                     'forename' => $this->getAzureMemberField($member, $mappings['forename']),
-                    'surname' => $this->getAzureMapFields($member, $mappings['surname']),
-                    'username' => $this->getAzureMapFields($member, $mappings['username']),
+                    'surname' => $this->getAzureMemberField($member, $mappings['surname']),
+                    'username' => $this->getAzureMemberField($member, $mappings['username']),
                     'employee_id' => $this->getAzureMemberField($member, $mappings['employee_id']),
                     'email' => $this->getAzureMemberField($member, $mappings['email']),
                     'title' => $this->getAzureMemberField($member, $mappings['title']),
@@ -234,7 +234,7 @@ class MasterController extends AppsController
                 return 0;
             }
             if ($type === 'date') {
-                return '0000-00-00 00:00:00';
+                return null;
             }
             return '';
         }
