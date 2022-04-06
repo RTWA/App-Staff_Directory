@@ -1,3 +1,8 @@
+# Version 1.0.7
+## What's Fixed?
+- Fixed an issue with Azure Field Mappings for new records
+- Fixed an issue preventing Custom Field values from saving
+
 # Version 1.0.6
 ## What's New?
 - You can now select which Azure attributes to use to synchronise your Users with
