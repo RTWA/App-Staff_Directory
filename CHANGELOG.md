@@ -2,6 +2,8 @@
 ## What's Fixed?
 - Fixed an issue with Azure Field Mappings for new records
 - Fixed an issue preventing Custom Field values from saving
+- Syncing a record using ExtensionAttributes, when none are set, now no longer prevents the entire sync from running
+- Improved UI of GridTile Layout
 
 # Version 1.0.6
 ## What's New?

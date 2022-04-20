@@ -240,7 +240,7 @@ class MasterController extends AppsController
         }
 
         if (strpos($field, 'extensionAttribute') === 0) {
-            $value = $member['onPremisesExtensionAttributes'][$field];
+            $value = isset($member['onPremisesExtensionAttributes']) ? $member['onPremisesExtensionAttributes'][$field] : '';
         } else {
             $value = $member[$field];
         }

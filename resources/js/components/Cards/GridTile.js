@@ -17,8 +17,8 @@ const GridTile = ({ UI, ...props }) => {
     return (
         <div data-order={index} data-surname={person.surname} data-id={person.id} className="flip-container mx-1 my-3 w-44 h-44">
             <div className="flipper relative duration-700">
-                <div className="front w-44 h-44 overflow-hidden inline-block duration-700 absolute top-0 left-0 z-10">
-                    <img className={`h-44 ${(person.onLeave === "1") ? 'opacity-40' : ''}`}
+                <div className="front w-44 h-44 overflow-hidden inline-block duration-500 absolute top-0 left-0 z-10">
+                    <img className={`h-44 mx-auto ${(person.onLeave === "1") ? 'opacity-40' : ''}`}
                         src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
                         id={`photo-${person.id}`}
                         alt={`${person.forename} ${person.surname} - Photo`} loading="lazy" />
@@ -31,7 +31,7 @@ const GridTile = ({ UI, ...props }) => {
                             : null
                     }
                 </div>
-                <div className={`back w-44 h-44 overflow-hidden inline-block duration-700 absolute top-0 left-0 bg-${UI.theme}-300`}>
+                <div className={`back w-44 h-44 overflow-hidden inline-block duration-500 absolute top-0 left-0 bg-${UI.theme}-300`}>
                     <ul className={`text-white p-1 bg-${UI.theme}-600 text-right my-2 h-40 leading-5`}>
                         <li>
                             {person.forename} {person.surname}
