@@ -6,7 +6,7 @@ import { FlyoutsContext } from '../AppSettings';
 
 const CreateDepartmentFlyout = ({ UI, ...props }) => {
     const {
-        pushDepartment,
+        setDepartments,
         departments,
     } = props;
 
@@ -79,7 +79,7 @@ const CreateDepartmentFlyout = ({ UI, ...props }) => {
 
         await APIClient('/api/apps/StaffDirectory/department', { name: name, department_id: parent }, { signal: APIController.signal })
             .then(json => {
-                pushDepartment(json.data.department);
+                setDepartments(json.data.departments);
                 addToast("Department Created Successfully", '', { appearance: 'success' });
                 toggleNew();
                 setState('');
