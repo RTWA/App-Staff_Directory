@@ -11,22 +11,16 @@ class DepartmentsController extends Controller
 {
     public function create(Request $request)
     {
-        return response()->json([
-            'department' => Department::create($request->input())->load('children')
-        ], 200);
+        Department::create($request->input());
+        
+        return $this->all();
     }
 
     public function delete(Department $department)
     {
         $department->delete();
-
-        return response()->json([
-            'departments' => Department::withCount('people')
-                ->withCount('children')
-                ->with('children')
-                ->whereNull('department_id')
-                ->get()
-        ], 200);
+        
+        return $this->all();
     }
 
     public function all()

@@ -63,11 +63,6 @@ const AppSettings = UI => {
             });
     }
 
-    const pushDepartment = department => {
-        departments.push(department);
-        setDepartments({ ...departments });
-    }
-
     const onDepChange = e => {
         departments.map(function (dep) {
             if (dep.id.toString() === e.target.value) {
@@ -172,7 +167,7 @@ const AppSettings = UI => {
             .then(json => {
                 addToast('Department Updated Successfully', '', { appearance: 'success' });
                 setDepartments(json.data.departments);
-                setDepartment('');
+                setDepartment({ children: [] });
                 toggleManage();
             })
             .catch(error => {
@@ -188,7 +183,7 @@ const AppSettings = UI => {
             .then(json => {
                 addToast('Department Deleted Successfully', '', { appearance: 'success' });
                 setDepartments(json.data.departments);
-                setDepartment('');
+                setDepartment({ children: [] });
                 toggleManage();
             })
             .catch(error => {
@@ -312,7 +307,7 @@ const AppSettings = UI => {
                 toggleManage,
                 toggleNew
             }}>
-                <CreateDepartmentFlyout pushDepartment={pushDepartment} departments={departments} />
+                <CreateDepartmentFlyout setDepartments={setDepartments} departments={departments} />
                 <DepartmentFlyout departments={departments} department={department} setDepartment={setDepartment} saveDepartment={saveDepartment} deleteDepartment={deleteDepartment} />
             </FlyoutsContext.Provider>
         </>
