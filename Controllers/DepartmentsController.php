@@ -22,10 +22,10 @@ class DepartmentsController extends Controller
 
         return response()->json([
             'departments' => Department::withCount('people')
-                                        ->withCount('children')
-                                        ->with('children')
-                                        ->whereNull('department_id')
-                                        ->get()
+                ->withCount('children')
+                ->with('children')
+                ->whereNull('department_id')
+                ->get()
         ], 200);
     }
 
@@ -33,19 +33,23 @@ class DepartmentsController extends Controller
     {
         return response()->json([
             'departments' => Department::withCount('people')
-                                        ->withCount('children')
-                                        ->with('children')
-                                        ->with('people')
-                                        ->with('children.people')
-                                        ->whereNull('department_id')
-                                        ->get()
+                ->withCount('children')
+                ->with('children')
+                ->with('people')
+                ->with('children.people')
+                ->whereNull('department_id')
+                ->orderBy('name', 'ASC')
+                ->get()
         ], 200);
     }
 
     public function list()
     {
         return response()->json([
-            'list' => Department::with('children')->whereNull('department_id')->get()
+            'list' => Department::with('children')
+                ->whereNull('department_id')
+                ->orderBy('name', 'ASC')
+                ->get()
         ], 200);
     }
 
@@ -60,10 +64,10 @@ class DepartmentsController extends Controller
 
         return response()->json([
             'departments' => Department::withCount('people')
-                                        ->withCount('children')
-                                        ->with('children')
-                                        ->whereNull('department_id')
-                                        ->get()
+                ->withCount('children')
+                ->with('children')
+                ->whereNull('department_id')
+                ->get()
         ], 200);
     }
 
