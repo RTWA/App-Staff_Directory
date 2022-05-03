@@ -113,6 +113,7 @@ class MasterController extends AppsController
                 if (!$person->trashed() & !$azUser['accountEnabled']) {
                     $person->delete();
                 }
+                $person->departments()->detach();
                 $person->save();
 
                 $splitDeps = explode(' & ', $azUser['department']);
@@ -124,6 +125,10 @@ class MasterController extends AppsController
                         $userDep = trim($userDep);
 
                         $dep = Department::where('name', $userDep)->first();
+
+                        if (!$dep) {
+                            $dep = Department::where('name', $userDep)->where('department_id', $createStore[$i - 1])->first();
+                        }
 
                         if (!$dep && $createDepartments === 'true') {
                             // Create a department
