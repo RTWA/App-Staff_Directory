@@ -91,12 +91,12 @@ const CustomView = props => {
             setSelected(emptyDepartment);
             setOnlyMe(false);
             setFiltered(false);
-            setPeople(tmpPeople);
+            setPeople(sortByStartDate(tmpPeople));
             setSearch('');
         } else {
             setOnlyMe(false);
             setFiltered(false);
-            setPeople(tmpPeople);
+            setPeople(sortByStartDate(tmpPeople));
             setSearch('');
         }
     }
@@ -106,9 +106,9 @@ const CustomView = props => {
         if (search !== '') {
             let _people = [];
             people.map(function (person, i) {
-                if (person.forename.toLowerCase().indexOf(search.toLowerCase()) !== -1
-                    || person.surname.toLowerCase().indexOf(search.toLowerCase()) !== -1
-                    || person.username.toLowerCase().indexOf(search.toLowerCase()) !== -1) {
+                if ((person.forename && person.forename.toLowerCase().indexOf(search.toLowerCase()) !== -1)
+                    || (person.surname && person.surname.toLowerCase().indexOf(search.toLowerCase()) !== -1)
+                    || (person.username && person.username.toLowerCase().indexOf(search.toLowerCase()) !== -1)) {
                     _people.push(person);
                 }
             });
@@ -140,8 +140,8 @@ const CustomView = props => {
             });
         } else {
             data.push({ 'value': 'all', 'label': 'All Sub-Departments' });
-            if (selected.children !== undefined) {
-                Object(selected.children).map(function (child) {
+            if (department.children !== undefined) {
+                Object(department.children).map(function (child) {
                     data.push({ value: child.id, label: child.name });
                 });
             }
@@ -154,46 +154,55 @@ const CustomView = props => {
             setDepartment(emptyDepartment);
             setSubDepartment(emptySubDepartment);
             setSelected(emptyDepartment);
-            setSortOrder('(Sorted by Employment Start Date)');
-            tmpPeople.sort(function (a, b) {
-                let keyA = new Date(a.startDate),
-                    keyB = new Date(b.startDate);
-                if (keyA > keyB) return -1;
-                if (keyA < keyB) return 1;
-                return 0;
-            });
-            setPeople(tmpPeople);
+            setPeople(sortByStartDate(tmpPeople));
         } else if (_selected.label !== "All Sub-Departments") {
             Object(departments).map(function (dep) {
                 if (dep.id == _selected.value) {
                     setDepartment(dep);
+                    setSubDepartment(emptySubDepartment);
                     setSelected(dep);
                 }
-
+                
                 if (dep.children !== undefined) {
                     Object(dep.children).map(function (child) {
                         if (child.id === _selected.value) {
-                            setDepartment(dep);
                             setSubDepartment(child);
                             setSelected(child);
                         }
                     });
                 }
             });
-            setSortOrder('(Sorted by Surname)');
-            tmpPeople.sort((a, b) => (a.surname > b.surname ? 1 : -1));
-            setPeople(tmpPeople);
+            setPeople(sortBySurname(tmpPeople));
+        } else if (_selected.label === "All Sub-Departments") {
+            setSelected(department);
+            setSubDepartment(_selected);
         } else {
             setDepartment(department);
             setSelected(emptySubDepartment);
-            setSortOrder('(Sorted by Surname)');
-            tmpPeople.sort((a, b) => (a.surname > b.surname ? 1 : -1));
-            setPeople(tmpPeople);
+            setPeople(sortBySurname(tmpPeople));
         }
 
         setSearch('');
         setOnlyMe(false);
-        setFiltered(true);
+        (_selected.label === "All Departments") ? setFiltered(false) : setFiltered(true);
+    }
+
+    const sortByStartDate = data => {
+        data.sort(function (a, b) {
+            let keyA = new Date(a.startDate),
+                keyB = new Date(b.startDate);
+            if (keyA > keyB) return -1;
+            if (keyA < keyB) return 1;
+            return 0;
+        });
+        setSortOrder('(Sorted by Employment Start Date)');
+        return data;
+    }
+
+    const sortBySurname = data => {
+        data.sort((a, b) => (a.surname > b.surname ? 1 : -1));
+        setSortOrder('(Sorted by Surname)');
+        return data;
     }
 
     const selectedDep = sub => {
@@ -212,6 +221,16 @@ const CustomView = props => {
 
     const sorttext = () => {
         if (view.settings.sorttext === "true" || view.settings.sorttext === true) {
+            if (onlyMe) {
+                return <h3 id="filter">Showing Only Me</h3>
+            }
+            if (department.id !== 'all' && subDepartment.id === 'all') {
+                return <h3 id="filter">Showing Staff in the {department.name} Department <small>{sortOrder}</small></h3>
+            }
+            if (department.id !== 'all' && subDepartment.id !== 'all') {
+                return <h3 id="filter">Showing Staff in the {department.name} - {subDepartment.name} Department <small>{sortOrder}</small></h3>
+            }
+
             return <h3 id="filter">Showing All Staff <small>{sortOrder}</small></h3>
         }
         return null;
