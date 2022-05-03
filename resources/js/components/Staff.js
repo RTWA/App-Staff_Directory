@@ -7,7 +7,7 @@ import { CustomFieldDetails, DepartmentDetails, EmploymentDetails, PersonalDetai
 
 const Manage = () => {
     const [people, setPeople] = useState(null);
-    const [person, setPerson] = useState({ departments: [{}], id: 0, customFields: [{}] });
+    const [person, setPerson] = useState({ departments: [{}], id: 0, customFields: {} });
     const [departments, setDepartments] = useState([]);
     const [custom, setCustom] = useState([]);
     const [changed, setChanged] = useState(false);
@@ -139,9 +139,10 @@ const Manage = () => {
         await APIClient(`/api/apps/StaffDirectory/person/${person.id}`, { person: JSON.stringify(person) }, { signal: APIController.signal })
             .then(json => {
                 updateToast(save, { appearance: 'success', autoDismiss: true, title: json.data.message });
+                setPeople(json.data.people);
+                setPerson(json.data.person);
 
                 setChanged(false);
-                getPeople();
             })
             .catch(error => {
                 if (!error.status?.isAbort) {
@@ -159,7 +160,7 @@ const Manage = () => {
         await APIClient(`/api/apps/StaffDirectory/person/${person.id}`, {}, { signal: APIController.signal, method: 'DELETE' })
             .then(json => {
                 setChanged(false);
-                setPerson({ departments: [{}], id: 0, customFields: [{}] });
+                setPerson({ departments: [{}], id: 0, customFields: {} });
                 getPeople();
             })
             .catch(error => {
@@ -190,7 +191,7 @@ const Manage = () => {
                     }
                 });
         } else {
-            setPerson({ departments: [{}], id: 0 });
+            setPerson({ departments: [{}], id: 0, customFields: {} });
         }
     }
 

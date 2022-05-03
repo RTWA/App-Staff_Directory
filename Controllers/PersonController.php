@@ -18,13 +18,7 @@ class PersonController extends Controller
 {
     public function peopleList()
     {
-        $people = Person::select('id', 'forename', 'surname')->orderBy('surname', 'ASC')->get();
-        $list = [['value' => '', 'label' => 'Create new record...']];
-        foreach ($people as $person) {
-            $list[] = ['value' => $person->id, 'label' => $person->surname.', '.$person->forename];
-        }
-
-        return response()->json(['list' => $list], 200);
+        return response()->json(['list' => $this->listOfPeople()], 200);
     }
 
     public function trashedPeople()
@@ -114,7 +108,11 @@ class PersonController extends Controller
                 ->send(new RecordCreatedMail($current));
         }
 
-        return response()->json(['message' => 'Record saved successfully'], 201);
+        return response()->json([
+            'message' => 'Record saved successfully',
+            'people' => $this->listOfPeople(),
+            'person' => $current,
+        ], 201);
     }
 
     public function unlinkFromAzure($id)
@@ -185,5 +183,16 @@ class PersonController extends Controller
     public function seed()
     {
         (new PersonSeeder())->run();
+    }
+
+    private function listOfPeople()
+    {
+        $people = Person::select('id', 'forename', 'surname')->orderBy('surname', 'ASC')->get();
+        $list = [['value' => '', 'label' => 'Create new record...']];
+        foreach ($people as $person) {
+            $list[] = ['value' => $person->id, 'label' => $person->surname.', '.$person->forename];
+        }
+
+        return $list;
     }
 }
