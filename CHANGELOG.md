@@ -1,3 +1,23 @@
+# Version 1.0.8
+## What's Fixed?
+- Issues when syncing records with Azure
+  - Removes all departments from user before re-applying current ones
+  - Syncs sub-departments with the correct parent department
+- The list of people is correctly sorted
+  - Sorted by Start Date when All Staff are displayed
+  - Sorted by Surname when a department, or sub-department is selected
+- The sorted by text is now correctly updated
+- Selecting a sub-department now does not remove the sub-departments list
+- Selecting a sub-department, switching to a different department and returning to the parent department now clears the selected sub-department
+- Department list now loads correctly when a Department is deleted
+- Department list now loads correctly when a Department is created
+- All department lists are now shown alphabetically
+- Custom Fields now save correctly
+- Group Access to Views now works correctly
+
+## What's Changed?
+- Security Updates
+
 # Version 1.0.7
 ## What's Fixed?
 - Fixed an issue with Azure Field Mappings for new records
