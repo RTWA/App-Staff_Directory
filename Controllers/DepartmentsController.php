@@ -12,14 +12,14 @@ class DepartmentsController extends Controller
     public function create(Request $request)
     {
         Department::create($request->input());
-        
+
         return $this->all();
     }
 
     public function delete(Department $department)
     {
         $department->delete();
-        
+
         return $this->all();
     }
 
@@ -60,7 +60,10 @@ class DepartmentsController extends Controller
             'departments' => Department::withCount('people')
                 ->withCount('children')
                 ->with('children')
+                ->with('people')
+                ->with('children.people')
                 ->whereNull('department_id')
+                ->orderBy('name', 'ASC')
                 ->get()
         ], 200);
     }
