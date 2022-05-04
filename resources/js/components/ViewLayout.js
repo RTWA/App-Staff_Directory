@@ -19,8 +19,7 @@ const ViewLayout = props => {
 
     const Authenticate = () => {
         if (!authenticated) {
-            localStorage.setItem('WA_Login', window.location.href);
-            window.location.replace("/login");
+            window.location.replace(`/login/windowed?url=${window.location.href}`);
         }
     }
 
