@@ -31,11 +31,13 @@ const ViewLayout = props => {
                     if (access) {
                         return resolve(true);
                     } else {
+                        let count = 0;
                         Object.keys(perms).map(async function (perm) {
                             if (perm !== 'all' && perm !== 'guest' && allowed === false) {
                                 await checkGroup(perm)
                                     .then(access => {
                                         if (access) {
+                                            console.log(true)
                                             return resolve(true);
                                         }
                                     })
@@ -43,13 +45,16 @@ const ViewLayout = props => {
                                         return reject(error);
                                     });
                             }
+                            count++;
                         });
+                        if (count === Object.keys(perms).length) {
+                            return resolve(false);
+                        }
                     }
                 })
                 .catch(error => {
                     return reject(error);
                 });
-            return resolve(false);
         });
     }
 
