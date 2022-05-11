@@ -1,3 +1,14 @@
+# Version 1.0.9
+## What's New?
+- Staff Directory now uses the new WebApps pop-up window for authentication when required in Views
+
+## What's Changed?
+- The department list of Views is now alphabetised
+
+## What's Fixed?
+- Setting a department head in App Settings doesn't cause the departments list to go wrong until the page was refreshed
+- Updating the App no longer resets your Azure Field Mappings
+
 # Version 1.0.8
 ## What's Fixed?
 - Issues when syncing records with Azure
