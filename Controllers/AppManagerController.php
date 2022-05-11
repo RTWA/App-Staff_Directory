@@ -95,116 +95,140 @@ class AppManagerController extends Controller
             });
         }
         if (Schema::hasTable($this->viewsTable())) {
-            DB::insert(
-                'insert into ' . $this->viewsTable() . ' 
+            if (!DB::table($this->viewsTable())->where('publicId', 'all')->first()) {
+                DB::insert(
+                    'insert into ' . $this->viewsTable() . ' 
                 (name, owner, publicId, display, display_type, settings) values (?, ?, ?, ?, ?, ?)',
-                [
-                    'All Staff', //name
-                    0, // owner
-                    'all', // publicId
-                    'all', // display
-                    'all', // display_type
-                    // settings
-                    json_encode([
-                        'perms' => [
-                            "Standard Users" => true
-                        ],
-                        "leading" => "true",
-                        "selectors" => "true",
-                        "sorttext" => "true"
-                    ])
-                ]
-            );
+                    [
+                        'All Staff', //name
+                        0, // owner
+                        'all', // publicId
+                        'all', // display
+                        'all', // display_type
+                        // settings
+                        json_encode([
+                            'perms' => [
+                                "all" => true
+                            ],
+                            "leading" => "true",
+                            "selectors" => "true",
+                            "sorttext" => "true"
+                        ])
+                    ]
+                );
+            }
         }
         if (Schema::hasTable($this->azureMapFieldsTable())) {
-            DB::insert(
-                'insert into ' . $this->azureMapFieldsTable() . '
+            if (!DB::table($this->azureMapFieldsTable())->where('local_field', 'forename')->first()) {
+                DB::insert(
+                    'insert into ' . $this->azureMapFieldsTable() . '
+                    (local_field, azure_field) values (?, ?)',
+                    [
+                        'forename', // local_field
+                        'givenName', // azure_field
+                    ]
+                );
+            }
+            if (!DB::table($this->azureMapFieldsTable())->where('local_field', 'surname')->first()) {
+                DB::insert(
+                    'insert into ' . $this->azureMapFieldsTable() . '
                 (local_field, azure_field) values (?, ?)',
-                [
-                    'forename', // local_field
-                    'givenName', // azure_field
-                ]
-            );
-            DB::insert(
-                'insert into ' . $this->azureMapFieldsTable() . '
+                    [
+                        'surname', // local_field
+                        'surname', // azure_field
+                    ]
+                );
+            }
+            if (!DB::table($this->azureMapFieldsTable())->where('local_field', 'username')->first()) {
+                DB::insert(
+                    'insert into ' . $this->azureMapFieldsTable() . '
                 (local_field, azure_field) values (?, ?)',
-                [
-                    'surname', // local_field
-                    'surname', // azure_field
-                ]
-            );
-            DB::insert(
-                'insert into ' . $this->azureMapFieldsTable() . '
+                    [
+                        'username', // local_field
+                        'userPrincipalName', // azure_field
+                    ]
+                );
+            }
+            if (!DB::table($this->azureMapFieldsTable())->where('local_field', 'employee_id')->first()) {
+                DB::insert(
+                    'insert into ' . $this->azureMapFieldsTable() . '
                 (local_field, azure_field) values (?, ?)',
-                [
-                    'username', // local_field
-                    'userPrincipalName', // azure_field
-                ]
-            );
-            DB::insert(
-                'insert into ' . $this->azureMapFieldsTable() . '
+                    [
+                        'employee_id', // local_field
+                        'do_not_sync', // azure_field
+                    ]
+                );
+            }
+            if (!DB::table($this->azureMapFieldsTable())->where('local_field', 'email')->first()) {
+                DB::insert(
+                    'insert into ' . $this->azureMapFieldsTable() . '
                 (local_field, azure_field) values (?, ?)',
-                [
-                    'employee_id', // local_field
-                    'do_not_sync', // azure_field
-                ]
-            );
-            DB::insert(
-                'insert into ' . $this->azureMapFieldsTable() . '
+                    [
+                        'email', // local_field
+                        'mail', // azure_field
+                    ]
+                );
+            }
+            if (!DB::table($this->azureMapFieldsTable())->where('local_field', 'startDate')->first()) {
+                DB::insert(
+                    'insert into ' . $this->azureMapFieldsTable() . '
                 (local_field, azure_field) values (?, ?)',
-                [
-                    'email', // local_field
-                    'mail', // azure_field
-                ]
-            );
-            DB::insert(
-                'insert into ' . $this->azureMapFieldsTable() . '
+                    [
+                        'startDate', // local_field
+                        'do_not_sync', // azure_field
+                    ]
+                );
+            }
+            if (!DB::table($this->azureMapFieldsTable())->where('local_field', 'title')->first()) {
+                DB::insert(
+                    'insert into ' . $this->azureMapFieldsTable() . '
                 (local_field, azure_field) values (?, ?)',
-                [
-                    'startDate', // local_field
-                    'do_not_sync', // azure_field
-                ]
-            );
-            DB::insert(
-                'insert into ' . $this->azureMapFieldsTable() . '
+                    [
+                        'title', // local_field
+                        'jobTitle', // azure_field
+                    ]
+                );
+            }
+            if (!DB::table($this->azureMapFieldsTable())->where('local_field', 'phone')->first()) {
+                DB::insert(
+                    'insert into ' . $this->azureMapFieldsTable() . '
                 (local_field, azure_field) values (?, ?)',
-                [
-                    'title', // local_field
-                    'jobTitle', // azure_field
-                ]
-            );
-            DB::insert(
-                'insert into ' . $this->azureMapFieldsTable() . '
+                    [
+                        'phone', // local_field
+                        'do_not_sync', // azure_field
+                    ]
+                );
+            }
+            if (!DB::table($this->azureMapFieldsTable())->where('local_field', 'onLeave')->first()) {
+                DB::insert(
+                    'insert into ' . $this->azureMapFieldsTable() . '
                 (local_field, azure_field) values (?, ?)',
-                [
-                    'phone', // local_field
-                    'do_not_sync', // azure_field
-                ]
-            );
-            DB::insert(
-                'insert into ' . $this->azureMapFieldsTable() . '
+                    [
+                        'onLeave', // local_field
+                        'do_not_sync', // azure_field
+                    ]
+                );
+            }
+            if (!DB::table($this->azureMapFieldsTable())->where('local_field', 'isCover')->first()) {
+                DB::insert(
+                    'insert into ' . $this->azureMapFieldsTable() . '
                 (local_field, azure_field) values (?, ?)',
-                [
-                    'onLeave', // local_field
-                    'do_not_sync', // azure_field
-                ]
-            );
-            DB::insert(
-                'insert into ' . $this->azureMapFieldsTable() . '
+                    [
+                        'isCover', // local_field
+                        'do_not_sync', // azure_field
+                    ]
+                );
+            }
+            if (!DB::table($this->azureMapFieldsTable())->where('local_field', 'isSenior')->first()) {
+                DB::insert(
+                    'insert into ' . $this->azureMapFieldsTable() . '
                 (local_field, azure_field) values (?, ?)',
-                [
-                    'isCover', // local_field
-                    'do_not_sync', // azure_field
-                ]
-            );
-            DB::insert(
-                'insert into ' . $this->azureMapFieldsTable() . '
-                (local_field, azure_field) values (?, ?)',
-                [
-                    'isSenior', // local_field
-                    'do_not_sync', // azure_field
-                ]
-            );
+                    [
+                        'isSenior', // local_field
+                        'do_not_sync', // azure_field
+                    ]
+                );
+            }
         }
         $this->createPermissions();
         $this->createSettings();
