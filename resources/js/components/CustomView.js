@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Select from 'react-select';
-import { APIClient, Button, Input, withWebApps } from 'webapps-react';
+import { APIClient, Button, Input, WebAppsUXContext } from 'webapps-react';
 
 import { CardView, GridView, SimpleCard, TableView } from './Views/index';
 
@@ -11,9 +11,10 @@ let emptySubDepartment = { id: 'all', name: 'All Sub-Departments' };
 
 const CustomView = props => {
     const {
-        UI,
         view
     } = props;
+
+    const { theme } = useContext(WebAppsUXContext);
 
     const [me, setMe] = useState([]);
     const [tmpPeople, setTmpPeople] = useState([]);
@@ -255,7 +256,7 @@ const CustomView = props => {
                                 options={options(false)}
                                 onChange={depChange}
                                 value={selectedDep(false)}
-                                className={`bg-gray-50 text-gray-900 outline-none text-sm rounded-lg block w-full dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white border-2 border-gray-300 dark:border-gray-600 focus:ring-${UI.theme}-600 dark:focus:ring-${UI.theme}-500 focus:border-${UI.theme}-600 dark:focus:border-${UI.theme}-500`}
+                                className={`bg-gray-50 text-gray-900 outline-none text-sm rounded-lg block w-full dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white border-2 border-gray-300 dark:border-gray-600 focus:ring-${theme}-600 dark:focus:ring-${theme}-500 focus:border-${theme}-600 dark:focus:border-${theme}-500`}
                                 classNamePrefix="input-select" />
                         </div>
                         <div className="w-full sm:w-4/12 lg:w-5/12">
@@ -266,7 +267,7 @@ const CustomView = props => {
                                         options={options(true)}
                                         onChange={depChange}
                                         value={selectedDep(true)}
-                                        className={`bg-gray-50 text-gray-900 outline-none text-sm rounded-lg block w-full dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white border-2 border-gray-300 dark:border-gray-600 focus:ring-${UI.theme}-600 dark:focus:ring-${UI.theme}-500 focus:border-${UI.theme}-600 dark:focus:border-${UI.theme}-500`}
+                                        className={`bg-gray-50 text-gray-900 outline-none text-sm rounded-lg block w-full dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white border-2 border-gray-300 dark:border-gray-600 focus:ring-${theme}-600 dark:focus:ring-${theme}-500 focus:border-${theme}-600 dark:focus:border-${theme}-500`}
                                         classNamePrefix="input-select" />
                             }
                         </div>
@@ -314,4 +315,4 @@ const CustomView = props => {
     )
 }
 
-export default withWebApps(CustomView);
+export default CustomView;

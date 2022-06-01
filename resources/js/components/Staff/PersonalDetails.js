@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import ReactUserAvatar from 'react-user-avatar';
-import { APIClient, Input, useToasts, withWebApps } from 'webapps-react';
+import { APIClient, Input, useToasts, WebAppsUXContext } from 'webapps-react';
 
 import { DatePicker } from '../DatePicker'
 
-const PersonalDetails = ({ UI, ...props }) => {
+const PersonalDetails = props => {
     const {
         person,
         setPerson,
@@ -14,6 +14,7 @@ const PersonalDetails = ({ UI, ...props }) => {
         isAzureMapped,
         azureIcon,
     } = props;
+    const { theme } = useContext(WebAppsUXContext);
 
     const { addToast, updateToast } = useToasts();
     let toastId = '';
@@ -76,7 +77,7 @@ const PersonalDetails = ({ UI, ...props }) => {
 
     return (
         <div className="relative bg-white dark:bg-gray-800 p-4 rounded shadow-xl">
-            <div className={`w-20 h-20 text-white flex items-center absolute rounded-full p-2 shadow-xl bg-${UI.theme}-600 dark:bg-${UI.theme}-500 left-1/2 transform -translate-x-1/2 sm:translate-x-0 sm:left-4 -top-12 sm:-top-6`}>
+            <div className={`w-20 h-20 text-white flex items-center absolute rounded-full p-2 shadow-xl bg-${theme}-600 dark:bg-${theme}-500 left-1/2 transform -translate-x-1/2 sm:translate-x-0 sm:left-4 -top-12 sm:-top-6`}>
                 {
                     (person.id !== 0)
                         ? (
@@ -188,4 +189,4 @@ const PersonalDetails = ({ UI, ...props }) => {
     );
 }
 
-export default withWebApps(PersonalDetails);
+export default PersonalDetails;

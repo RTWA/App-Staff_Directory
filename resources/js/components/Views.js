@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { APIClient, AppPage, Banner, Button, ConfirmDeleteButton, Drawer, DrawerHeader, DrawerItem, DrawerItems, Flyout, Input, Loader, PageWrapper, Select, Switch, useToasts, WebAppsUXContext, withWebApps } from 'webapps-react';
+import { APIClient, AppPage, Banner, Button, ConfirmDeleteButton, Drawer, DrawerHeader, DrawerItem, DrawerItems, Flyout, Input, Loader, PageWrapper, Select, Switch, useToasts, WebAppsUXContext } from 'webapps-react';
 
 import { CustomFilter, DepartmentFilter, PersonFilter } from './Filters';
 import { PermissionsModal, PreviewModal, TableFieldsModal, UseModal } from './Modals';
@@ -18,7 +18,7 @@ const newView = {
     display_type: 'grid'
 };
 
-const Views = ({ UI }) => {
+const Views = () => {
     const [people, setPeople] = useState(null);
     const [departments, setDepartments] = useState([]);
     const [custom, setCustom] = useState([]);
@@ -492,4 +492,4 @@ const Views = ({ UI }) => {
     )
 }
 
-export default withWebApps(Views);
+export default Views;

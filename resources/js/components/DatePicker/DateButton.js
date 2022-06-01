@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import classNames from 'classnames';
-import { withWebApps } from 'webapps-react';
+import { WebAppsUXContext } from 'webapps-react';
 
 const DateButton = props => {
-    const { UI, isToday, isCurrent, inMonth, onClick } = props;
+    const { isToday, isCurrent, inMonth, onClick } = props;
+    const { theme } = useContext(WebAppsUXContext);
 
     const classes = classNames(
         'text-center',
@@ -14,12 +15,12 @@ const DateButton = props => {
         'hover:bg-gray-200',
         'dark:hover:bg-gray-500',
         (inMonth) ? '' : 'text-gray-300 dark:text-gray-500',
-        (isCurrent) ? `text-${UI.theme}-600 font-semibold bg-gray-50 dark:bg-gray-700 dark:text-${UI.theme}-500` : '',
+        (isCurrent) ? `text-${theme}-600 font-semibold bg-gray-50 dark:bg-gray-700 dark:text-${theme}-500` : '',
         (isToday) ? 'bg-gray-200 dark:bg-gray-800' : '',
     )
-    
-    
+
+
     return <div className={classes} onClick={onClick}>{props.children}</div>
 }
 
-export default withWebApps(DateButton);
+export default DateButton;

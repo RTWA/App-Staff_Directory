@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Select from 'react-select';
-import { WebAppsContext } from 'webapps-react';
+import { WebAppsUXContext } from 'webapps-react';
 
 import './Select.css';
 
@@ -15,7 +15,7 @@ const PersonSelect = props => {
         boxed,
     } = props;
 
-    const { UI } = useContext(WebAppsContext);
+    const { theme } = useContext(WebAppsUXContext);
 
     const getValue = () => {
         let _value = {};
@@ -31,10 +31,10 @@ const PersonSelect = props => {
         (boxed) ? 'border-2' : null,
         (boxed) ? 'border-gray-300' : null,
         (boxed) ? 'dark:border-gray-600' : null,
-        (boxed) ? `focus:ring-${UI.theme}-600` : null,
-        (boxed) ? `dark:focus:ring-${UI.theme}-500` : null,
-        (boxed) ? `focus:border-${UI.theme}-600` : null,
-        (boxed) ? `dark:focus:border-${UI.theme}-500` : null,
+        (boxed) ? `focus:ring-${theme}-600` : null,
+        (boxed) ? `dark:focus:ring-${theme}-500` : null,
+        (boxed) ? `focus:border-${theme}-600` : null,
+        (boxed) ? `dark:focus:border-${theme}-500` : null,
     )
 
     const inputClasses = classNames(

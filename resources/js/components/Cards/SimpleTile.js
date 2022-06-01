@@ -1,7 +1,6 @@
 import React from 'react';
-import { withWebApps } from 'webapps-react';
 
-const SimpleTile = ({ UI, ...props }) => {
+const SimpleTile = props => {
     const {
         person,
         index
@@ -35,4 +34,4 @@ const SimpleTile = ({ UI, ...props }) => {
     );
 }
 
-export default withWebApps(SimpleTile);
+export default SimpleTile;

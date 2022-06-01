@@ -1,14 +1,16 @@
-import React from 'react';
-import { withWebApps } from 'webapps-react';
+import React, { useContext } from 'react';
+import { WebAppsUXContext } from 'webapps-react';
 
 import './styles/GridTile.css';
 
-const GridTile = ({ UI, ...props }) => {
+const GridTile = props => {
     const {
         person,
         hod,
         index
     } = props;
+
+    const { theme } = useContext(WebAppsUXContext);
 
     if (!person) {
         return null;
@@ -22,17 +24,17 @@ const GridTile = ({ UI, ...props }) => {
                         src={`/apps/StaffDirectory/view/person/${person.id}/photo`}
                         id={`photo-${person.id}`}
                         alt={`${person.forename} ${person.surname} - Photo`} loading="lazy" />
-                    <p className={`absolute bottom-0 w-full py-1 text-center font-medium text-white bg-${UI.theme}-600 bg-opacity-60 text-sm`}>
+                    <p className={`absolute bottom-0 w-full py-1 text-center font-medium text-white bg-${theme}-600 bg-opacity-60 text-sm`}>
                         {person.forename} {person.surname}
                     </p>
                     {
                         (hod)
-                            ? <p className={`absolute w-full py-1 text-center font-medium text-white bg-${UI.theme}-600 text-xs hod`}>Head of Department</p>
+                            ? <p className={`absolute w-full py-1 text-center font-medium text-white bg-${theme}-600 text-xs hod`}>Head of Department</p>
                             : null
                     }
                 </div>
-                <div className={`back w-44 h-44 overflow-hidden inline-block duration-500 absolute top-0 left-0 bg-${UI.theme}-300`}>
-                    <ul className={`text-white p-1 bg-${UI.theme}-600 text-right my-2 h-40 leading-5`}>
+                <div className={`back w-44 h-44 overflow-hidden inline-block duration-500 absolute top-0 left-0 bg-${theme}-300`}>
+                    <ul className={`text-white p-1 bg-${theme}-600 text-right my-2 h-40 leading-5`}>
                         <li>
                             {person.forename} {person.surname}
                             {
@@ -64,4 +66,4 @@ const GridTile = ({ UI, ...props }) => {
     )
 }
 
-export default withWebApps(GridTile);
+export default GridTile;
