@@ -1,6 +1,6 @@
 import React from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Input, useToasts } from 'webapps-react';
+import { Input, Textarea, useToasts } from 'webapps-react';
 
 const UseModal = props => {
     const { publicId } = props;
@@ -16,14 +16,13 @@ const UseModal = props => {
         <>
             <label htmlFor="simple-text" className="text-gray-600 dark:text-gray-400 text-sm font-normal">Embed the View in your web page</label>
             <CopyToClipboard text={textarea} onCopy={() => { addToast("Copied to clipboard!", '', { appearance: 'success' }) }}>
-                <textarea className="mt-2 w-full bg-gray-200 dark:bg-gray-700" value={textarea} readOnly rows="4" />
-                {/* <Textarea
+                <Textarea
                     id="simple-text"
                     name="simple-text"
                     wrapperClassName=""
                     readOnly
                     value={textarea}
-                /> */}
+                />
             </CopyToClipboard>
             <div className="relative my-6 h-px bg-gray-600 dark:bg-gray-400">
                 <div className="absolute left-0 top-0 flex justify-center w-full -mt-2">
