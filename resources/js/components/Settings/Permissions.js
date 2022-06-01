@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { APIClient, Switch, UserSuggest } from 'webapps-react';
+import { APIClient, Loader, PageWrapper, Switch, UserSuggest } from 'webapps-react';
 
 const Permissions = () => {
     const [groups, setGroups] = useState([]);
@@ -114,13 +114,12 @@ const Permissions = () => {
     }
 
 
-    // render
     if (permissions.length === 0 && groups.length === 0) {
-        return <div>Loading...</div>
+        return <Loader />
     }
 
     return (
-        <>
+        <PageWrapper title="App Permissions">
             <div className={`hidden lg:grid lg:grid-cols-${permissions.length + 1}`}>
                 <div>&nbsp;</div>
                 {
@@ -154,7 +153,7 @@ const Permissions = () => {
                     )
                 })
             }
-            <div className="py-2 bg-gray-300 dark:bg-gray-700 -mx-5 px-5">
+            <div className="py-2 bg-gray-100 dark:bg-gray-700 -mx-5 px-5">
                 Add extra permissions for specified users...
             </div>
             {
@@ -180,7 +179,7 @@ const Permissions = () => {
                 })
             }
             <UserSuggest users={users} select={select} />
-        </>
+        </PageWrapper>
     );
 }
 

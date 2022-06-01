@@ -80,34 +80,11 @@ const Settings = () => {
                 <Route exact path="/settings/azure">
                     <AzureSettings />
                 </Route>
-            </Switch>
-            {/* <div className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded">
-                <nav className="flex flex-col md:flex-row border-b border-gray-200 dark:border-gray-600">
-                    <button className={tabClass(0)} onClick={() => toggle(0)}>
-                        App Settings
-                    </button>
-                    <button className={tabClass(1)} onClick={() => toggle(1)}>
-                        Microsoft Azure Integration
-                    </button>
-                    <button className={tabClass(2)} onClick={() => toggle(2)}>
-                        App Permissions
-                    </button>
-                    <button className={tabClass(3)} onClick={() => toggle(3)}>
-                        Select Fields
-                    </button>
-                    <button className={classNames(tabClass(4), 'md:ml-auto text-red-600 dark:text-red-500')} onClick={() => toggle(4)}>
-                        Recycle Bin
-                    </button>
-                </nav>
-                <div className={paneClass(0)}>
-                    <AppSettings />
-                </div>
-                <div className={paneClass(1)}>
-                    <AzureSettings />
-                </div>
-                <div className={paneClass(2)}>
+                <Route exact path="/settings/permissions">
                     <Permissions />
-                </div>
+                </Route>
+            </Switch>
+            {/* 
                 <div className={paneClass(3)}>
                     <SelectFields />
                 </div>
