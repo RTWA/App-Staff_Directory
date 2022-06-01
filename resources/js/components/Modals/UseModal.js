@@ -30,7 +30,7 @@ const UseModal = props => {
                     <span className="bg-white dark:bg-gray-800 px-4 text-xs text-gray-600 dark:text-gray-400 uppercase">Or</span>
                 </div>
             </div>
-            <label htmlFor="advanced-text" className="text-gray-600 dark:text-gray-400 text-sm font-normal">Provide a link to the Block</label>
+            <label htmlFor="advanced-text" className="text-gray-600 dark:text-gray-400 text-sm font-normal">Provide a link to the View</label>
             <CopyToClipboard text={link} onCopy={() => { addToast("Copied to clipboard!", '', { appearance: 'success' }) }}>
                 <Input
                     id="advanced-text"
