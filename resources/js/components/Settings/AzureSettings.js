@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { APIClient, Button, Input, Switch } from 'webapps-react';
+import { APIClient, AzureGroupSearch, Button, Input, PageWrapper, Switch } from 'webapps-react';
 import GroupSearch from '../GroupSearch/GroupSearch';
 
 let _mounted = false;
@@ -228,14 +228,19 @@ const AzureSettings = () => {
     }
 
     return (
-        <>
-            <div className="mb-6">
-                <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300" htmlFor="depList">Add Azure Group to Sync</label>
-                <GroupSearch id="depList" name="depList" groupData={depList} setData={setDepList} saveChange={addSyncGroup} accessToken={accessToken} />
-            </div>
+        <PageWrapper title="Microsoft Azure Integration">
+            <AzureGroupSearch
+                id="depList"
+                name="depList"
+                groupData={depList}
+                setData={setDepList}
+                saveChange={addSyncGroup}
+                accessToken={accessToken}
+                label="Add Azure Group to Sync"
+            />
             <div className="mb-6">
                 <p className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Currently Syncing Groups</p>
-                <div className="w-full bg-gray-50 border-2 border-gray-300 text-gray-900 outline-none text-sm rounded-lg block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                <div className="w-full bg-transparent border-2 border-gray-400 text-gray-900 dark:text-white dark:border-gray-600 outline-none text-sm rounded-lg block p-2.5">
                     <span className="inline-flex w-0 py-1 text-xs font-bold leading-none">&nbsp;</span>
                     {
                         Object(syncGroups).map(function (group, i) {
@@ -257,7 +262,8 @@ const AzureSettings = () => {
                 id="create_departments"
                 name="create_departments"
                 label="Create Departments from User properties"
-                helpText="The Department string will be split on a '-' character (with a space either side) to create sub-departments."
+                helpText={<>The Department string will be split on a '-' character (with a space either side) to create sub-departments.<br />
+                    The Department string will be split on a '&' character (with a space either side) to create multiple departments.</>}
                 checked={(app.create_departments === 'true')}
                 onChange={onChange}
                 className="mb-6"
@@ -278,17 +284,17 @@ const AzureSettings = () => {
                 type="text"
                 value={moment(app.last_sync).calendar()}
                 action={
-                    <Button style="ghost" color="gray" size="small" square
+                    <Button type="ghost" color="gray" size="small" square
                         className="uppercase mr-1 w-full sm:w-auto sm:rounded-md"
                         onClick={syncNow}>
                         Sync Now
                     </Button>
                 }
                 readOnly disabled />
-            <hr className="mb-6" />
+            <div className="h-px bg-gray-300 dark:bg-gray-700 mb-6" />
             <div className="mb-6">
                 <p className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Don't sync these users</p>
-                <div className="w-full bg-gray-50 border-2 border-gray-300 text-gray-900 outline-none text-sm rounded-lg block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                <div className="w-full bg-transparent border-2 border-gray-400 text-gray-900 dark:text-white dark:border-gray-600 outline-none text-sm rounded-lg block p-2.5">
                     <span className="inline-flex w-0 py-1 text-xs font-bold leading-none">&nbsp;</span>
                     {
                         Object.keys(skipUsers).map(function (i) {
@@ -307,7 +313,7 @@ const AzureSettings = () => {
                     }
                 </div>
             </div>
-        </>
+        </PageWrapper>
     );
 }
 

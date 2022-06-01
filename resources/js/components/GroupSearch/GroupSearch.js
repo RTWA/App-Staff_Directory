@@ -8,7 +8,7 @@ const GroupSearch = ({ id, groupData, setData, accessToken, saveChange, ...props
 
     const change = e => {
         // Abort any running requests
-        controllers.map(function (controller, i) {
+        controllers.map(/* istanbul ignore next */(controller, i) => {
             controller?.abort();
             delete controllers[i];
         });
@@ -18,7 +18,12 @@ const GroupSearch = ({ id, groupData, setData, accessToken, saveChange, ...props
         let id = e.target.id;
         let value = e.target.value;
 
-        groupData.value = value;
+        /* istanbul ignore else */
+        if (groupData[id] === undefined) {
+            groupData[id] = {};
+        }
+        groupData[id].value = value;
+        setData({ ...groupData });
 
         let headers = new Headers();
         let bearer = `Bearer ${accessToken}`;
@@ -33,16 +38,19 @@ const GroupSearch = ({ id, groupData, setData, accessToken, saveChange, ...props
         fetch(graphEndpoint, options)
             .then(response => response.json())
             .then(data => {
-                groupData.data = data.value
+                groupData[id].data = data.value
 
-                setData({...groupData});
+                setData({ ...groupData });
                 setActive(0);
                 setShowResults(true);
             })
             .catch(error => {
+                /* istanbul ignore else */
                 if (!error.status?.isAbort) {
-                    // TODO: Handle Errors
-                    console.log(error)
+                    groupData[id].data = [];
+                    setData({ ...groupData });
+                    setActive(0);
+                    setShowResults(true);
                 }
             });
     }
@@ -50,31 +58,32 @@ const GroupSearch = ({ id, groupData, setData, accessToken, saveChange, ...props
     const onClick = e => {
         e.stopPropagation();
 
-        groupData.selected = groupData.data[e.currentTarget.dataset.key];
-        groupData.value = groupData.data[e.currentTarget.dataset.key].displayName;
-        groupData.data = [];
+        groupData[id].selected = groupData[id].data[e.currentTarget.dataset.key];
+        groupData[id].value = groupData[id].data[e.currentTarget.dataset.key].displayName;
+        groupData[id].data = [];
 
         setActive(0);
         setShowResults(false);
-        setData({...groupData});
-        saveChange(groupData.selected);
+        setData({ ...groupData });
+        saveChange(id);
     }
 
     const onKeyDown = e => {
+        /* istanbul ignore else */
         if (e.keyCode === 13) {
-            groupData.selected = groupData.data[active];
-            groupData.value = groupData.data[active].displayName;
-            setData({...groupData});
+            groupData[id].selected = groupData[id].data[active];
+            groupData[id].value = groupData[id].data[active].displayName;
+            setData({ ...groupData });
             setShowResults(false);
             setActive(0);
-            saveChange(groupData.selected);
+            saveChange(id);
         } else if (e.keyCode === 38) {
             if (active === 0) {
                 return;
             }
             setActive(active - 1);
         } else if (e.keyCode === 40) {
-            if (active + 1 === groupData.data.length) {
+            if (active + 1 === groupData[id].data.length) {
                 return;
             }
             setActive(active + 1);
@@ -83,13 +92,14 @@ const GroupSearch = ({ id, groupData, setData, accessToken, saveChange, ...props
 
     let DataListComponent;
 
-    if (showResults && groupData?.value) {
-        if (groupData.data?.length) {
+    if (showResults && groupData[id]?.value) {
+        if (groupData[id].data?.length) {
             let count = 1;
             DataListComponent = (
                 <ul className="z-50 absolute mx-1.5 inset-x-0 bg-white dark:bg-gray-700 rounded-b border border-gray-200 dark:border-gray-600 text-gray-900 text-sm font-medium dark:text-white cursor-pointer">
                     {
-                        groupData.data.map((data, index) => {
+                        groupData[id].data.map((data, index) => {
+                            /* istanbul ignore else */
                             if (count <= 5) {
                                 let className = "flex flex-row gap-x-2 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-900";
 
@@ -116,7 +126,15 @@ const GroupSearch = ({ id, groupData, setData, accessToken, saveChange, ...props
 
     return (
         <div className="relative mb-6">
-            <Input type="text" id={`${id}`} value={groupData?.value || ''} onChange={change} onKeyDown={onKeyDown} state={groupData?.state} wrapperClassName="" {...props} />
+            <Input
+                type="text"
+                id={id}
+                value={groupData[id]?.value || ''}
+                onChange={change}
+                onKeyDown={onKeyDown}
+                state={groupData[id]?.state}
+                error={groupData[id]?.error}
+                wrapperClassName="" {...props} />
             {DataListComponent}
         </div>
     );

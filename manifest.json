@@ -40,7 +40,7 @@
         {
             "path": "/settings",
             "name": "App Settings",
-            "exact": true,
+            "exact": false,
             "component": "Manage",
             "permission": "app.StaffDirectory.appSettings"
         }

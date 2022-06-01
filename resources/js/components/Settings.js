@@ -51,7 +51,7 @@ const Settings = () => {
                         App Settings
                     </DrawerItem>
                     <DrawerItem
-                        to="settings/azure"
+                        to="/settings/azure"
                     >
                         Microsoft Azure Integration
                     </DrawerItem>
@@ -76,6 +76,9 @@ const Settings = () => {
             <Switch>
                 <Route exact path="/settings">
                     <AppSettings />
+                </Route>
+                <Route exact path="/settings/azure">
+                    <AzureSettings />
                 </Route>
             </Switch>
             {/* <div className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded">
