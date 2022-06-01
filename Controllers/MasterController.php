@@ -124,7 +124,7 @@ class MasterController extends AppsController
                     foreach ($userDeps as $i => $userDep) {
                         $userDep = trim($userDep);
 
-                        $dep = Department::where('name', $userDep)->first();
+                        $dep = Department::where('name', $userDep)->whereNull('department_id')->first();
 
                         if (!$dep) {
                             $dep = Department::where('name', $userDep)->where('department_id', $createStore[$i - 1])->first();
