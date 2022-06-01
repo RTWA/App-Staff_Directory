@@ -83,11 +83,11 @@ const Settings = () => {
                 <Route exact path="/settings/permissions">
                     <Permissions />
                 </Route>
+                <Route exact path="/settings/fields">
+                    <SelectFields />
+                </Route>
             </Switch>
             {/* 
-                <div className={paneClass(3)}>
-                    <SelectFields />
-                </div>
                 <div className={classNames(paneClass(4), 'relative', 'px-4 lg:px-10 py-10 pt-5')}>
                     <RecycleBin />
                 </div>
