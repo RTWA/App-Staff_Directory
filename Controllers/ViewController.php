@@ -81,9 +81,19 @@ class ViewController extends Controller
             $view['publicId'] = Plugin::generatePublicId();
             View::create($view);
         }
-        
+
         return response()->json([
-            'message' => 'Record saved successfully'
+            'message' => 'Record saved successfully',
+            'view' => $view,
         ], 201);
+    }
+
+    public function delete($publicId)
+    {
+        View::findByPublicId($publicId)->firstOrFail()->delete();
+
+        return response()->json([
+            'message' => 'Record deleted successfully',
+        ], 200);
     }
 }

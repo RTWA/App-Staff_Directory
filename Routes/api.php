@@ -27,6 +27,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::get('/views', [ViewController::class, 'mine']);
     Route::post('/view/{publicId}', [ViewController::class, 'save']);
+    Route::delete('/view/{publicId}', [ViewController::class, 'delete']);
 
     Route::get('/departments', [DepartmentsController::class, 'all']);
     Route::get('/departmentList', [DepartmentsController::class, 'list']);

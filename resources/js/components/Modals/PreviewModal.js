@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import classNames from 'classnames';
 import { withWebApps } from 'webapps-react';
 
-import { ModalsContext } from '../Views';
+import { FlyoutContext } from '../Views';
 import CustomView from '../CustomView';
 
 const PreviewModal = ({ UI, ...props }) => {
@@ -13,14 +13,17 @@ const PreviewModal = ({ UI, ...props }) => {
     } = props;
 
     const {
-        modals
-    } = useContext(ModalsContext);
+        current
+    } = useContext(FlyoutContext);
+
+    if (current !== 'preview') {
+        return null;
+    }
 
     const modalClass = classNames(
         'absolute',
         'inset-0',
         'overflow-hidden',
-        (modals.preview) ? 'z-50' : '-z-10'
     )
 
     const bdClass = classNames(
@@ -28,10 +31,7 @@ const PreviewModal = ({ UI, ...props }) => {
         'inset-0',
         'bg-gray-500',
         'bg-opacity-75',
-        'transition-opacity',
-        'duration-500',
-        'ease-in-out',
-        (modals.preview) ? 'opacity-100' : 'opacity-0'
+        'opacity-100'
     )
 
     const panelClass = classNames(
@@ -39,16 +39,11 @@ const PreviewModal = ({ UI, ...props }) => {
         'w-screen',
         'max-w-7xl',
         'h-5/6',
-        'transform',
-        'transition',
-        'ease-in-out',
-        'duration-500',
-        'delay-500',
-        (modals.preview) ? 'opacity-100' : 'opacity-0'
+        'opacity-100'
     )
 
     return (
-        <div className={modalClass}>
+        <div className={modalClass} style={{ zIndex: 2000 }}>
             <div className={bdClass} aria-hidden="true" onClick={closeModal}></div>
             <section className="h-screen w-full fixed left-0 top-0 flex justify-center items-center" aria-labelledby="slide-over-heading">
                 <div className={panelClass}>

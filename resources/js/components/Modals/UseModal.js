@@ -1,51 +1,11 @@
-import React, { useContext } from 'react';
-import classNames from 'classnames';
+import React from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { useToasts, withWebApps } from 'webapps-react';
+import { Input, useToasts } from 'webapps-react';
 
-import { ModalsContext } from '../Views';
-
-const UseModal = ({ UI, ...props }) => {
-    const {
-        publicId,
-        closeModal
-    } = props;
-
-    const {
-        modals
-    } = useContext(ModalsContext);
+const UseModal = props => {
+    const { publicId } = props;
 
     const { addToast } = useToasts();
-
-    const modalClass = classNames(
-        'absolute',
-        'inset-0',
-        'overflow-hidden',
-        (modals.useView) ? 'z-50' : '-z-10'
-    )
-
-    const bdClass = classNames(
-        'absolute',
-        'inset-0',
-        'bg-gray-500',
-        'bg-opacity-75',
-        'transition-opacity',
-        'duration-500',
-        'ease-in-out',
-        (modals.useView) ? 'opacity-100' : 'opacity-0'
-    )
-
-    const panelClass = classNames(
-        'relative',
-        'w-screen',
-        'max-w-2xl',
-        'transform',
-        'transition',
-        'ease-in-out',
-        'duration-500',
-        'delay-500',
-        (modals.useView) ? 'opacity-100' : 'opacity-0'
-    )
 
     const URL = `${location.protocol}//${location.hostname}${(location.port ? `:${location.port}` : '')}`;
     const link = `${URL}/apps/StaffDirectory/view/${publicId}`;
@@ -53,38 +13,41 @@ const UseModal = ({ UI, ...props }) => {
         `<iframe src="${link}" style="width=100%;height:100%;border:0;overflow:hidden;" scrolling="no"></iframe>`;
 
     return (
-        <div className={modalClass}>
-            <div className={bdClass} aria-hidden="true" onClick={closeModal}></div>
-            <section className="h-screen w-full fixed left-0 top-0 flex justify-center items-center" aria-labelledby="slide-over-heading">
-                <div className={panelClass}>
-                    <div className="h-full flex flex-col bg-white dark:bg-gray-900 shadow-xl">
-                        <div className={`px-4 py-4 bg-${UI.theme}-600 dark:bg-${UI.theme}-500 text-white relative`}>
-                            <div className="absolute top-0 right-0 -ml-8 pt-4 pr-2 flex sm:-ml-10 sm:pr-4">
-                                <button className="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                                    onClick={closeModal}>
-                                    <span className="sr-only">Close panel</span>
-                                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <h2 id="slide-over-heading" className="text-lg font-medium">Use this view</h2>
-                        </div>
-                        <div className="px-4 sm:px-6 py-5">
-                            <ol className="list-decimal px-6">
-                                <li>Click into the box below to automatically select and copy the text.</li>
-                                <li>Go the page you wish to display it on and enter edit mode.</li>
-                                <li>Insert an HTML/Embed option and paste (<kbd>Ctrl</kbd>+<kbd>V</kbd>) the text below.</li>
-                            </ol>
-                            <CopyToClipboard text={textarea} onCopy={() => { addToast("Copied to clipboard!", '', { appearance: 'success' }) }}>
-                                <textarea className="mt-2 w-full bg-gray-200 dark:bg-gray-700" value={textarea} readOnly rows="4" />
-                            </CopyToClipboard>
-                        </div>
-                    </div>
+        <>
+            <label htmlFor="simple-text" className="text-gray-600 dark:text-gray-400 text-sm font-normal">Embed the View in your web page</label>
+            <CopyToClipboard text={textarea} onCopy={() => { addToast("Copied to clipboard!", '', { appearance: 'success' }) }}>
+                <textarea className="mt-2 w-full bg-gray-200 dark:bg-gray-700" value={textarea} readOnly rows="4" />
+                {/* <Textarea
+                    id="simple-text"
+                    name="simple-text"
+                    wrapperClassName=""
+                    readOnly
+                    value={textarea}
+                /> */}
+            </CopyToClipboard>
+            <div className="relative my-6 h-px bg-gray-600 dark:bg-gray-400">
+                <div className="absolute left-0 top-0 flex justify-center w-full -mt-2">
+                    <span className="bg-white dark:bg-gray-800 px-4 text-xs text-gray-600 dark:text-gray-400 uppercase">Or</span>
                 </div>
-            </section>
-        </div>
+            </div>
+            <label htmlFor="advanced-text" className="text-gray-600 dark:text-gray-400 text-sm font-normal">Provide a link to the Block</label>
+            <CopyToClipboard text={link} onCopy={() => { addToast("Copied to clipboard!", '', { appearance: 'success' }) }}>
+                <Input
+                    id="advanced-text"
+                    name="advanced-text"
+                    action={
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                        </svg>
+                    }
+                    actionLocation="left"
+                    wrapperClassName=""
+                    readOnly
+                    value={link}
+                />
+            </CopyToClipboard>
+        </>
     )
 }
 
-export default withWebApps(UseModal);
+export default UseModal;

@@ -1,169 +1,98 @@
 import React, { useContext } from 'react';
-import classNames from 'classnames';
-import { Switch, withWebApps } from 'webapps-react';
+import { FlyoutContent, FlyoutHeader, Switch } from 'webapps-react';
 
-import { ModalsContext } from '../Views';
+import { FlyoutContext } from '../Views';
 
-const TableFieldsModal = ({ UI, ...props }) => {
+const TableFieldsModal = props => {
     const {
         fields,
         customFields,
-        closeModal
+        close
     } = props;
 
     const {
-        modals
-    } = useContext(ModalsContext);
+        current
+    } = useContext(FlyoutContext);
 
     const onChange = e => {
         props.onChange(e.target.dataset.field, e.target.checked);
     }
 
-    const modalClass = classNames(
-        'absolute',
-        'inset-0',
-        'overflow-hidden',
-        (modals.tableFields) ? 'z-50' : '-z-10'
-    )
-
-    const bdClass = classNames(
-        'absolute',
-        'inset-0',
-        'bg-gray-500',
-        'bg-opacity-75',
-        'transition-opacity',
-        'duration-500',
-        'ease-in-out',
-        (modals.tableFields) ? 'opacity-100' : 'opacity-0'
-    )
-
-    const panelClass = classNames(
-        'relative',
-        'w-screen',
-        'max-w-2xl',
-        'transform',
-        'transition',
-        'ease-in-out',
-        'duration-500',
-        'delay-500',
-        (modals.tableFields) ? 'opacity-100' : 'opacity-0'
-    )
+    if (current !== 'tableFields') {
+        return null;
+    }
 
     return (
-        <div className={modalClass}>
-            <div className={bdClass} aria-hidden="true" onClick={closeModal}></div>
-            <section className="h-screen w-full fixed left-0 top-0 flex justify-center items-center" aria-labelledby="slide-over-heading">
-                <div className={panelClass}>
-                    <div className="h-full flex flex-col bg-white dark:bg-gray-900 shadow-xl">
-                        <div className={`px-4 py-4 bg-${UI.theme}-600 dark:bg-${UI.theme}-500 text-white relative`}>
-                            <div className="absolute top-0 right-0 -ml-8 pt-4 pr-2 flex sm:-ml-10 sm:pr-4">
-                                <button className="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                                    onClick={closeModal}>
-                                    <span className="sr-only">Close panel</span>
-                                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <h2 id="slide-over-heading" className="text-lg font-medium">Choose Table Fields</h2>
-                        </div>
-                        <div>
-                            <table className="table-fixed w-full">
-                                <tbody>
-                                    <tr>
-                                        <td className="py-2 pl-4 w-48">Table Headings</td>
-                                        <td className="px-6">
-                                            <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <Switch data-field="table_headings"
-                                                    checked={fields['table_headings'] || false}
-                                                    onChange={onChange} />
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="bg-gray-200 dark:bg-gray-800 border-t border-b border-gray-200 dark:border-gray-600">
-                                        <td className="py-2 pl-4">Photo</td>
-                                        <td className="px-6">
-                                            <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <Switch data-field="table_photo"
-                                                    checked={fields['table_photo'] || false}
-                                                    onChange={onChange} />
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className="py-2 pl-4">Employee ID</td>
-                                        <td className="px-6">
-                                            <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <Switch data-field="table_employee_id"
-                                                    checked={fields['table_employee_id'] || false}
-                                                    onChange={onChange} />
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="bg-gray-200 dark:bg-gray-800 border-t border-b border-gray-200 dark:border-gray-600">
-                                        <td className="py-2 pl-4">Email Address</td>
-                                        <td className="px-6">
-                                            <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <Switch data-field="table_email"
-                                                    checked={fields['table_email'] || false}
-                                                    onChange={onChange} />
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className="py-2 pl-4">Phone Number</td>
-                                        <td className="px-6">
-                                            <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <Switch data-field="table_phone"
-                                                    checked={fields['table_phone'] || false}
-                                                    onChange={onChange} />
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className="bg-gray-200 dark:bg-gray-800 border-t border-b border-gray-200 dark:border-gray-600">
-                                        <td className="py-2 pl-4">Department</td>
-                                        <td className="px-6">
-                                            <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <Switch data-field="table_department"
-                                                    checked={fields['table_department'] || false}
-                                                    onChange={onChange} />
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className="py-2 pl-4">Job Title</td>
-                                        <td className="px-6">
-                                            <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <Switch data-field="table_title"
-                                                    checked={fields['table_title'] || false}
-                                                    onChange={onChange} />
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {
-                                        customFields.map(function (field, i) {
-                                            return (
-                                                <tr key={i} className={(i % 2) ? '' : 'bg-gray-200 dark:bg-gray-800 border-t border-b border-gray-200 dark:border-gray-600'}>
-                                                    <td className="py-2 pl-4">{field.label}</td>
-                                                    <td className="px-6">
-                                                        <div className="relative inline-block w-10 mr-2 align-middle select-none">
-                                                            <Switch data-field={`table_${field.field}`}
-                                                                checked={fields[`table_${field.field}`] || false}
-                                                                onChange={onChange} />
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
+        <>
+            <FlyoutHeader closeAction={close}>
+                Choose Table Fields
+            </FlyoutHeader>
+            <FlyoutContent>
+                <Switch data-field="table_headings"
+                    checked={fields['table_headings'] || false}
+                    onChange={onChange}
+                    label="Table Headings"
+                    className="my-6"
+                />
+                <Switch
+                    data-field="table_photo"
+                    checked={fields['table_photo'] || false}
+                    onChange={onChange}
+                    label="Photo"
+                    className="my-6"
+                />
+                <Switch
+                    data-field="table_employee_id"
+                    checked={fields['table_employee_id'] || false}
+                    onChange={onChange}
+                    label="Employee ID"
+                    className="my-6"
+                />
+                <Switch
+                    data-field="table_email"
+                    checked={fields['table_email'] || false}
+                    onChange={onChange}
+                    label="Email Address"
+                    className="my-6"
+                />
+                <Switch
+                    data-field="table_phone"
+                    checked={fields['table_phone'] || false}
+                    onChange={onChange}
+                    label="Phone Number"
+                    className="my-6"
+                />
+                <Switch
+                    data-field="table_department"
+                    checked={fields['table_department'] || false}
+                    onChange={onChange}
+                    label="Department"
+                    className="my-6"
+                />
+                <Switch
+                    data-field="table_title"
+                    checked={fields['table_title'] || false}
+                    onChange={onChange}
+                    label="Job Title"
+                    className="my-6"
+                />
+                {
+                    customFields.map(function (field, i) {
+                        return (
+                            <Switch
+                                key={i}
+                                data-field={`table_${field.field}`}
+                                checked={fields[`table_${field.field}`] || false}
+                                onChange={onChange}
+                                label={field.label}
+                                className="my-6"
+                            />
+                        );
+                    })
+                }
+            </FlyoutContent>
+        </>
     )
 }
 
-export default withWebApps(TableFieldsModal);
+export default TableFieldsModal;
