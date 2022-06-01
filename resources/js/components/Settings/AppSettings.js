@@ -1,15 +1,15 @@
-import React, { createContext, useEffect, useState } from 'react';
-import { APIClient, Button, Input, Loader, Select, Switch, useToasts, withWebApps } from 'webapps-react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { APIClient, Button, Flyout, Input, Loader, PageWrapper, Select, Switch, useToasts, WebAppsUXContext } from 'webapps-react';
 
 import { CreateDepartmentFlyout, DepartmentFlyout } from './Flyouts';
 
 export const FlyoutsContext = createContext({});
 
-const AppSettings = UI => {
+const AppSettings = () => {
     const [states, setStates] = useState({});
     const [departments, setDepartments] = useState(null);
     const [department, setDepartment] = useState({ children: [] });
-    const [modals, setModals] = useState({ manage: false, new: false });
+    const [current, setCurrent] = useState('');
     const [notifications, setNotifications] = useState({
         newRecord: false,
         newNotifyTo: '',
@@ -18,12 +18,14 @@ const AppSettings = UI => {
     });
 
     const { addToast } = useToasts();
+    const { useFlyouts } = useContext(WebAppsUXContext);
+    const { openFlyout, closeFlyout } = useFlyouts;
 
     const APIController = new AbortController();
 
     useEffect(async () => {
         await loadData();
-        
+
         return () => {
             APIController.abort();
         }
@@ -77,27 +79,18 @@ const AppSettings = UI => {
             }
         });
         if (e.target.value !== '') {
-            modals.manage = true;
-            setModals({ ...modals });
+            openAFlyout('Department');
         }
     }
 
-    const toggleManage = e => {
-        if (e !== undefined) {
-            e.preventDefault();
-        }
-
-        modals.manage = !modals.manage;
-        setModals({ ...modals });
+    const closeFlyouts = () => {
+        setCurrent('');
+        closeFlyout();
     }
 
-    const toggleNew = e => {
-        if (e !== undefined) {
-            e.preventDefault();
-        }
-
-        modals.new = !modals.new;
-        setModals({ ...modals });
+    const openAFlyout = panel => {
+        setCurrent(panel);
+        openFlyout();
     }
 
     const onType = e => {
@@ -168,7 +161,7 @@ const AppSettings = UI => {
                 addToast('Department Updated Successfully', '', { appearance: 'success' });
                 setDepartments(json.data.departments);
                 setDepartment({ children: [] });
-                toggleManage();
+                closeFlyouts();
             })
             .catch(error => {
                 if (!error.status?.isAbort) {
@@ -184,7 +177,7 @@ const AppSettings = UI => {
                 addToast('Department Deleted Successfully', '', { appearance: 'success' });
                 setDepartments(json.data.departments);
                 setDepartment({ children: [] });
-                toggleManage();
+                closeFlyouts();
             })
             .catch(error => {
                 if (!error.status?.isAbort) {
@@ -203,9 +196,14 @@ const AppSettings = UI => {
     }
 
     const newDepButton = (
-        <Button style="ghost" color="gray" size="small" square
+        <Button
+            type="ghost"
+            color="gray"
+            size="small"
+            square
             className="uppercase mr-1 w-full sm:w-auto sm:rounded-md"
-            onClick={toggleNew}>
+            onClick={() => openAFlyout('CreateDepartment')}
+        >
             Create a new Department
         </Button>
     )
@@ -216,102 +214,98 @@ const AppSettings = UI => {
 
     return (
         <>
-            <Select
-                id="depList"
-                value={department.id}
-                onChange={onDepChange}
-                label="Manage Departments"
-                action={newDepButton}
-            >
-                {
-                    (department.length === 0)
-                        ? <option value="">No departments have been created yet</option>
-                        : <option value="">Select...</option>
-                }
-                {
-                    (department.length !== 0)
-                        ? (
-                            Object(departments).map(function (department, i) {
-                                let _return = [];
-                                _return.push(
-                                    <option key={i} value={department.id}>{department.name}</option>
-                                );
+            <PageWrapper title="App Settings">
+                <Select
+                    id="depList"
+                    value={department.id}
+                    onChange={onDepChange}
+                    label="Manage Departments"
+                    action={newDepButton}
+                >
+                    {
+                        (department.length === 0)
+                            ? <option value="">No departments have been created yet</option>
+                            : <option value="">Select...</option>
+                    }
+                    {
+                        (department.length !== 0)
+                            ? (
+                                Object(departments).map(function (department, i) {
+                                    let _return = [];
+                                    _return.push(
+                                        <option key={i} value={department.id}>{department.name}</option>
+                                    );
 
-                                if (department.childrenCount !== 0) {
-                                    department.children.map(function (sub, si) {
-                                        _return.push(
-                                            <option key={`${i}-${si}`} value={sub.id}>{department.name} - {sub.name}</option>
-                                        );
-                                    });
-                                }
-                                return _return;
-                            })
+                                    if (department.childrenCount !== 0) {
+                                        department.children.map(function (sub, si) {
+                                            _return.push(
+                                                <option key={`${i}-${si}`} value={sub.id}>{department.name} - {sub.name}</option>
+                                            );
+                                        });
+                                    }
+                                    return _return;
+                                })
+                            ) : null
+                    }
+                </Select>
+                <div className="h-px bg-gray-300 dark:bg-gray-700 my-4" />
+                <Switch
+                    id="app.StaffDirectory.newRecord.sendNotification"
+                    name="app.StaffDirectory.newRecord.sendNotification"
+                    label="Send Email when record is created"
+                    helpText="This will not trigger for records created by Microsoft Azure Integration"
+                    className="mb-6"
+                    checked={(notifications.newRecord === 'true')}
+                    onChange={onChange}
+                    state={states['app.StaffDirectory.newRecord.sendNotification']} />
+                <Input
+                    id="app.StaffDirectory.newRecord.notifyTo"
+                    name="app.StaffDirectory.newRecord.notifyTo"
+                    label="Send new record notification to"
+                    type="text"
+                    value={notifications.newNotifyTo || ''}
+                    onChange={onType}
+                    onBlur={onChange}
+                    state={states['app.StaffDirectory.newRecord.notifyTo']} />
+                <Switch
+                    id="app.StaffDirectory.deleteRecord.sendNotification"
+                    name="app.StaffDirectory.deleteRecord.sendNotification"
+                    label="Send Email when record is deleted"
+                    helpText="This will not trigger for records deleted by Microsoft Azure Integration"
+                    className="mb-6"
+                    checked={(notifications.deleteRecord === 'true')}
+                    onChange={onChange}
+                    state={states['app.StaffDirectory.deleteRecord.sendNotification']} />
+                <Input
+                    id="app.StaffDirectory.deleteRecord.notifyTo"
+                    name="app.StaffDirectory.deleteRecord.notifyTo"
+                    label="Send deleted record notification to"
+                    type="text"
+                    value={notifications.deleteNotifyTo || ''}
+                    onChange={onType}
+                    onBlur={onChange}
+                    state={states['app.StaffDirectory.deleteRecord.notifyTo']} />
+                {
+                    (departments.length === 0)
+                        ? (
+                            <Button onClick={installSampleData} type="link" padding={false} color="gray">
+                                Install Sample Data
+                            </Button>
                         ) : null
                 }
-            </Select>
-            <div className="h-px bg-gray-300 dark:bg-gray-700 my-4" />
-            <Switch
-                id="app.StaffDirectory.newRecord.sendNotification"
-                name="app.StaffDirectory.newRecord.sendNotification"
-                label="Send Email when record is created"
-                helpText="This will not trigger for records created by Microsoft Azure Integration"
-                className="mb-6"
-                checked={(notifications.newRecord === 'true')}
-                onChange={onChange}
-                state={states['app.StaffDirectory.newRecord.sendNotification']} />
-            <Input
-                id="app.StaffDirectory.newRecord.notifyTo"
-                name="app.StaffDirectory.newRecord.notifyTo"
-                label="Send new record notification to"
-                type="text"
-                value={notifications.newNotifyTo || ''}
-                onChange={onType}
-                onBlur={onChange}
-                state={states['app.StaffDirectory.newRecord.notifyTo']} />
-            <Switch
-                id="app.StaffDirectory.deleteRecord.sendNotification"
-                name="app.StaffDirectory.deleteRecord.sendNotification"
-                label="Send Email when record is deleted"
-                helpText="This will not trigger for records deleted by Microsoft Azure Integration"
-                className="mb-6"
-                checked={(notifications.deleteRecord === 'true')}
-                onChange={onChange}
-                state={states['app.StaffDirectory.deleteRecord.sendNotification']} />
-            <Input
-                id="app.StaffDirectory.deleteRecord.notifyTo"
-                name="app.StaffDirectory.deleteRecord.notifyTo"
-                label="Send deleted record notification to"
-                type="text"
-                value={notifications.deleteNotifyTo || ''}
-                onChange={onType}
-                onBlur={onChange}
-                state={states['app.StaffDirectory.deleteRecord.notifyTo']} />
-            {
-                (departments.length === 0)
-                    ? (
-                        <div className="flex flex-col xl:flex-row py-4">
-                            <label className="w-full xl:w-4/12 xl:py-2 font-medium xl:font-normal text-sm xl:text-base">
-                                Sample Data
-                            </label>
-                            <div className="w-full">
-                                <Button onClick={installSampleData} square className="w-full mt-2 sm:mt-0 sm:w-auto sm:rounded-md">
-                                    Install Sample Data
-                                </Button>
-                            </div>
-                        </div>
-                    ) : null
-            }
+            </PageWrapper>
 
             <FlyoutsContext.Provider value={{
-                modals,
-                toggleManage,
-                toggleNew
+                current,
+                closeFlyouts
             }}>
-                <CreateDepartmentFlyout setDepartments={setDepartments} departments={departments} />
-                <DepartmentFlyout departments={departments} department={department} setDepartment={setDepartment} saveDepartment={saveDepartment} deleteDepartment={deleteDepartment} />
+                <Flyout>
+                    <CreateDepartmentFlyout setDepartments={setDepartments} departments={departments} />
+                    <DepartmentFlyout departments={departments} department={department} setDepartment={setDepartment} saveDepartment={saveDepartment} deleteDepartment={deleteDepartment} />
+                </Flyout>
             </FlyoutsContext.Provider>
         </>
     );
 }
 
-export default withWebApps(AppSettings);
+export default AppSettings;

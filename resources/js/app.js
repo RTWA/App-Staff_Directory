@@ -13,7 +13,7 @@ ReactDOM.render(
                 <Switch>
                     <Route exact path="/views" name="Manage Views" component={Views} />
                     <Route exact path="/staff" name="Manage Staff" component={Staff} />
-                    <Route exact path="/settings" name="App Settings" component={Settings} />
+                    <Route path="/settings" name="App Settings" component={Settings} />
                 </Switch>
             </BrowserRouter>
         </WebApps>

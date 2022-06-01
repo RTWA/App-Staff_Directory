@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
+import { Route, Switch } from 'react-router-dom';
 import classNames from 'classnames';
-import { Loader, WebAppsContext } from 'webapps-react';
+import { AppPage, Drawer, DrawerHeader, DrawerItem, DrawerItems, Loader, PageWrapper, WebAppsContext } from 'webapps-react';
 
 import { AppSettings, AzureSettings, Permissions, RecycleBin, SelectFields } from './Settings/index';
 
@@ -38,8 +39,46 @@ const Settings = () => {
     }
 
     return (
-        <div className="w-full py-4">
-            <div className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded">
+        <AppPage>
+            <Drawer>
+                <DrawerHeader>
+                    Staff Directory
+                </DrawerHeader>
+                <DrawerItems>
+                    <DrawerItem
+                        to="/settings"
+                    >
+                        App Settings
+                    </DrawerItem>
+                    <DrawerItem
+                        to="settings/azure"
+                    >
+                        Microsoft Azure Integration
+                    </DrawerItem>
+                    <DrawerItem
+                        to="/settings/permissions"
+                    >
+                        App Permissions
+                    </DrawerItem>
+                    <DrawerItem
+                        to="/settings/fields"
+                    >
+                        Select Fields
+                    </DrawerItem>
+                    <DrawerItem
+                        to="/settings/bin"
+                        color="red"
+                    >
+                        Recycle Bin
+                    </DrawerItem>
+                </DrawerItems>
+            </Drawer>
+            <Switch>
+                <Route exact path="/settings">
+                    <AppSettings />
+                </Route>
+            </Switch>
+            {/* <div className="flex flex-col min-w-0 break-words w-full mx-auto shadow bg-white dark:bg-gray-800 rounded">
                 <nav className="flex flex-col md:flex-row border-b border-gray-200 dark:border-gray-600">
                     <button className={tabClass(0)} onClick={() => toggle(0)}>
                         App Settings
@@ -72,8 +111,8 @@ const Settings = () => {
                 <div className={classNames(paneClass(4), 'relative', 'px-4 lg:px-10 py-10 pt-5')}>
                     <RecycleBin />
                 </div>
-            </div>
-        </div>
+            </div> */}
+        </AppPage>
     )
 }
 
