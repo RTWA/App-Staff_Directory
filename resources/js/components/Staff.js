@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Moment from 'moment';
 // import { Prompt } from 'react-router';
-import { APIClient, Button, ConfirmDeleteButton, Loader, Select, useToasts } from 'webapps-react';
+import { APIClient, AppPage, Button, ConfirmDeleteButton, Loader, PageWrapper, Select, useToasts } from 'webapps-react';
 
 import { CustomFieldDetails, DepartmentDetails, EmploymentDetails, PersonalDetails } from './Staff/index';
 
@@ -276,10 +276,10 @@ const Manage = () => {
     }
 
     return (
-        <>
+        <AppPage>
             {/* <Prompt when={changed} message="You have unsaved changes, are you sure you want to leave?" /> */}
 
-            <div className="w-full py-4">
+            <PageWrapper>
                 <Select
                     id="staffSelect"
                     label="Select person to update from the list below, or complete the form to create a new record."
@@ -322,8 +322,8 @@ const Manage = () => {
                         }
                     </div>
                 </div>
-            </div>
-        </>
+            </PageWrapper>
+        </AppPage>
     )
 }
 
