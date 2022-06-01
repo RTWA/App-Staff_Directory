@@ -86,12 +86,10 @@ const Settings = () => {
                 <Route exact path="/settings/fields">
                     <SelectFields />
                 </Route>
-            </Switch>
-            {/* 
-                <div className={classNames(paneClass(4), 'relative', 'px-4 lg:px-10 py-10 pt-5')}>
+                <Route exact path="/settings/bin">
                     <RecycleBin />
-                </div>
-            </div> */}
+                </Route>
+            </Switch>
         </AppPage>
     )
 }

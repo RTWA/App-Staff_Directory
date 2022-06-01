@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { APIClient, Banner, Button, useToasts } from 'webapps-react';
+import { APIClient, Banner, Button, Loader, PageWrapper, useToasts } from 'webapps-react';
 
 const RecycleBin = props => {
-    const [people, setPeople] = useState([]);
+    const [people, setPeople] = useState();
 
     const { addToast } = useToasts();
 
@@ -55,15 +55,23 @@ const RecycleBin = props => {
             });
     }
 
+    if (!people) {
+        return <PageWrapper title="Recyle Bin"><Loader /></PageWrapper>
+    }
+
     if (people.length === 0) {
-        return <p className="text-center">You have nothing in the Recyle Bin!</p>
+        return (
+            <PageWrapper title="Recycle Bin">
+                <p>You have nothing in the Recyle Bin!</p>
+            </PageWrapper>
+        )
     }
 
     return (
-        <>
+        <PageWrapper title="Recyle Bin">
             <Banner className="absolute top-0 left-0 right-0 text-center lg:text-left">
                 Items in the Recycle Bin are deleted after 30 days.
-                <Button style="link" color="gray" className="-my-2" onClick={empty}>
+                <Button type="link" color="gray" className="-my-2" onClick={empty}>
                     Empty the Recycle Bin now.
                 </Button>
             </Banner>
@@ -85,7 +93,7 @@ const RecycleBin = props => {
                     })
                 }
             </div>
-        </>
+        </PageWrapper>
     );
 }
 
