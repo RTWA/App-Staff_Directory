@@ -5,6 +5,10 @@ import { Auth, WebAppsUX } from 'webapps-react';
 
 import { ViewLayout } from './components';
 
+if (localStorage.getItem('WA_Login')) {
+    localStorage.removeItem('WA_Login');
+}
+
 ReactDOM.render(
     <Auth>
         <WebAppsUX>
