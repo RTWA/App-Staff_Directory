@@ -1,6 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import ReactUserAvatar from 'react-user-avatar';
-import { APIClient, Input, useToasts, WebAppsUXContext } from 'webapps-react';
+import { APIClient, Input, UserAvatar, useToasts, WebAppsUXContext } from 'webapps-react';
 
 import { DatePicker } from '../DatePicker'
 
@@ -93,7 +92,7 @@ const PersonalDetails = props => {
                         )
                         : (
                             <div className="relative cursor-pointer" onClick={e => imageUpload(e)}>
-                                <ReactUserAvatar size="64" name={`${person.forename || 'Creating'} ${person.surname || 'New Record'}`} />
+                                <UserAvatar size="64" name={`${person.forename || 'Creating'} ${person.surname || 'New Record'}`} />
                             </div>
                         )
                 }
