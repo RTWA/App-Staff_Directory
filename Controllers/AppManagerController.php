@@ -238,13 +238,13 @@ class AppManagerController extends Controller
 
     public function uninstall()
     {
-        Schema::dropIfExists($this->viewsTable());
-        Schema::dropIfExists($this->peopleTable());
-        Schema::dropIfExists($this->departmentsTable());
-        Schema::dropIfExists($this->peopleDepartmentsTable());
-        Schema::dropIfExists($this->customFieldsTable());
-        Schema::dropIfExists($this->peopleCustomFieldsTable());
         Schema::dropIfExists($this->azureMapFieldsTable());
+        Schema::dropIfExists($this->peopleCustomFieldsTable());
+        Schema::dropIfExists($this->customFieldsTable());
+        Schema::dropIfExists($this->peopleDepartmentsTable());
+        Schema::dropIfExists($this->departmentsTable());
+        Schema::dropIfExists($this->peopleTable());
+        Schema::dropIfExists($this->viewsTable());
         $this->dropPermissions();
         $this->dropSettings();
         $this->dropAppJS();
