@@ -2,7 +2,14 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { APIClient, Button, Input, Select, useToasts } from 'webapps-react';
 
-const CustomFields = props => {
+const CustomFields = ({ actions }) => {
+    const {
+        azureMapFieldStates,
+        azureMapFields,
+        mapField,
+        graph,
+    } = actions;
+
     const [tab, setTab] = useState(-1);
     const [custom, setCustom] = useState([]);
     const [changed, setChanged] = useState(false);
@@ -134,6 +141,22 @@ const CustomFields = props => {
                                         </small>
                                     </div>
                                 </div>
+                                {
+                                    (graph.tenantId)
+                                        ? (
+                                            <div
+                                                className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg px-1 -mx-1 sm:mx-0 mt-2 mb-4 sm:my-0 transition-colors duration-500 ${(azureMapFieldStates[field.field] === 'saved') ? 'bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800' : ''}  ${(azureMapFieldStates[field.field] === 'error') ? 'bg-red-100 dark:bg-red-900' : ''}`}
+                                                title="Click to change"
+                                                onClick={() => mapField(field.field, field.label)}>
+                                                <div className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                    Map with Azure attribute
+                                                </div>
+                                                <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                                                    {(azureMapFields[field.field]) ? azureMapFields[field.field] : 'do_not_sync'}
+                                                </div>
+                                            </div>
+                                        ) : null
+                                }
                             </div>
                         </div>
                     );

@@ -219,6 +219,13 @@ const SelectFields = props => {
         (sections[section].show === 'true') ? 'block' : 'hidden'
     )
 
+    const customProps = {
+        azureMapFieldStates,
+        azureMapFields,
+        mapField,
+        graph,
+    }
+
     return (
         <>
             <PageWrapper title="Select Fields">
@@ -601,7 +608,7 @@ const SelectFields = props => {
                         <p className="flex-1 p-4">Custom Fields</p>
                     </div>
                     <div className="p-4 bg-white dark:bg-gray-800 block">
-                        <CustomFields />
+                        <CustomFields actions={customProps} />
                     </div>
                 </div>
             </PageWrapper>

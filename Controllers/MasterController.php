@@ -7,6 +7,7 @@ use App\Http\Controllers\MSGraphController;
 use Illuminate\Http\Request;
 use RobTrehy\LaravelApplicationSettings\ApplicationSettings;
 use WebApps\Apps\StaffDirectory\Models\AzureMapFields;
+use WebApps\Apps\StaffDirectory\Models\CustomField;
 use WebApps\Apps\StaffDirectory\Models\Department;
 use WebApps\Apps\StaffDirectory\Models\Person;
 
@@ -30,9 +31,16 @@ class MasterController extends AppsController
 
     public function setAzureMapField(Request $request)
     {
-        $mapping = AzureMapFields::where('local_field', '=', $request->input('local_field'))->firstOrFail();
-        $mapping->azure_field = $request->input('azure_field');
-        $mapping->save();
+        $mapping = AzureMapFields::where('local_field', '=', $request->input('local_field'))->first();
+        if (!$mapping) {
+            $mapping = AzureMapFields::create([
+                'local_field' => $request->input('local_field'),
+                'azure_field' => $request->input('azure_field')
+            ]);
+        } else {
+            $mapping->azure_field = $request->input('azure_field');
+            $mapping->save();
+        }
 
         $this->azureMapFields = AzureMapFields::all();
 
@@ -113,6 +121,7 @@ class MasterController extends AppsController
                 if (!$person->trashed() & !$azUser['accountEnabled']) {
                     $person->delete();
                 }
+                $this->syncCustomFields($mappings, $azUser, $person->id);
                 $person->departments()->detach();
                 $person->save();
 
@@ -150,6 +159,21 @@ class MasterController extends AppsController
         }
 
         ApplicationSettings::set('app.StaffDirectory.azure.last_sync', new \DateTime());
+    }
+
+    private function syncCustomFields($mappings, $azUser, $person_id)
+    {
+        $cf = CustomField::where('person_id', $person_id)->get();
+
+        foreach ($cf as $custom) {
+            if (
+                isset($mappings[$custom->field]) &&
+                $custom->value !== $this->getAzureMemberField($azUser, $mappings[$custom->field]) &&
+                $mappings[$custom->field] !== 'do_not_sync'
+            ) {
+                $custom->value = $this->getAzureMemberField($azUser, $mappings[$custom->field]);
+            }
+        }
     }
 
     private function syncGroupMembers($token, $id)
