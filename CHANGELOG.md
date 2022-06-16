@@ -1,3 +1,19 @@
+# Version 1.1
+## What's New?
+- Added ability to delete custom views
+- Added ability to sync custom fields with Azure (strings only)
+
+## What's Changed?
+- Updated all screens to use new WebApps UX
+
+## What's Fixed?
+- An issue with Azure sync and sub-departments of the same name
+- An issue preventing the App being installed when using MS SQL Server database
+- An issue preventing the App being uninstalled when using MS SQL Server database
+- An issue with the embed code for views
+
+---
+
 # Version 1.0.9
 ## What's New?
 - Staff Directory now uses the new WebApps pop-up window for authentication when required in Views
@@ -8,6 +24,8 @@
 ## What's Fixed?
 - Setting a department head in App Settings doesn't cause the departments list to go wrong until the page was refreshed
 - Updating the App no longer resets your Azure Field Mappings
+
+---
 
 # Version 1.0.8
 ## What's Fixed?
@@ -29,12 +47,16 @@
 ## What's Changed?
 - Security Updates
 
+---
+
 # Version 1.0.7
 ## What's Fixed?
 - Fixed an issue with Azure Field Mappings for new records
 - Fixed an issue preventing Custom Field values from saving
 - Syncing a record using ExtensionAttributes, when none are set, now no longer prevents the entire sync from running
 - Improved UI of GridTile Layout
+
+---
 
 # Version 1.0.6
 ## What's New?
@@ -46,6 +68,8 @@
 ## What's Changed?
 - When editing a record that has been synced with Azure the fields that are managed by Azure are now read-only
 
+---
+
 # Version 1.0.5
 ## What's New?
 - Added option to select which fields appear in edit staff view
@@ -56,16 +80,22 @@
 - Fixed issue preventing Administrators from viewing Views
 - Fixed issue with selecting Azure Groups to sync not always saving
 
+---
+
 # Version 1.0.4
 ## What's Fixed?
 - Issue where you are unable to search for Azure Groups, where there are more than 100 groups
 - Issue causing only the first 100 members of an Azure Group to be synced
+
+---
 
 # Version 1.0.3
 ## What's Changed?
 - Speed improvements
 - Security improvements
 - UI improvements
+
+---
 
 # Version 1.0.2
 ## What's New?
@@ -79,6 +109,8 @@
 - Fixed mail notifications for creating new staff
 - Fixed mail notifications when using the "Gray" WebApps theme
 
+---
+
 # Version 1.0.1
 ## What's New?
 - Added option to upload photos to non-Azure synced users
@@ -89,6 +121,8 @@
 - Fixed opacity issue for users marked as On-Leave
 - Fixed setting a Custom Field to unused now removes the field
 - Fixed installation on Linux/macOS based web servers
+
+---
 
 # Version 1.0.0
 - Initial Release
