@@ -1,4 +1,4 @@
-# Version 1.1
+# Version 1.1.0
 ## What's New?
 - Added ability to delete custom views
 - Added ability to sync custom fields with Azure (strings only)
