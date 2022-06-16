@@ -480,9 +480,6 @@ const Views = () => {
                         customFields={custom}
                         onChange={tableFieldsChange} />
                 </Flyout>
-                {/* <UseModal
-                            closeModal={() => toggleModals('useView')}
-                            publicId={view.publicId} /> */}
                 <PreviewModal
                     closeModal={closeAllFlyouts}
                     view={view}
