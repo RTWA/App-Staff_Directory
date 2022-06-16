@@ -101,7 +101,7 @@ class AppManagerController extends Controller
                 (name, owner, publicId, display, display_type, settings) values (?, ?, ?, ?, ?, ?)',
                     [
                         'All Staff', //name
-                        0, // owner
+                        1, // owner - Administrator (hopefully), awaiting WebApps hidden "App User"/system user
                         'all', // publicId
                         'all', // display
                         'all', // display_type
