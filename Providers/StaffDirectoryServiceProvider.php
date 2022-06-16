@@ -36,16 +36,16 @@ class StaffDirectoryServiceProvider extends ServiceProvider
         ];
 
         foreach ($folders as $folder) {
-            foreach (GLOB(__DIR__.'/../'.$folder.'/*.php') as $file) {
-                $className = str_replace(__DIR__.'/../'.$folder.'/', '', str_replace('.php', '', $file));
-                if (class_exists($this->namespace.'\\'.$className)) {
+            foreach (GLOB(__DIR__ . '/../' . $folder . '/*.php') as $file) {
+                $className = str_replace(__DIR__ . '/../' . $folder . '/', '', str_replace('.php', '', $file));
+                if (class_exists(str_replace("Controllers", $folder, $this->namespace) . '\\' . $className)) {
                     continue;
                 }
                 include $file;
             }
         }
         // Add the Apps views
-        $this->loadViewsFrom(__DIR__.'/../Views', "StaffDirectory");
+        $this->loadViewsFrom(__DIR__ . '/../Views', "StaffDirectory");
         // Add the Apps Commands
         $this->loadCommands();
     }
@@ -95,12 +95,10 @@ class StaffDirectoryServiceProvider extends ServiceProvider
 
     private function loadCommands()
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                StaffDirectoryAzureSync::class,
-                StaffDirectoryCheckLastSyncTime::class,
-                StaffDirectoryDeleteTrash::class,
-            ]);
-        }
+        $this->commands([
+            StaffDirectoryAzureSync::class,
+            StaffDirectoryCheckLastSyncTime::class,
+            StaffDirectoryDeleteTrash::class,
+        ]);
     }
 }
