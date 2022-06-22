@@ -5,9 +5,9 @@ namespace WebApps\Apps\StaffDirectory\Controllers;
 use App\Http\Controllers\AppsController;
 use App\Http\Controllers\MSGraphController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use RobTrehy\LaravelApplicationSettings\ApplicationSettings;
 use WebApps\Apps\StaffDirectory\Models\AzureMapFields;
-use WebApps\Apps\StaffDirectory\Models\CustomField;
 use WebApps\Apps\StaffDirectory\Models\Department;
 use WebApps\Apps\StaffDirectory\Models\Person;
 
@@ -163,7 +163,8 @@ class MasterController extends AppsController
 
     private function syncCustomFields($mappings, $azUser, $person_id)
     {
-        $cf = CustomField::where('person_id', $person_id)->get();
+        $cf = DB::table(AppManagerController::peopleCustomFieldsTable())
+            ->where('person_id', $person_id)->get();
 
         foreach ($cf as $custom) {
             if (
@@ -172,6 +173,7 @@ class MasterController extends AppsController
                 $mappings[$custom->field] !== 'do_not_sync'
             ) {
                 $custom->value = $this->getAzureMemberField($azUser, $mappings[$custom->field]);
+                $custom->save();
             }
         }
     }
