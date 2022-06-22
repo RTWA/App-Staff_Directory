@@ -10,7 +10,7 @@ if (localStorage.getItem('WA_Login')) {
 }
 
 ReactDOM.render(
-    <Auth>
+    <Auth checkOnInit={false}>
         <WebAppsUX>
             <BrowserRouter basename="/apps/StaffDirectory/view/">
                 <Switch>
