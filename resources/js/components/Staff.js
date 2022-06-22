@@ -311,7 +311,7 @@ const Manage = () => {
                     <div className="ml-auto flex flex-row gap-4">
                         {
                             (person.id !== 0 && person.azure_id !== null)
-                                ? <Button style="link" color="gray" size="small" onClick={unlinkAzure}>Do not sync this person with Azure again</Button>
+                                ? <Button type="link" color="gray" size="small" onClick={unlinkAzure}>Do not sync this person with Azure again</Button>
                                 : null
                         }
                         {
