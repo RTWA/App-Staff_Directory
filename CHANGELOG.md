@@ -1,7 +1,12 @@
+# Version 1.1.3
+## What's Fixed?
+- Windowed Login (for Azure) now works as expected
+
+---
+
 # Version 1.1.2
 ## What's Fixed?
 - Unable to view staff record when synced with Azure
-- Windowed Login (for Azure) now works as expected
 
 ---
 
