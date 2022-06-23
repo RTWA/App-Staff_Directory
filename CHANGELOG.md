@@ -1,5 +1,15 @@
+# Version 1.1.2
+## What's Fixed?
+- Unable to view staff record when synced with Azure
+- Windowed Login (for Azure) now works as expected
+
+---
+
 # Version 1.1.1
+## What's Fixed?
 - Fixed issue syncing custom fields with Azure
+
+---
 
 # Version 1.1.0
 ## What's New?
