@@ -1,4 +1,4 @@
-# Version 1.1.3
+# Version 1.1.3 & 1.1.4
 ## What's Fixed?
 - Windowed Login (for Azure) now works as expected
 
