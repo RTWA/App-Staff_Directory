@@ -7,19 +7,40 @@ const ViewLayout = props => {
     const [view, setView] = useState({ state: 'loading' });
     const [allowed, setAllowed] = useState(false);
 
-    const { authenticated, checkGroup } = useContext(AuthContext);
+    const { authenticated, checkGroup, setUser } = useContext(AuthContext);
 
     const APIController = new AbortController();
 
     useEffect(() => {
+        Authenticate();
+
         return () => {
             APIController.abort();
         }
     }, []);
 
-    const Authenticate = () => {
+    useEffect(() => {
+        if (authenticated === true) {
+            loadView();
+        }
+    }, [authenticated]);
+
+    const Authenticate = async () => {
         if (!authenticated) {
-            window.location.replace(`/login/windowed?url=${window.location.href}`);
+            await APIClient('/api/user', undefined, { signal: APIController.signal })
+                .then(json => {
+                    delete json.data.preferences;
+                    setUser(json.data, true);
+                })
+                .catch(error => {
+                    /* istanbul ignore else */
+                    if (!error.status?.isAbort) {
+                        if (error.response && error.status.code === 401) {
+                            // If 401 returns, the user is not logged in
+                            window.location.replace(`/login/windowed?url=${window.location.href}`);
+                        }
+                    }
+                });
         }
     }
 
@@ -57,7 +78,7 @@ const ViewLayout = props => {
         });
     }
 
-    useEffect(async () => {
+    const loadView = async () => {
         let publicId = props.match.params.publicId;
         await APIClient(`/api/apps/StaffDirectory/view/${publicId}`, undefined, { signal: APIController.signal })
             .then(async json => {
@@ -72,7 +93,7 @@ const ViewLayout = props => {
                 }
 
                 if (!_view.settings.perms.guest) {
-                    Authenticate();
+                    // await Authenticate();
                     if (!_view.settings.perms.all) {
                         setAllowed(await checkAccess(_view.settings.perms));
                     } else {
@@ -95,7 +116,7 @@ const ViewLayout = props => {
                     console.log(error);
                 }
             })
-    }, []);
+    }
 
     if (view.state === "loading") {
         return <Loader />
