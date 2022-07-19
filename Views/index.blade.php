@@ -10,7 +10,7 @@
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
-        <div id="StaffDirectory"></div>
+        <div id="StaffDirectory" class="flex h-screen w-screen"></div>
 
         <script src="{{ asset('js/apps/StaffDirectory_View.js') }}"></script>
     </body>

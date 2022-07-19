@@ -1,3 +1,7 @@
+# Version 1.1.5
+## What's Fixed?
+- Scrollbars not displaying on view pages
+
 # Version 1.1.3 & 1.1.4
 ## What's Fixed?
 - Windowed Login (for Azure) now works as expected

@@ -126,7 +126,7 @@ const ViewLayout = props => {
         return <p>Sorry, you do not have access to view this information.</p>
     }
 
-    return <div className="StaffDirectory-view embed"><CustomView view={view} /></div>
+    return <div id="StaffDirectory-view" className="overflow-auto"><CustomView view={view} /></div>
 }
 
 export default ViewLayout;
